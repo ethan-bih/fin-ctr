@@ -1,20 +1,24 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { Transaction, Budget, SavingsGoal, Category, UserProfile } from '@/lib/types';
-import { DEFAULT_CATEGORIES, INITIAL_MOCK_TRANSACTIONS, INITIAL_MOCK_BUDGETS, INITIAL_MOCK_SAVINGS } from '@/lib/constants';
+import { Transaction, Budget, SavingsGoal, Category, UserProfile, JarType } from '@/lib/types';
+import { DEFAULT_CATEGORIES, INITIAL_MOCK_TRANSACTIONS, INITIAL_MOCK_BUDGETS, INITIAL_MOCK_SAVINGS, DEFAULT_JARS } from '@/lib/constants';
 import { createClient } from '@/lib/supabase/client';
+
+export type ActiveTabType = 'dashboard' | 'transactions' | 'budgets' | 'savings' | 'reports' | 'settings' | 'jars';
 
 interface FinanceContextType {
   user: UserProfile | null;
   isLiveMode: boolean;
-  activeTab: 'dashboard' | 'transactions' | 'budgets' | 'savings' | 'reports' | 'settings';
-  setActiveTab: (tab: 'dashboard' | 'transactions' | 'budgets' | 'savings' | 'reports' | 'settings') => void;
+  activeTab: ActiveTabType;
+  setActiveTab: (tab: ActiveTabType) => void;
   
   transactions: Transaction[];
   categories: Category[];
   budgets: Budget[];
   savingsGoals: SavingsGoal[];
+  jarRatios: Record<JarType, number>;
+  updateJarRatios: (newRatios: Record<JarType, number>) => void;
   
   addTransaction: (tx: Omit<Transaction, 'id' | 'user_id' | 'created_at'>) => Promise<void>;
   deleteTransaction: (id: string) => Promise<void>;
@@ -37,9 +41,19 @@ const FinanceContext = createContext<FinanceContextType | undefined>(undefined);
 const LOCAL_STORAGE_TX_KEY = 'pf_transactions_v1';
 const LOCAL_STORAGE_BGT_KEY = 'pf_budgets_v1';
 const LOCAL_STORAGE_SAVING_KEY = 'pf_savings_v1';
+const LOCAL_STORAGE_JAR_RATIOS_KEY = 'pf_jar_ratios_v1';
+
+const DEFAULT_RATIOS: Record<JarType, number> = {
+  NEC: 55,
+  FFA: 10,
+  LTSS: 10,
+  EDU: 10,
+  PLAY: 10,
+  GIVE: 5,
+};
 
 export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'transactions' | 'budgets' | 'savings' | 'reports' | 'settings'>('dashboard');
+  const [activeTab, setActiveTab] = useState<ActiveTabType>('dashboard');
   const [user, setUser] = useState<UserProfile | null>({
     id: 'demo-user',
     email: 'banbe@demo.vn',
@@ -52,6 +66,7 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [categories] = useState<Category[]>(DEFAULT_CATEGORIES);
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [savingsGoals, setSavingsGoals] = useState<SavingsGoal[]>([]);
+  const [jarRatios, setJarRatios] = useState<Record<JarType, number>>(DEFAULT_RATIOS);
 
   // Format currency helper
   const formatCurrency = useCallback((amount: number) => {
@@ -62,12 +77,17 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }).format(amount);
   }, []);
 
+  // Update Jar Ratios
+  const updateJarRatios = (newRatios: Record<JarType, number>) => {
+    setJarRatios(newRatios);
+    localStorage.setItem(LOCAL_STORAGE_JAR_RATIOS_KEY, JSON.stringify(newRatios));
+  };
+
   // Initialize Data
   useEffect(() => {
     const supabase = createClient();
 
     if (supabase) {
-      // Check auth state
       supabase.auth.getUser().then(({ data: { user: authUser } }) => {
         if (authUser) {
           setIsLiveMode(true);
@@ -120,14 +140,17 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
       const savedTx = localStorage.getItem(LOCAL_STORAGE_TX_KEY);
       const savedBgt = localStorage.getItem(LOCAL_STORAGE_BGT_KEY);
       const savedSvg = localStorage.getItem(LOCAL_STORAGE_SAVING_KEY);
+      const savedRatios = localStorage.getItem(LOCAL_STORAGE_JAR_RATIOS_KEY);
 
       setTransactions(savedTx ? JSON.parse(savedTx) : INITIAL_MOCK_TRANSACTIONS);
       setBudgets(savedBgt ? JSON.parse(savedBgt) : INITIAL_MOCK_BUDGETS);
       setSavingsGoals(savedSvg ? JSON.parse(savedSvg) : INITIAL_MOCK_SAVINGS);
+      if (savedRatios) setJarRatios(JSON.parse(savedRatios));
     } catch {
       setTransactions(INITIAL_MOCK_TRANSACTIONS);
       setBudgets(INITIAL_MOCK_BUDGETS);
       setSavingsGoals(INITIAL_MOCK_SAVINGS);
+      setJarRatios(DEFAULT_RATIOS);
     }
   };
 
@@ -135,7 +158,6 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const supabase = createClient();
     if (!supabase) return;
 
-    // Fetch Transactions
     const { data: txData } = await supabase
       .from('transactions')
       .select('*')
@@ -144,28 +166,24 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
     if (txData) setTransactions(txData);
 
-    // Fetch Budgets
-    const { data: bgtData } = await supabase
-      .from('budgets')
-      .select('*')
-      .eq('user_id', userId);
-
+    const { data: bgtData } = await supabase.from('budgets').select('*').eq('user_id', userId);
     if (bgtData) setBudgets(bgtData);
 
-    // Fetch Savings
-    const { data: svgData } = await supabase
-      .from('savings_goals')
-      .select('*')
-      .eq('user_id', userId);
-
+    const { data: svgData } = await supabase.from('savings_goals').select('*').eq('user_id', userId);
     if (svgData) setSavingsGoals(svgData);
   };
 
   // Add Transaction
   const addTransaction = async (txInput: Omit<Transaction, 'id' | 'user_id' | 'created_at'>) => {
     const supabase = createClient();
+
+    // Map category to jar if missing
+    const category = categories.find((c) => c.id === txInput.category_id);
+    const jarId = txInput.jar_id || category?.jar_id;
+
     const newTx: Transaction = {
       ...txInput,
+      jar_id: jarId,
       id: isLiveMode ? undefined! : 'tx-' + Date.now(),
       user_id: user?.id || 'demo-user',
       created_at: new Date().toISOString(),
@@ -182,12 +200,13 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
           category_name: txInput.category_name,
           category_icon: txInput.category_icon,
           category_color: txInput.category_color,
+          jar_id: jarId,
           note: txInput.note,
           date: txInput.date,
         }])
         .select();
 
-      if (error) console.error('Error adding transaction to Supabase:', error);
+      if (error) console.error('Error adding transaction:', error);
       else if (data && data[0]) {
         setTransactions((prev) => [data[0], ...prev]);
       }
@@ -239,7 +258,6 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   };
 
-  // Delete Budget
   const deleteBudget = async (id: string) => {
     const supabase = createClient();
     if (isLiveMode && supabase) {
@@ -279,7 +297,6 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   };
 
-  // Deposit/Withdraw Savings Goal
   const updateSavingsGoal = async (id: string, newAmount: number) => {
     const supabase = createClient();
     if (isLiveMode && supabase) {
@@ -290,7 +307,6 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     if (!isLiveMode) localStorage.setItem(LOCAL_STORAGE_SAVING_KEY, JSON.stringify(updated));
   };
 
-  // Delete Savings Goal
   const deleteSavingsGoal = async (id: string) => {
     const supabase = createClient();
     if (isLiveMode && supabase) {
@@ -301,7 +317,6 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     if (!isLiveMode) localStorage.setItem(LOCAL_STORAGE_SAVING_KEY, JSON.stringify(updated));
   };
 
-  // Google OAuth Login
   const loginWithGoogle = async () => {
     const supabase = createClient();
     if (!supabase) {
@@ -319,7 +334,6 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     if (error) alert('Lỗi đăng nhập Google: ' + error.message);
   };
 
-  // Logout
   const logout = async () => {
     const supabase = createClient();
     if (supabase) {
@@ -335,14 +349,15 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     loadLocalStorageData();
   };
 
-  // Reset Demo Data
   const resetDemoData = () => {
     localStorage.removeItem(LOCAL_STORAGE_TX_KEY);
     localStorage.removeItem(LOCAL_STORAGE_BGT_KEY);
     localStorage.removeItem(LOCAL_STORAGE_SAVING_KEY);
+    localStorage.removeItem(LOCAL_STORAGE_JAR_RATIOS_KEY);
     setTransactions(INITIAL_MOCK_TRANSACTIONS);
     setBudgets(INITIAL_MOCK_BUDGETS);
     setSavingsGoals(INITIAL_MOCK_SAVINGS);
+    setJarRatios(DEFAULT_RATIOS);
   };
 
   return (
@@ -356,6 +371,8 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
         categories,
         budgets,
         savingsGoals,
+        jarRatios,
+        updateJarRatios,
         addTransaction,
         deleteTransaction,
         addBudget,

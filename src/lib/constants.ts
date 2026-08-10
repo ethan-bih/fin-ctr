@@ -1,15 +1,83 @@
-import { Category, Transaction, Budget, SavingsGoal } from './types';
+import { Category, Transaction, Budget, SavingsGoal, JarConfig } from './types';
+
+export const DEFAULT_JARS: JarConfig[] = [
+  {
+    id: 'NEC',
+    code: 'NEC',
+    name: 'Nhu Cầu Thiết Yếu',
+    percent: 55,
+    description: 'Ăn uống, thuê nhà, điện nước, di chuyển, y tế sinh hoạt hàng ngày',
+    color: '#f59e0b',
+    bgGradient: 'from-amber-500/20 via-orange-500/10 to-transparent',
+    icon: 'Home',
+  },
+  {
+    id: 'FFA',
+    code: 'FFA',
+    name: 'Tự Do Tài Chính',
+    percent: 10,
+    description: 'Đầu tư chứng khoán, bất động sản, gửi tiết kiệm sinh lời tạo thu nhập thụ động',
+    color: '#10b981',
+    bgGradient: 'from-emerald-500/20 via-teal-500/10 to-transparent',
+    icon: 'TrendingUp',
+  },
+  {
+    id: 'LTSS',
+    code: 'LTSS',
+    name: 'Tiết Kiệm Dài Hạn',
+    percent: 10,
+    description: 'Quỹ dự phòng khẩn cấp, mua xe, mua laptop, đi du lịch lớn',
+    color: '#3b82f6',
+    bgGradient: 'from-blue-500/20 via-indigo-500/10 to-transparent',
+    icon: 'ShieldCheck',
+  },
+  {
+    id: 'EDU',
+    code: 'EDU',
+    name: 'Giáo Dục & Phát Triển',
+    percent: 10,
+    description: 'Mua sách, học khóa học mới, tham gia hội thảo nâng cao kỹ năng bản thân',
+    color: '#06b6d4',
+    bgGradient: 'from-cyan-500/20 via-sky-500/10 to-transparent',
+    icon: 'GraduationCap',
+  },
+  {
+    id: 'PLAY',
+    code: 'PLAY',
+    name: 'Hưởng Thụ & Giải Trí',
+    percent: 10,
+    description: 'Xem phim, ăn uống tự thưởng, mua sắm cá nhân, du lịch ngắn ngày',
+    color: '#ec4899',
+    bgGradient: 'from-pink-500/20 via-rose-500/10 to-transparent',
+    icon: 'Film',
+  },
+  {
+    id: 'GIVE',
+    code: 'GIVE',
+    name: 'Cho Đi & Quà Tặng',
+    percent: 5,
+    description: 'Biếu bố mẹ, từ thiện, quà sinh nhật bạn bè, giúp đỡ người thân',
+    color: '#8b5cf6',
+    bgGradient: 'from-purple-500/20 via-fuchsia-500/10 to-transparent',
+    icon: 'Heart',
+  },
+];
 
 export const DEFAULT_CATEGORIES: Category[] = [
-  // Expenses
-  { id: 'cat-food', name: 'Ăn uống', type: 'expense', icon: 'Utensils', color: '#f59e0b' },
-  { id: 'cat-bills', name: 'Hóa đơn & Nhà ở', type: 'expense', icon: 'Home', color: '#ef4444' },
-  { id: 'cat-transport', name: 'Di chuyển', type: 'expense', icon: 'Car', color: '#3b82f6' },
-  { id: 'cat-shopping', name: 'Mua sắm', type: 'expense', icon: 'ShoppingBag', color: '#ec4899' },
-  { id: 'cat-entertainment', name: 'Giải trí & Phim', type: 'expense', icon: 'Film', color: '#8b5cf6' },
-  { id: 'cat-health', name: 'Sức khỏe & Y tế', type: 'expense', icon: 'HeartPulse', color: '#10b981' },
-  { id: 'cat-education', name: 'Học tập & Sách', type: 'expense', icon: 'GraduationCap', color: '#06b6d4' },
-  { id: 'cat-other-exp', name: 'Chi phí khác', type: 'expense', icon: 'MoreHorizontal', color: '#64748b' },
+  // Expenses (mapped to Jars)
+  { id: 'cat-food', name: 'Ăn uống', type: 'expense', icon: 'Utensils', color: '#f59e0b', jar_id: 'NEC' },
+  { id: 'cat-bills', name: 'Hóa đơn & Nhà ở', type: 'expense', icon: 'Home', color: '#ef4444', jar_id: 'NEC' },
+  { id: 'cat-transport', name: 'Di chuyển', type: 'expense', icon: 'Car', color: '#3b82f6', jar_id: 'NEC' },
+  { id: 'cat-health', name: 'Sức khỏe & Y tế', type: 'expense', icon: 'HeartPulse', color: '#10b981', jar_id: 'NEC' },
+
+  { id: 'cat-invest-exp', name: 'Đầu tư & Vốn', type: 'expense', icon: 'TrendingUp', color: '#10b981', jar_id: 'FFA' },
+  { id: 'cat-savings-exp', name: 'Gửi tiết kiệm', type: 'expense', icon: 'ShieldCheck', color: '#3b82f6', jar_id: 'LTSS' },
+
+  { id: 'cat-education', name: 'Học tập & Sách', type: 'expense', icon: 'GraduationCap', color: '#06b6d4', jar_id: 'EDU' },
+  { id: 'cat-shopping', name: 'Mua sắm', type: 'expense', icon: 'ShoppingBag', color: '#ec4899', jar_id: 'PLAY' },
+  { id: 'cat-entertainment', name: 'Giải trí & Phim', type: 'expense', icon: 'Film', color: '#8b5cf6', jar_id: 'PLAY' },
+  { id: 'cat-give', name: 'Từ thiện & Quà biếu', type: 'expense', icon: 'Heart', color: '#a855f7', jar_id: 'GIVE' },
+  { id: 'cat-other-exp', name: 'Chi phí khác', type: 'expense', icon: 'MoreHorizontal', color: '#64748b', jar_id: 'NEC' },
 
   // Income
   { id: 'cat-salary', name: 'Lương hàng tháng', type: 'income', icon: 'Wallet', color: '#10b981' },
@@ -41,6 +109,7 @@ export const INITIAL_MOCK_TRANSACTIONS: Transaction[] = [
     category_name: 'Hóa đơn & Nhà ở',
     category_icon: 'Home',
     category_color: '#ef4444',
+    jar_id: 'NEC',
     note: 'Tiền thuê nhà + điện nước internet',
     date: new Date(new Date().getFullYear(), new Date().getMonth(), 3).toISOString().split('T')[0],
     created_at: new Date().toISOString(),
@@ -54,6 +123,7 @@ export const INITIAL_MOCK_TRANSACTIONS: Transaction[] = [
     category_name: 'Ăn uống',
     category_icon: 'Utensils',
     category_color: '#f59e0b',
+    jar_id: 'NEC',
     note: 'Tiền đi chợ, siêu thị & cà phê',
     date: new Date(new Date().getFullYear(), new Date().getMonth(), 5).toISOString().split('T')[0],
     created_at: new Date().toISOString(),
@@ -80,8 +150,23 @@ export const INITIAL_MOCK_TRANSACTIONS: Transaction[] = [
     category_name: 'Mua sắm',
     category_icon: 'ShoppingBag',
     category_color: '#ec4899',
+    jar_id: 'PLAY',
     note: 'Mua quần áo mới & phụ kiện',
     date: new Date(new Date().getFullYear(), new Date().getMonth(), 8).toISOString().split('T')[0],
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'tx-6',
+    user_id: 'demo-user',
+    type: 'expense',
+    amount: 1200000,
+    category_id: 'cat-education',
+    category_name: 'Học tập & Sách',
+    category_icon: 'GraduationCap',
+    category_color: '#06b6d4',
+    jar_id: 'EDU',
+    note: 'Mua sách phát triển bản thân & khóa học tiếng Anh',
+    date: new Date(new Date().getFullYear(), new Date().getMonth(), 10).toISOString().split('T')[0],
     created_at: new Date().toISOString(),
   },
 ];
@@ -105,15 +190,6 @@ export const INITIAL_MOCK_BUDGETS: Budget[] = [
     category_color: '#ec4899',
     monthly_limit: 3000000,
   },
-  {
-    id: 'bgt-3',
-    user_id: 'demo-user',
-    category_id: 'cat-entertainment',
-    category_name: 'Giải trí & Phim',
-    category_icon: 'Film',
-    category_color: '#8b5cf6',
-    monthly_limit: 2000000,
-  },
 ];
 
 export const INITIAL_MOCK_SAVINGS: SavingsGoal[] = [
@@ -136,15 +212,5 @@ export const INITIAL_MOCK_SAVINGS: SavingsGoal[] = [
     target_date: '2026-10-15',
     category_color: '#6366f1',
     icon: 'Laptop',
-  },
-  {
-    id: 'svg-3',
-    user_id: 'demo-user',
-    title: 'Chuyến Du Lịch Nhật Bản',
-    target_amount: 30000000,
-    current_amount: 12000000,
-    target_date: '2027-04-01',
-    category_color: '#ec4899',
-    icon: 'Plane',
   },
 ];

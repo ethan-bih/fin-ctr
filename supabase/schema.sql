@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS public.categories (
     type TEXT CHECK (type IN ('income', 'expense')) NOT NULL,
     icon TEXT NOT NULL,
     color TEXT NOT NULL,
+    jar_id TEXT, -- 6 Jars code (NEC, FFA, LTSS, EDU, PLAY, GIVE)
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE, -- NULL means global system category
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
@@ -37,6 +38,7 @@ CREATE TABLE IF NOT EXISTS public.transactions (
     category_name TEXT NOT NULL,
     category_icon TEXT NOT NULL,
     category_color TEXT NOT NULL,
+    jar_id TEXT, -- 6 Jars code (NEC, FFA, LTSS, EDU, PLAY, GIVE)
     note TEXT DEFAULT '',
     date DATE NOT NULL DEFAULT CURRENT_DATE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL

@@ -1,20 +1,21 @@
 'use client';
 
 import React from 'react';
-import { useFinance } from '@/context/FinanceContext';
-import { LayoutDashboard, Receipt, PieChart, Target, BarChart3, Settings } from 'lucide-react';
+import { useFinance, ActiveTabType } from '@/context/FinanceContext';
+import { LayoutDashboard, Receipt, PieChart, Target, BarChart3, Settings, Coins } from 'lucide-react';
 
 export const Sidebar: React.FC = () => {
   const { activeTab, setActiveTab } = useFinance();
 
-  const navItems = [
+  const navItems: { id: ActiveTabType; label: string; icon: React.ElementType }[] = [
     { id: 'dashboard', label: 'Tổng Quan', icon: LayoutDashboard },
+    { id: 'jars', label: 'Quy Tắc 6 Hũ', icon: Coins },
     { id: 'transactions', label: 'Sổ Giao Dịch', icon: Receipt },
     { id: 'budgets', label: 'Hạn Mức Chi', icon: PieChart },
     { id: 'savings', label: 'Quỹ Tiết Kiệm', icon: Target },
     { id: 'reports', label: 'Báo Cáo Thống Kê', icon: BarChart3 },
     { id: 'settings', label: 'Cấu Hình Supabase', icon: Settings },
-  ] as const;
+  ];
 
   return (
     <>
@@ -56,7 +57,7 @@ export const Sidebar: React.FC = () => {
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`flex flex-col items-center py-1 px-2.5 rounded-lg text-[10px] font-medium transition-all ${
+              className={`flex flex-col items-center py-1 px-2 rounded-lg text-[10px] font-medium transition-all ${
                 isActive ? 'text-emerald-400' : 'text-slate-400 hover:text-slate-200'
               }`}
             >

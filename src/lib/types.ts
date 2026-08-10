@@ -1,11 +1,25 @@
 export type TransactionType = 'income' | 'expense';
 
+export type JarType = 'NEC' | 'FFA' | 'LTSS' | 'EDU' | 'PLAY' | 'GIVE';
+
+export interface JarConfig {
+  id: JarType;
+  name: string;
+  code: string;
+  percent: number;
+  description: string;
+  color: string;
+  bgGradient: string;
+  icon: string;
+}
+
 export interface Category {
   id: string;
   name: string;
   type: TransactionType;
-  icon: string; // Lucide icon name
+  icon: string;
   color: string;
+  jar_id?: JarType;
   user_id?: string;
 }
 
@@ -18,6 +32,7 @@ export interface Transaction {
   category_name: string;
   category_icon: string;
   category_color: string;
+  jar_id?: JarType;
   note: string;
   date: string; // ISO String (YYYY-MM-DD)
   created_at: string;

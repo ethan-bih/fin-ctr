@@ -5,6 +5,7 @@ import { FinanceProvider, useFinance } from '@/context/FinanceContext';
 import { Navbar } from '@/components/Navbar';
 import { Sidebar } from '@/components/Sidebar';
 import { DashboardOverview } from '@/components/DashboardOverview';
+import { SixJarsTracker } from '@/components/SixJarsTracker';
 import { TransactionList } from '@/components/TransactionList';
 import { BudgetTracker } from '@/components/BudgetTracker';
 import { SavingsGoals } from '@/components/SavingsGoals';
@@ -32,6 +33,7 @@ function MainAppContent() {
         {/* Dynamic Content View */}
         <main className="flex-1 p-4 sm:p-6 lg:p-8 min-w-0">
           {activeTab === 'dashboard' && <DashboardOverview onOpenAddModal={handleOpenAddModal} />}
+          {activeTab === 'jars' && <SixJarsTracker />}
           {activeTab === 'transactions' && <TransactionList onOpenAddModal={handleOpenAddModal} />}
           {activeTab === 'budgets' && <BudgetTracker />}
           {activeTab === 'savings' && <SavingsGoals />}
