@@ -214,7 +214,7 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onOpenAddM
                 <XAxis dataKey="month" stroke="#94a3b8" fontSize={12} tickLine={false} />
                 <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} tickFormatter={(v) => `${v / 1000000}M`} />
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', color: '#0f172a', borderRadius: '12px', fontSize: '12px' }}
+                  contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', color: '#0f172a', borderRadius: '12px', fontSize: '12px' }}
                   formatter={(val: any) => [formatCurrency(Number(val || 0)), '']}
                 />
                 <Area type="monotone" dataKey="income" stroke="#10b981" strokeWidth={2.5} fillOpacity={1} fill="url(#colorIncome)" />
@@ -248,7 +248,7 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onOpenAddM
                       ))}
                     </Pie>
                     <Tooltip
-                      contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', color: '#0f172a', borderRadius: '8px' }}
+                      contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', color: '#0f172a', borderRadius: '8px' }}
                       formatter={(val: any) => [formatCurrency(Number(val || 0)), '']}
                     />
                   </RePieChart>

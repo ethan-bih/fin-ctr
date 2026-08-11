@@ -162,7 +162,7 @@ export const ReportsAnalytics: React.FC = () => {
               <XAxis dataKey="month" stroke="#94a3b8" fontSize={12} tickLine={false} />
               <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} tickFormatter={(v) => `${v / 1000000}M`} />
               <Tooltip
-                contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', color: '#0f172a', borderRadius: '8px' }}
+                contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', color: '#0f172a', borderRadius: '8px' }}
                 formatter={(val: any) => [formatCurrency(Number(val || 0)), 'Chi tiêu']}
               />
               <Bar dataKey="Chi_tiêu" fill="#4f46e5" radius={[6, 6, 0, 0]} />

@@ -422,7 +422,7 @@ export const WeddingOverviewTab: React.FC<WeddingOverviewTabProps> = ({
                 <YAxis stroke="#94a3b8" fontSize={10} tickFormatter={(v) => `${v / 1000000}M`} />
                 <Tooltip
                   formatter={(val: any) => formatCurrency(Number(val))}
-                  contentStyle={{ backgroundColor: '#fff', borderRadius: '12px', borderColor: '#e2e8f0' }}
+                  contentStyle={{ backgroundColor: '#fff', borderRadius: '12px', border: '1px solid #e2e8f0' }}
                 />
                 <Legend wrapperStyle={{ fontSize: '12px' }} />
                 <Bar dataKey="Dự_kiến" fill="#94a3b8" radius={[4, 4, 0, 0]} />
