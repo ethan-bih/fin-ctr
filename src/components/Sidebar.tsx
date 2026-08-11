@@ -187,7 +187,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Mobile Bottom Navigation Bar */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-2 py-1.5 flex justify-around items-center shadow-lg">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-[60] bg-white/95 backdrop-blur-md border-t border-slate-200 px-2 py-1.5 flex justify-around items-center shadow-lg">
         {mainBottomTabs.map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;

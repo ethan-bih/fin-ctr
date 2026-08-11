@@ -46,22 +46,22 @@ export const WeddingVendorsTab: React.FC<WeddingVendorsTabProps> = ({ onOpenVend
   return (
     <div className="space-y-5">
       {/* Header Banner */}
-      <div className="flex items-center justify-between gap-2 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs">
+      <div className="flex items-center justify-between gap-2 bg-white p-3 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs">
         <div>
-          <h2 className="text-base sm:text-xl font-bold text-slate-900 flex items-center gap-2">
-            <span>Nhà Cung Cấp Dịch Vụ</span>
-            <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200 shrink-0">
+          <h2 className="text-sm sm:text-xl font-bold text-slate-900 flex items-center gap-1.5">
+            <span>Nhà Cung Cấp</span>
+            <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200 shrink-0">
               {filteredVendors.length} đơn vị
             </span>
           </h2>
           <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 hidden sm:block">
-            Quản lý báo giá, tiền đặt cọc và hợp đồng dịch vụ (Studio, Trang trí, Quay phim, Make-up...)
+            Quản lý báo giá, tiền đặt cọc và hợp đồng dịch vụ
           </p>
         </div>
 
         <button
           onClick={() => onOpenVendorModal()}
-          className="flex items-center justify-center space-x-1 px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs sm:text-sm shadow-2xs transition-all shrink-0"
+          className="flex items-center justify-center space-x-1 px-2.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-2xs transition-all shrink-0"
         >
           <Plus className="w-3.5 h-3.5" />
           <span>Thêm Đơn Vị</span>
@@ -69,14 +69,14 @@ export const WeddingVendorsTab: React.FC<WeddingVendorsTabProps> = ({ onOpenVend
       </div>
 
       {/* Summary KPI Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-        <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
-          <div className="text-xs text-slate-500 font-medium">Tổng Báo Giá Dịch Vụ</div>
-          <div className="text-xl font-bold text-slate-900 mt-1">{formatCurrency(totalQuoted)}</div>
+      <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
+        <div className="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs">
+          <div className="text-[11px] sm:text-xs text-slate-500 font-medium truncate">Tổng Báo Giá Dịch Vụ</div>
+          <div className="text-sm sm:text-xl font-black text-slate-900 mt-0.5 truncate">{formatCurrency(totalQuoted)}</div>
         </div>
-        <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
-          <div className="text-xs text-slate-500 font-medium">Tổng Đã Đặt Cọc</div>
-          <div className="text-xl font-bold text-rose-600 mt-1">{formatCurrency(totalDeposited)}</div>
+        <div className="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs">
+          <div className="text-[11px] sm:text-xs text-slate-500 font-medium truncate">Tổng Đã Đặt Cọc</div>
+          <div className="text-sm sm:text-xl font-black text-rose-600 mt-0.5 truncate">{formatCurrency(totalDeposited)}</div>
         </div>
       </div>
 
