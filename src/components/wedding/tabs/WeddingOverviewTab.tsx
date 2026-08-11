@@ -39,6 +39,11 @@ export const WeddingOverviewTab: React.FC<WeddingOverviewTabProps> = ({
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(val);
   };
 
+  const handleSaveDate = () => {
+    setWeddingDate(tempDate);
+    setIsEditingDate(false);
+  };
+
   // Recharts Data for Budget by Category
   const budgetByCategoryData = [
     {
@@ -60,67 +65,60 @@ export const WeddingOverviewTab: React.FC<WeddingOverviewTabProps> = ({
 
   // Recharts Data for Guest RSVP
   const guestRsvpData = [
-    { name: 'Đã xác nhận', value: guests.filter((g) => g.rsvp_status === 'Đã xác nhận').length },
-    { name: 'Từ chối', value: guests.filter((g) => g.rsvp_status === 'Từ chối').length },
-    { name: 'Chưa phản hồi', value: guests.filter((g) => g.rsvp_status === 'Chưa phản hồi').length },
-  ];
-
-  const COLORS = ['#10b981', '#ef4444', '#f59e0b'];
-
-  const handleSaveDate = () => {
-    setWeddingDate(tempDate);
-    setIsEditingDate(false);
-  };
+    { name: 'Đã xác nhận', value: summary.confirmedGuests, color: '#10b981' },
+    { name: 'Chưa phản hồi', value: guests.filter((g) => g.rsvp_status === 'Chưa phản hồi').length, color: '#f59e0b' },
+    { name: 'Từ chối', value: guests.filter((g) => g.rsvp_status === 'Từ chối').length, color: '#ef4444' },
+  ].filter((d) => d.value > 0);
 
   return (
-    <div className="space-y-6">
-      {/* Romantic Banner & Countdown Timer */}
-      <div className="relative overflow-hidden rounded-2xl bg-white border border-rose-200/80 p-3.5 sm:p-6 shadow-xs">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 sm:gap-6">
-          <div className="space-y-1.5 max-w-2xl">
-            <div className="inline-flex items-center space-x-1.5 px-2 py-0.5 rounded-full bg-rose-50 text-rose-600 text-[11px] font-bold border border-rose-200/80">
-              <Sparkles className="w-3 h-3 text-rose-500" />
+    <div className="space-y-5">
+      {/* Sleek Compact Hero Banner */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-rose-500/10 via-pink-500/5 to-white border border-rose-200/80 p-3.5 sm:p-5 shadow-2xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          {/* Couple Title */}
+          <div className="space-y-1">
+            <div className="inline-flex items-center space-x-1.5 px-2 py-0.5 rounded-full bg-rose-100/80 text-rose-700 text-[10px] sm:text-xs font-black tracking-wider uppercase">
+              <Sparkles className="w-3 h-3 text-rose-600" />
               <span>WEDDING PLANNER</span>
             </div>
-            
-            <div>
-              <h1 className="text-lg sm:text-3xl font-extrabold text-slate-900 tracking-tight flex flex-wrap items-center gap-x-2 gap-y-1 leading-snug">
-                <span>Kế Hoạch Đám Cưới:</span>
-                <span className="text-rose-600 flex items-center gap-1 font-black whitespace-nowrap">
-                  Quốc Huy &amp; Yến Nhi
-                  <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-rose-500 fill-rose-500 shrink-0 inline-block" />
-                </span>
-              </h1>
-            </div>
+            <h1 className="text-base sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-1.5">
+              <span>Kế Hoạch:</span>
+              <span className="text-rose-600 flex items-center gap-1">
+                Quốc Huy &amp; Yến Nhi
+                <Heart className="w-4 h-4 text-rose-500 fill-rose-500 shrink-0" />
+              </span>
+            </h1>
           </div>
 
-          {/* Countdown Clock Widget */}
-          <div className="w-full lg:w-auto bg-rose-50/50 border border-rose-200/80 rounded-2xl p-4 sm:p-4.5 flex flex-col sm:flex-row items-start sm:items-center justify-between lg:justify-start gap-4 sm:gap-6 shadow-2xs shrink-0">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-rose-600 text-white flex items-center justify-center shadow-xs shrink-0">
-                <Clock className="w-5 h-5" />
+          {/* Countdown & Date Picker Widget */}
+          <div className="flex items-center gap-2.5 bg-white/90 backdrop-blur-xs border border-rose-200/80 rounded-xl p-2.5 sm:px-4 sm:py-2.5 shadow-2xs shrink-0 justify-between sm:justify-start">
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 rounded-lg bg-rose-600 text-white flex items-center justify-center shrink-0">
+                <Clock className="w-4 h-4" />
               </div>
               <div>
-                <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Đếm ngược ngày cưới</div>
-                <div className="text-2xl sm:text-3xl font-black text-slate-900 leading-none mt-0.5">
-                  {daysLeft} <span className="text-xs font-medium text-slate-500">ngày nữa</span>
+                <div className="text-[10px] font-bold text-slate-500 uppercase">Còn lại</div>
+                <div className="text-sm sm:text-lg font-black text-slate-900 leading-none">
+                  {daysLeft} <span className="text-[10px] font-semibold text-slate-500">ngày</span>
                 </div>
               </div>
             </div>
 
-            <div className="w-full sm:w-auto text-left sm:text-right border-t sm:border-t-0 sm:border-l border-rose-200/80 pt-3 sm:pt-0 pl-0 sm:pl-5">
-              <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Ngày cưới dự kiến</div>
+            <div className="h-6 w-px bg-rose-200" />
+
+            <div>
+              <div className="text-[10px] font-bold text-slate-500 uppercase">Ngày cưới</div>
               {isEditingDate ? (
-                <div className="flex items-center gap-1 mt-1">
+                <div className="flex items-center gap-1">
                   <input
                     type="date"
                     value={tempDate}
                     onChange={(e) => setTempDate(e.target.value)}
-                    className="bg-white text-xs border border-slate-300 rounded-lg px-2 py-1 text-slate-900 focus:outline-none"
+                    className="bg-white text-[11px] border border-slate-300 rounded px-1.5 py-0.5 text-slate-900 focus:outline-none"
                   />
                   <button
                     onClick={handleSaveDate}
-                    className="bg-rose-600 hover:bg-rose-700 text-white text-xs px-2.5 py-1 rounded-lg font-medium shadow-2xs"
+                    className="bg-rose-600 text-white text-[10px] px-2 py-0.5 rounded font-bold"
                   >
                     Lưu
                   </button>
@@ -128,9 +126,9 @@ export const WeddingOverviewTab: React.FC<WeddingOverviewTabProps> = ({
               ) : (
                 <button
                   onClick={() => setIsEditingDate(true)}
-                  className="text-xs sm:text-sm font-bold text-rose-700 hover:text-rose-800 flex items-center sm:justify-end gap-1.5 transition-colors mt-1"
+                  className="text-xs font-bold text-rose-700 hover:text-rose-800 flex items-center gap-1 transition-colors"
                 >
-                  <Calendar className="w-4 h-4 text-rose-500" />
+                  <Calendar className="w-3.5 h-3.5 text-rose-500" />
                   <span>{new Date(weddingDate).toLocaleDateString('vi-VN')}</span>
                 </button>
               )}
@@ -139,415 +137,337 @@ export const WeddingOverviewTab: React.FC<WeddingOverviewTabProps> = ({
         </div>
       </div>
 
-      {/* KPI Cards Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      {/* KPI Cards Grid (Strict Uniform Alignment) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 items-stretch">
         {/* Card 1: Budget */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 hover:border-slate-300 transition-all shadow-xs group relative">
+        <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-between h-full">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-slate-500 flex items-center gap-1">
+            <span className="text-[11px] sm:text-xs font-bold text-slate-500 truncate flex items-center gap-1">
               <span>Ngân Sách Mục Tiêu</span>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   setIsEditingBudget(true);
                 }}
-                className="p-1 text-slate-400 hover:text-rose-600 rounded-md transition-colors"
-                title="Chỉnh sửa ngân sách tổng ban đầu"
+                className="p-0.5 text-slate-400 hover:text-rose-600"
+                title="Sửa ngân sách mục tiêu"
               >
-                <Pencil className="w-3.5 h-3.5" />
+                <Pencil className="w-3 h-3" />
               </button>
             </span>
             <div
               onClick={() => onSwitchTab('budget')}
-              className="p-2 rounded-xl bg-emerald-50 text-emerald-600 cursor-pointer"
+              className="p-1.5 rounded-xl bg-emerald-50 text-emerald-600 cursor-pointer shrink-0"
             >
-              <Wallet className="w-5 h-5" />
+              <Wallet className="w-4 h-4" />
             </div>
           </div>
 
-          {isEditingBudget ? (
-            <div className="flex items-center gap-1.5 my-1">
-              <input
-                type="number"
-                value={tempBudget}
-                onChange={(e) => setTempBudget(Number(e.target.value))}
-                className="w-full bg-slate-50 border border-slate-300 rounded-lg px-2 py-1 text-xs font-bold text-slate-900 focus:outline-none focus:border-rose-500"
-                placeholder="Nhập số tiền..."
-              />
-              <button
-                onClick={() => {
-                  setTargetBudget(tempBudget);
-                  setIsEditingBudget(false);
-                }}
-                className="bg-rose-600 hover:bg-rose-700 text-white text-xs px-2.5 py-1 rounded-lg font-bold shadow-2xs shrink-0"
+          <div className="my-1">
+            {isEditingBudget ? (
+              <div className="flex items-center gap-1">
+                <input
+                  type="number"
+                  value={tempBudget}
+                  onChange={(e) => setTempBudget(Number(e.target.value))}
+                  className="w-full bg-slate-50 border border-slate-300 rounded px-1.5 py-0.5 text-xs font-bold text-slate-900 focus:outline-none"
+                />
+                <button
+                  onClick={() => {
+                    setTargetBudget(tempBudget);
+                    setIsEditingBudget(false);
+                  }}
+                  className="bg-rose-600 text-white text-[10px] px-2 py-0.5 rounded font-bold shrink-0"
+                >
+                  Lưu
+                </button>
+              </div>
+            ) : (
+              <div
+                onClick={() => setIsEditingBudget(true)}
+                className="text-sm sm:text-xl font-black text-slate-900 leading-tight cursor-pointer hover:text-rose-600 truncate"
               >
-                Lưu
-              </button>
-            </div>
-          ) : (
-            <div
-              onClick={() => setIsEditingBudget(true)}
-              className="text-xl sm:text-2xl font-extrabold text-slate-900 mb-1 cursor-pointer hover:text-rose-600 transition-colors"
-            >
-              {formatCurrency(summary.targetBudget)}
-            </div>
-          )}
-
-          <div className="flex items-center justify-between text-xs text-slate-500 mt-2">
-            <span>Đã chi: <strong className="text-emerald-600">{formatCurrency(summary.totalActualExpense)}</strong></span>
-            <span>{summary.targetBudget > 0 ? Math.round((summary.totalActualExpense / summary.targetBudget) * 100) : 0}%</span>
+                {formatCurrency(summary.targetBudget)}
+              </div>
+            )}
           </div>
 
-          <div className="w-full bg-slate-100 rounded-full h-1.5 mt-2.5 overflow-hidden">
-            <div
-              className="bg-emerald-600 h-1.5 rounded-full transition-all duration-500"
-              style={{
-                width: `${summary.targetBudget > 0 ? Math.min(100, (summary.totalActualExpense / summary.targetBudget) * 100) : 0}%`,
-              }}
-            />
+          <div className="text-[10px] sm:text-xs text-slate-500 space-y-0.5 my-1">
+            <div className="flex items-center justify-between">
+              <span>Đã chi:</span>
+              <strong className="text-emerald-600 font-bold">{formatCurrency(summary.totalActualExpense)}</strong>
+            </div>
+            <div className="flex items-center justify-between">
+              <span>Hạng mục:</span>
+              <span className="font-semibold text-slate-700">{formatCurrency(summary.totalEstimatedBudget)}</span>
+            </div>
           </div>
 
-          <div className="text-[11px] text-slate-400 mt-2 flex items-center justify-between">
-            <span>Hạng mục dự kiến:</span>
-            <span className="font-semibold text-slate-600">{formatCurrency(summary.totalEstimatedBudget)}</span>
+          <div className="mt-1">
+            <div className="flex items-center justify-between text-[10px] text-slate-400 mb-1 font-semibold">
+              <span>Tiến độ dùng</span>
+              <span>{summary.targetBudget > 0 ? Math.round((summary.totalActualExpense / summary.targetBudget) * 100) : 0}%</span>
+            </div>
+            <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+              <div
+                className="bg-emerald-600 h-1.5 rounded-full transition-all duration-500"
+                style={{
+                  width: `${summary.targetBudget > 0 ? Math.min(100, (summary.totalActualExpense / summary.targetBudget) * 100) : 0}%`,
+                }}
+              />
+            </div>
           </div>
         </div>
 
         {/* Card 2: Tasks */}
         <div
           onClick={() => onSwitchTab('timeline')}
-          className="bg-white p-5 rounded-2xl border border-slate-200 hover:border-slate-300 transition-all cursor-pointer shadow-xs group"
+          className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs hover:border-slate-300 transition-all cursor-pointer flex flex-col justify-between h-full"
         >
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold text-slate-500">Công Việc Đám Cưới</span>
-            <div className="p-2 rounded-xl bg-blue-50 text-blue-600">
-              <CheckSquare className="w-5 h-5" />
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] sm:text-xs font-bold text-slate-500 truncate">Công Việc Đám Cưới</span>
+            <div className="p-1.5 rounded-xl bg-blue-50 text-blue-600 shrink-0">
+              <CheckSquare className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-xl sm:text-2xl font-bold text-slate-900 mb-1">
-            {summary.completedTasks} / {summary.totalTasks} <span className="text-xs font-normal text-slate-500">hoàn thành</span>
+
+          <div className="my-1">
+            <div className="text-sm sm:text-xl font-black text-slate-900 leading-tight">
+              {summary.completedTasks} / {summary.totalTasks} <span className="text-[10px] sm:text-xs font-normal text-slate-500">việc</span>
+            </div>
           </div>
-          <div className="flex items-center justify-between text-xs text-slate-500">
-            <span>Tiến độ tổng thể</span>
-            <span className="text-blue-600 font-semibold">
-              {summary.totalTasks > 0 ? Math.round((summary.completedTasks / summary.totalTasks) * 100) : 0}%
-            </span>
+
+          <div className="text-[10px] sm:text-xs text-slate-500 space-y-0.5 my-1">
+            <div className="flex items-center justify-between">
+              <span>Đã hoàn thành:</span>
+              <strong className="text-blue-600 font-bold">{summary.completedTasks} việc</strong>
+            </div>
+            <div className="flex items-center justify-between">
+              <span>Còn lại:</span>
+              <span className="font-semibold text-slate-700">{summary.totalTasks - summary.completedTasks} việc</span>
+            </div>
           </div>
-          <div className="w-full bg-slate-100 rounded-full h-1.5 mt-3 overflow-hidden">
-            <div
-              className="bg-blue-600 h-1.5 rounded-full transition-all duration-500"
-              style={{
-                width: `${summary.totalTasks > 0 ? (summary.completedTasks / summary.totalTasks) * 100 : 0}%`,
-              }}
-            />
+
+          <div className="mt-1">
+            <div className="flex items-center justify-between text-[10px] text-slate-400 mb-1 font-semibold">
+              <span>Tiến độ tổng</span>
+              <span>{summary.totalTasks > 0 ? Math.round((summary.completedTasks / summary.totalTasks) * 100) : 0}%</span>
+            </div>
+            <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+              <div
+                className="bg-blue-600 h-1.5 rounded-full transition-all duration-500"
+                style={{
+                  width: `${summary.totalTasks > 0 ? (summary.completedTasks / summary.totalTasks) * 100 : 0}%`,
+                }}
+              />
+            </div>
           </div>
         </div>
 
         {/* Card 3: Guests */}
         <div
           onClick={() => onSwitchTab('guests')}
-          className="bg-white p-5 rounded-2xl border border-slate-200 hover:border-slate-300 transition-all cursor-pointer shadow-xs group"
+          className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs hover:border-slate-300 transition-all cursor-pointer flex flex-col justify-between h-full"
         >
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold text-slate-500">Khách Mời Tiệc Cưới</span>
-            <div className="p-2 rounded-xl bg-purple-50 text-purple-600">
-              <Users className="w-5 h-5" />
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] sm:text-xs font-bold text-slate-500 truncate">Khách Mời Tiệc Cưới</span>
+            <div className="p-1.5 rounded-xl bg-purple-50 text-purple-600 shrink-0">
+              <Users className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-xl sm:text-2xl font-bold text-slate-900 mb-1">
-            {summary.confirmedGuests} / {summary.totalGuests} <span className="text-xs font-normal text-slate-500">đã xác nhận</span>
+
+          <div className="my-1">
+            <div className="text-sm sm:text-xl font-black text-slate-900 leading-tight">
+              {summary.confirmedGuests} / {summary.totalGuests} <span className="text-[10px] sm:text-xs font-normal text-slate-500">khách</span>
+            </div>
           </div>
-          <div className="flex items-center justify-between text-xs text-slate-500">
-            <span>Tổng người dự tiệc</span>
-            <span className="text-purple-600 font-semibold">{summary.totalAccompanying} người</span>
+
+          <div className="text-[10px] sm:text-xs text-slate-500 space-y-0.5 my-1">
+            <div className="flex items-center justify-between">
+              <span>Đã xác nhận:</span>
+              <strong className="text-purple-600 font-bold">{summary.confirmedGuests} khách</strong>
+            </div>
+            <div className="flex items-center justify-between">
+              <span>Tổng đi dự:</span>
+              <span className="font-semibold text-slate-700">{summary.totalAccompanying} người</span>
+            </div>
           </div>
-          <div className="w-full bg-slate-100 rounded-full h-1.5 mt-3 overflow-hidden">
-            <div
-              className="bg-purple-600 h-1.5 rounded-full transition-all duration-500"
-              style={{
-                width: `${summary.totalGuests > 0 ? (summary.confirmedGuests / summary.totalGuests) * 100 : 0}%`,
-              }}
-            />
+
+          <div className="mt-1">
+            <div className="flex items-center justify-between text-[10px] text-slate-400 mb-1 font-semibold">
+              <span>Tỷ lệ RSVP</span>
+              <span>{summary.totalGuests > 0 ? Math.round((summary.confirmedGuests / summary.totalGuests) * 100) : 0}%</span>
+            </div>
+            <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+              <div
+                className="bg-purple-600 h-1.5 rounded-full transition-all duration-500"
+                style={{
+                  width: `${summary.totalGuests > 0 ? (summary.confirmedGuests / summary.totalGuests) * 100 : 0}%`,
+                }}
+              />
+            </div>
           </div>
         </div>
 
         {/* Card 4: Vendors & Gifts */}
         <div
           onClick={() => onSwitchTab('vendors')}
-          className="bg-white p-5 rounded-2xl border border-slate-200 hover:border-slate-300 transition-all cursor-pointer shadow-xs group"
+          className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs hover:border-slate-300 transition-all cursor-pointer flex flex-col justify-between h-full"
         >
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold text-slate-500">Nhà Cung Cấp & Lễ Vật</span>
-            <div className="p-2 rounded-xl bg-rose-50 text-rose-600">
-              <Store className="w-5 h-5" />
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] sm:text-xs font-bold text-slate-500 truncate">Nhà Cung Cấp &amp; Lễ Vật</span>
+            <div className="p-1.5 rounded-xl bg-rose-50 text-rose-600 shrink-0">
+              <Store className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-xl sm:text-2xl font-bold text-slate-900 mb-1">
-            {summary.depositedVendors} / {summary.totalVendors} <span className="text-xs font-normal text-slate-500">đã đặt cọc</span>
+
+          <div className="my-1">
+            <div className="text-sm sm:text-xl font-black text-slate-900 leading-tight">
+              {summary.depositedVendors} / {summary.totalVendors} <span className="text-[10px] sm:text-xs font-normal text-slate-500">đơn vị</span>
+            </div>
           </div>
-          <div className="flex items-center justify-between text-xs text-slate-500">
-            <span>Mâm quả chuẩn bị</span>
-            <span className="text-rose-600 font-semibold">
-              {gifts.filter((g) => g.is_prepared).length} / {gifts.length} mâm
-            </span>
+
+          <div className="text-[10px] sm:text-xs text-slate-500 space-y-0.5 my-1">
+            <div className="flex items-center justify-between">
+              <span>Đã đặt cọc:</span>
+              <strong className="text-rose-600 font-bold">{summary.depositedVendors} đơn vị</strong>
+            </div>
+            <div className="flex items-center justify-between">
+              <span>Mâm quả chuẩn bị:</span>
+              <span className="font-semibold text-slate-700">{gifts.filter((g) => g.is_prepared).length}/{gifts.length} mâm</span>
+            </div>
           </div>
-          <div className="w-full bg-slate-100 rounded-full h-1.5 mt-3 overflow-hidden">
-            <div
-              className="bg-rose-600 h-1.5 rounded-full transition-all duration-500"
-              style={{
-                width: `${summary.totalVendors > 0 ? (summary.depositedVendors / summary.totalVendors) * 100 : 0}%`,
-              }}
-            />
+
+          <div className="mt-1">
+            <div className="flex items-center justify-between text-[10px] text-slate-400 mb-1 font-semibold">
+              <span>Đã đặt cọc</span>
+              <span>{summary.totalVendors > 0 ? Math.round((summary.depositedVendors / summary.totalVendors) * 100) : 0}%</span>
+            </div>
+            <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+              <div
+                className="bg-rose-600 h-1.5 rounded-full transition-all duration-500"
+                style={{
+                  width: `${summary.totalVendors > 0 ? (summary.depositedVendors / summary.totalVendors) * 100 : 0}%`,
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Ceremonies Schedule Preview */}
-      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-              <span>Chuỗi Các Ngày Lễ &amp; Sự Kiện</span>
-              <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">
-                {eventDates.length} sự kiện
-              </span>
-            </h3>
-            <p className="text-xs text-slate-500 mt-0.5">Tiến trình cử hành theo mốc thời gian thực tế</p>
+      {/* Events Quick Timeline List */}
+      <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <h2 className="text-base sm:text-lg font-bold text-slate-900">Lịch Các Ngày Lễ &amp; Sự Kiện</h2>
+            <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200">
+              {eventDates.length} sự kiện
+            </span>
           </div>
           <button
             onClick={() => onSwitchTab('events')}
-            className="text-xs text-rose-600 hover:text-rose-700 font-semibold flex items-center gap-1"
+            className="text-xs font-bold text-rose-600 hover:text-rose-700 flex items-center space-x-1"
           >
-            <span>Cài đặt &amp; Quản lý</span>
+            <span>Quản Lý Lịch</span>
             <span>&rarr;</span>
           </button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-          {eventDates.map((evt) => {
-            const target = new Date(evt.date);
-            const today = new Date();
-            const diffDays = Math.ceil((target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-
-            return (
-              <div
-                key={evt.id}
-                onClick={() => onSwitchTab('events')}
-                className={`p-3.5 rounded-xl border transition-all cursor-pointer space-y-1 ${
-                  evt.is_main_event
-                    ? 'border-rose-300 bg-rose-50/30 shadow-2xs'
-                    : 'border-slate-200 bg-slate-50/50 hover:bg-white hover:border-slate-300'
-                }`}
-              >
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-bold text-slate-900 truncate">{evt.name}</span>
-                  {evt.is_main_event && <span className="text-[10px] bg-rose-600 text-white font-extrabold px-1.5 py-0.2 rounded">Chính</span>}
-                </div>
-                <div className="text-xs text-rose-600 font-semibold flex items-center gap-1">
-                  <Calendar className="w-3.5 h-3.5" />
-                  <span>{new Date(evt.date).toLocaleDateString('vi-VN')}</span>
-                </div>
-                <div className="text-[11px] text-slate-500 font-medium">
-                  {diffDays < 0 ? 'Đã diễn ra' : `Còn ${diffDays} ngày`}
-                </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {eventDates.map((evt) => (
+            <div
+              key={evt.id}
+              className={`p-3.5 rounded-xl border transition-all ${
+                evt.is_main_event
+                  ? 'bg-rose-50/50 border-rose-200 text-rose-900'
+                  : 'bg-slate-50/80 border-slate-200 text-slate-800'
+              }`}
+            >
+              <div className="flex items-center justify-between mb-1">
+                <span className="font-bold text-xs truncate">{evt.name}</span>
+                {evt.is_main_event && (
+                  <span className="text-[10px] font-extrabold px-1.5 py-0.2 rounded bg-rose-600 text-white">
+                    Chính
+                  </span>
+                )}
               </div>
-            );
-          })}
+              <div className="text-xs text-slate-600 flex items-center gap-1 font-semibold">
+                <Calendar className="w-3.5 h-3.5 text-rose-500" />
+                <span>{new Date(evt.date).toLocaleDateString('vi-VN')}</span>
+              </div>
+              {evt.location && <div className="text-[11px] text-slate-500 mt-1 truncate">{evt.location}</div>}
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* Charts & Graphs Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Chart 1: Budget Comparison */}
-        <div className="lg:col-span-2 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex flex-col">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="text-base font-bold text-slate-900">So Sánh Ngân Sách Dự Kiến & Chi Thực Tế</h3>
-              <p className="text-xs text-slate-500">Phân bổ chi phí theo nhóm Đám hỏi, Đám cưới và Chi phí chung</p>
-            </div>
+      {/* Analytics Charts Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        {/* Budget Chart */}
+        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-bold text-slate-900 text-sm sm:text-base">So Sánh Ngân Sách Theo Danh Mục</h3>
             <button
               onClick={() => onSwitchTab('budget')}
-              className="text-xs text-indigo-600 hover:text-indigo-700 font-medium"
+              className="text-xs text-rose-600 font-semibold hover:underline"
             >
-              Chi tiết &rarr;
+              Chi tiết
             </button>
           </div>
 
-          <div className="h-64 w-full">
+          <div className="h-60 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={budgetByCategoryData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
-                <XAxis dataKey="name" stroke="#64748b" fontSize={12} />
-                <YAxis
-                  stroke="#64748b"
-                  fontSize={11}
-                  tickFormatter={(val) => `${val / 1000000}M`}
-                />
+              <BarChart data={budgetByCategoryData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <XAxis dataKey="name" stroke="#94a3b8" fontSize={11} />
+                <YAxis stroke="#94a3b8" fontSize={10} tickFormatter={(v) => `${v / 1000000}M`} />
                 <Tooltip
-                  formatter={(value: any) => [formatCurrency(Number(value || 0)), '']}
-                  contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', color: '#0f172a', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}
+                  formatter={(val: any) => formatCurrency(Number(val))}
+                  contentStyle={{ backgroundColor: '#fff', borderRadius: '12px', borderColor: '#e2e8f0' }}
                 />
-                <Legend />
-                <Bar dataKey="Dự_kiến" fill="#4f46e5" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="Thực_tế" fill="#059669" radius={[4, 4, 0, 0]} />
+                <Legend wrapperStyle={{ fontSize: '12px' }} />
+                <Bar dataKey="Dự_kiến" fill="#94a3b8" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="Thực_tế" fill="#10b981" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Chart 2: Guest RSVP Pie Chart */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between mb-2">
-            <div>
-              <h3 className="text-base font-bold text-slate-900">Phản Hồi Khách Mời</h3>
-              <p className="text-xs text-slate-500">Tỷ lệ xác nhận tham dự (RSVP)</p>
-            </div>
+        {/* Guest RSVP Chart */}
+        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-bold text-slate-900 text-sm sm:text-base">Tỷ Lệ Phản Hỏi Thiệp Mời (RSVP)</h3>
             <button
               onClick={() => onSwitchTab('guests')}
-              className="text-xs text-purple-600 hover:text-purple-700 font-medium"
+              className="text-xs text-rose-600 font-semibold hover:underline"
             >
-              Chi tiết &rarr;
+              Chi tiết
             </button>
           </div>
 
-          {guests.length > 0 ? (
-            <div className="h-48 w-full">
+          <div className="h-60 w-full flex items-center justify-center">
+            {guestRsvpData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={guestRsvpData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={45}
-                    outerRadius={65}
+                    innerRadius={55}
+                    outerRadius={80}
                     paddingAngle={4}
                     dataKey="value"
                   >
                     {guestRsvpData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip
-                    contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', color: '#0f172a', borderRadius: '8px' }}
-                  />
+                  <Tooltip formatter={(val: any) => [`${val} thiệp`, 'Số lượng']} />
+                  <Legend wrapperStyle={{ fontSize: '12px' }} />
                 </PieChart>
               </ResponsiveContainer>
-            </div>
-          ) : (
-            <div className="h-48 flex items-center justify-center text-xs text-slate-400">
-              Chưa có dữ liệu khách mời
-            </div>
-          )}
-
-          <div className="grid grid-cols-3 gap-2 text-center text-xs pt-3 border-t border-slate-100">
-            <div>
-              <span className="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 mr-1" />
-              <span className="text-slate-500">Xác nhận</span>
-              <div className="font-bold text-slate-900">{guests.filter((g) => g.rsvp_status === 'Đã xác nhận').length}</div>
-            </div>
-            <div>
-              <span className="inline-block w-2.5 h-2.5 rounded-full bg-red-500 mr-1" />
-              <span className="text-slate-500">Từ chối</span>
-              <div className="font-bold text-slate-900">{guests.filter((g) => g.rsvp_status === 'Từ chối').length}</div>
-            </div>
-            <div>
-              <span className="inline-block w-2.5 h-2.5 rounded-full bg-amber-500 mr-1" />
-              <span className="text-slate-500">Chờ trả lời</span>
-              <div className="font-bold text-slate-900">{guests.filter((g) => g.rsvp_status === 'Chưa phản hồi').length}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Quick Actions & Recent Tasks */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Quick Action Shortcuts */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3">
-          <h3 className="text-base font-bold text-slate-900 mb-2">Thao Tác Nhanh</h3>
-          <button
-            onClick={onOpenTaskModal}
-            className="w-full flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-sm font-medium text-slate-700 transition-all"
-          >
-            <span className="flex items-center space-x-3">
-              <CheckSquare className="w-4 h-4 text-blue-600" />
-              <span>Thêm công việc mới</span>
-            </span>
-            <Plus className="w-4 h-4 text-slate-400" />
-          </button>
-          <button
-            onClick={onOpenBudgetModal}
-            className="w-full flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-sm font-medium text-slate-700 transition-all"
-          >
-            <span className="flex items-center space-x-3">
-              <Wallet className="w-4 h-4 text-emerald-600" />
-              <span>Thêm khoản ngân sách</span>
-            </span>
-            <Plus className="w-4 h-4 text-slate-400" />
-          </button>
-          <button
-            onClick={onOpenGuestModal}
-            className="w-full flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-sm font-medium text-slate-700 transition-all"
-          >
-            <span className="flex items-center space-x-3">
-              <Users className="w-4 h-4 text-purple-600" />
-              <span>Thêm khách mời</span>
-            </span>
-            <Plus className="w-4 h-4 text-slate-400" />
-          </button>
-        </div>
-
-        {/* Priority Tasks List Preview */}
-        <div className="lg:col-span-2 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-base font-bold text-slate-900">Công Việc Cần Thực Hiện Gần Nhất</h3>
-            <button
-              onClick={() => onSwitchTab('timeline')}
-              className="text-xs text-indigo-600 hover:text-indigo-700 font-medium"
-            >
-              Xem tất cả ({tasks.length}) &rarr;
-            </button>
-          </div>
-
-          <div className="space-y-2">
-            {tasks.slice(0, 4).map((task) => (
-              <div
-                key={task.id}
-                className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 text-sm transition-all"
-              >
-                <div className="flex items-center space-x-3 min-w-0">
-                  <span
-                    className={`w-2.5 h-2.5 rounded-full shrink-0 ${
-                      task.status === 'Hoàn thành'
-                        ? 'bg-emerald-500'
-                        : task.status === 'Đang thực hiện'
-                        ? 'bg-blue-500'
-                        : 'bg-amber-500'
-                    }`}
-                  />
-                  <div className="truncate">
-                    <div className="font-semibold text-slate-800 truncate">{task.title}</div>
-                    <div className="text-xs text-slate-500 flex items-center space-x-2">
-                      <span className="text-rose-600 font-medium">{task.category}</span>
-                      <span>•</span>
-                      <span>Phụ trách: {task.assigned_to}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="text-right shrink-0">
-                  <span
-                    className={`px-2.5 py-0.5 text-xs rounded-full font-medium ${
-                      task.status === 'Hoàn thành'
-                        ? 'bg-emerald-100 text-emerald-800'
-                        : task.status === 'Đang thực hiện'
-                        ? 'bg-blue-100 text-blue-800'
-                        : 'bg-slate-200 text-slate-700'
-                    }`}
-                  >
-                    {task.status}
-                  </span>
-                </div>
-              </div>
-            ))}
+            ) : (
+              <div className="text-slate-400 text-xs">Chưa có dữ liệu thiệp mời</div>
+            )}
           </div>
         </div>
       </div>
