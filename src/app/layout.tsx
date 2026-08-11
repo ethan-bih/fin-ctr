@@ -5,8 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Sổ Thu Chi Pro - Quản Lý Tài Chính Cá Nhân & Bạn Bè",
-  description: "Ứng dụng theo dõi thu chi cá nhân an toàn, bảo mật bằng Supabase và Google OAuth, giao diện hiện đại.",
+  title: "F&W - Quản Lý Tài Chính & Đám Cưới (QH & YN)",
+  description: "Ứng dụng theo dõi thu chi cá nhân & đám cưới an toàn, bảo mật bằng Supabase và Google OAuth.",
 };
 
 export default function RootLayout({

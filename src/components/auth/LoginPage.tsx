@@ -68,7 +68,7 @@ export const LoginPage: React.FC = () => {
         </div>
         <div>
           <h1 className="font-black text-lg text-slate-900 tracking-tight leading-tight">
-            Finance &amp; Wedding
+            F&amp;W Manager
           </h1>
           <p className="text-xs font-bold text-rose-600">QH &amp; YN Management</p>
         </div>

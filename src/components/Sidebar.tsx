@@ -82,7 +82,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <HeartHandshake className="w-4 h-4" />
             </div>
             <span className="font-extrabold text-sm text-slate-900 tracking-tight">
-              Finance &amp; Wedding
+              F&amp;W Manager
             </span>
           </div>
         </div>
@@ -122,7 +122,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
             <div>
               <h1 className="font-extrabold text-sm text-slate-900 tracking-tight leading-tight">
-                Finance &amp; Wedding
+                F&amp;W Manager
               </h1>
               <p className="text-[11px] font-semibold text-rose-600">QH &amp; YN Manager</p>
             </div>

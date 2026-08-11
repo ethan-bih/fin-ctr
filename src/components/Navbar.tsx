@@ -33,7 +33,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAddModal, onToggleMobileDr
           </div>
           <div className="flex items-center gap-1.5">
             <span className="font-extrabold text-sm sm:text-base text-slate-900 tracking-tight whitespace-nowrap">
-              Finance &amp; Wedding
+              F&amp;W Manager
             </span>
             <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-rose-50 text-rose-700 border border-rose-200">
               QH &amp; YN
