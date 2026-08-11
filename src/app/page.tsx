@@ -36,7 +36,7 @@ function MainAppContent() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-rose-500 selection:text-white">
       {/* Main Layout Area */}
-      <div className="flex-1 flex max-w-7xl w-full mx-auto">
+      <div className="flex-1 flex flex-col lg:flex-row max-w-7xl w-full mx-auto">
         {/* Left Sidebar Pane (Handles all navigation & user profile actions) */}
         <Sidebar
           isMobileDrawerOpen={isMobileDrawerOpen}
