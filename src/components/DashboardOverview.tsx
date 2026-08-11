@@ -106,76 +106,67 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onOpenAddM
   return (
     <div className="space-y-6 animate-fade-in pb-12">
       {/* Top Banner */}
-      <div className="flex items-center justify-between gap-2 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs">
-        <div>
-          <h2 className="text-base sm:text-xl font-bold text-slate-900">Tổng Quan Tài Chính</h2>
-          <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 hidden sm:block">Theo dõi thu chi và tình hình tài chính cá nhân</p>
-        </div>
-        <button
-          onClick={onOpenAddModal}
-          className="flex items-center justify-center space-x-1 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-2xs transition-all shrink-0"
-        >
-          <Plus className="w-3.5 h-3.5" />
-          <span>Ghi Thu/Chi</span>
-        </button>
+      <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs">
+        <h2 className="text-lg sm:text-xl font-bold text-slate-900">Tổng Quan Tài Chính</h2>
+        <p className="text-xs text-slate-500 mt-0.5">Theo dõi thu chi và tình hình tài chính cá nhân</p>
       </div>
 
       {/* 4 Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Total Balance */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs relative overflow-hidden">
+        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs relative overflow-hidden transition-all hover:shadow-md">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Tổng Số Dư Tích Lũy</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Tổng Số Dư Tích Lũy</span>
             <div className="p-2.5 rounded-xl bg-indigo-50 text-indigo-600">
               <Wallet className="w-5 h-5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-slate-900 mb-1">
+          <div className="text-2xl font-black text-slate-900 mb-1 tracking-tight">
             {formatCurrency(stats.allTimeBalance)}
           </div>
-          <p className="text-xs text-slate-500">Tất cả tài sản hiện có</p>
+          <p className="text-xs text-slate-500 font-medium">Tất cả tài sản hiện có</p>
         </div>
 
         {/* Monthly Income */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs relative overflow-hidden">
+        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs relative overflow-hidden transition-all hover:shadow-md">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Thu Nhập Tháng Này</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Thu Nhập Tháng Này</span>
             <div className="p-2.5 rounded-xl bg-emerald-50 text-emerald-600">
               <ArrowUpRight className="w-5 h-5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-emerald-600 mb-1">
+          <div className="text-2xl font-black text-emerald-600 mb-1 tracking-tight">
             +{formatCurrency(stats.totalIncomeMonth)}
           </div>
           <p className="text-xs text-emerald-700 font-medium">Tổng thu nhập phát sinh</p>
         </div>
 
         {/* Monthly Expense */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs relative overflow-hidden">
+        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs relative overflow-hidden transition-all hover:shadow-md">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Chi Tiêu Tháng Này</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Chi Tiêu Tháng Này</span>
             <div className="p-2.5 rounded-xl bg-rose-50 text-rose-600">
               <ArrowDownRight className="w-5 h-5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-rose-600 mb-1">
+          <div className="text-2xl font-black text-rose-600 mb-1 tracking-tight">
             -{formatCurrency(stats.totalExpenseMonth)}
           </div>
           <p className="text-xs text-rose-700 font-medium">Tổng khoản đã chi tiêu</p>
         </div>
 
         {/* Net Savings */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs relative overflow-hidden">
+        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs relative overflow-hidden transition-all hover:shadow-md">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Tiết Kiệm Tháng Này</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Tiết Kiệm Tháng Này</span>
             <div className="p-2.5 rounded-xl bg-teal-50 text-teal-600">
               <PiggyBank className="w-5 h-5" />
             </div>
           </div>
-          <div className={`text-2xl font-black mb-1 ${stats.netSavingsMonth >= 0 ? 'text-teal-600' : 'text-rose-600'}`}>
-            {formatCurrency(stats.netSavingsMonth)}
+          <div className={`text-2xl font-black mb-1 tracking-tight ${stats.netSavingsMonth >= 0 ? 'text-teal-600' : 'text-rose-600'}`}>
+            {stats.netSavingsMonth >= 0 ? `+${formatCurrency(stats.netSavingsMonth)}` : `-${formatCurrency(Math.abs(stats.netSavingsMonth))}`}
           </div>
-          <p className="text-xs text-slate-500">Thu nhập dư ra sau chi tiêu</p>
+          <p className="text-xs text-slate-500 font-medium">Thu nhập dư ra sau chi tiêu</p>
         </div>
       </div>
 

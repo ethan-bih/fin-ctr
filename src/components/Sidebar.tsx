@@ -44,7 +44,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { id: 'budgets', label: 'Hạn Mức Chi', icon: PieChart },
     { id: 'savings', label: 'Quỹ Tiết Kiệm', icon: Target },
     { id: 'reports', label: 'Báo Cáo Thống Kê', icon: BarChart3 },
-    { id: 'user', label: 'Tài Khoản User', icon: User },
     { id: 'settings', label: 'Cấu Hình Supabase', icon: Settings },
   ];
 
@@ -111,75 +110,63 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Desktop Sidebar Navigation */}
       <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-slate-200 shrink-0 p-4 space-y-5 min-h-screen">
-        {/* Brand Header */}
-        <div
-          className="flex items-center justify-between px-1 py-1 cursor-pointer"
-          onClick={() => handleTabClick('dashboard')}
-        >
-          <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-xl bg-slate-900 text-rose-500 flex items-center justify-center shadow-2xs shrink-0">
-              <HeartHandshake className="w-5 h-5" />
-            </div>
-            <div>
-              <h1 className="font-extrabold text-sm text-slate-900 tracking-tight leading-tight">
-                F&amp;W Manager
-              </h1>
-              <p className="text-[11px] font-semibold text-rose-600">QH &amp; YN Manager</p>
-            </div>
-          </div>
-        </div>
-
-        {/* User Card & Status Pane */}
-        {user && (
-          <div className="p-3 bg-slate-50 hover:bg-slate-100/80 rounded-2xl border border-slate-200/90 transition-all space-y-2.5">
+        {/* Unified Compact Brand & Profile Header Card */}
+        <div className="p-3 bg-slate-50 hover:bg-slate-100/90 rounded-2xl border border-slate-200/90 transition-all space-y-2">
+          {/* Top Line: Brand Logo & User Avatar */}
+          <div className="flex items-center justify-between">
             <div
-              onClick={() => handleTabClick('user')}
-              className="flex items-center justify-between cursor-pointer group"
+              className="flex items-center space-x-2.5 cursor-pointer"
+              onClick={() => handleTabClick('dashboard')}
             >
-              <div className="flex items-center space-x-2.5 min-w-0">
-                <div className="w-9 h-9 rounded-full bg-slate-900 text-rose-400 font-black text-sm flex items-center justify-center shrink-0 border border-slate-800">
+              <div className="w-8 h-8 rounded-xl bg-slate-900 text-rose-500 flex items-center justify-center shadow-2xs shrink-0">
+                <HeartHandshake className="w-4 h-4" />
+              </div>
+              <div>
+                <h1 className="font-extrabold text-xs text-slate-900 tracking-tight leading-none">
+                  F&amp;W Manager
+                </h1>
+                <p className="text-[10px] font-semibold text-rose-600 mt-0.5">QH &amp; YN</p>
+              </div>
+            </div>
+
+            {user && (
+              <div
+                onClick={() => handleTabClick('user')}
+                className="flex items-center space-x-1 p-1 pl-1.5 pr-2 bg-white hover:bg-slate-100 rounded-xl border border-slate-200 cursor-pointer transition-all shadow-2xs"
+                title="Tài khoản cá nhân"
+              >
+                <div className="w-5 h-5 rounded-full bg-slate-900 text-rose-400 font-black text-[10px] flex items-center justify-center shrink-0">
                   {user.full_name?.charAt(0).toUpperCase() || 'U'}
                 </div>
-                <div className="min-w-0">
-                  <div className="flex items-center space-x-1.5">
-                    <p className="text-xs font-extrabold text-slate-900 truncate">
-                      {user.full_name || user.username}
-                    </p>
-                    {user.role === 'admin' && (
-                      <span className="text-[9px] font-black px-1.5 py-0.2 rounded-md bg-rose-500 text-white uppercase">
-                        ADMIN
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-[11px] text-slate-500 font-medium truncate">
-                    @{user.username || 'admin'}
-                  </p>
-                </div>
-              </div>
-              <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-slate-700 transition-colors shrink-0" />
-            </div>
-
-            {/* Status Indicator Pill */}
-            <div
-              onClick={() => handleTabClick('settings')}
-              className={`flex items-center justify-between px-2.5 py-1 rounded-xl text-[11px] font-bold cursor-pointer transition-all ${
-                isLiveMode
-                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                  : 'bg-amber-50 text-amber-700 border border-amber-200'
-              }`}
-            >
-              <div className="flex items-center space-x-1.5">
-                {isLiveMode ? (
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                ) : (
-                  <AlertCircle className="w-3.5 h-3.5 text-amber-600" />
+                {user.role === 'admin' && (
+                  <span className="text-[8px] font-black px-1 py-0.2 rounded bg-rose-500 text-white uppercase">
+                    ADMIN
+                  </span>
                 )}
-                <span>{isLiveMode ? 'Cloud Sync Active' : 'Demo Mode Active'}</span>
               </div>
-              <span className="text-[9px] underline">Cấu hình</span>
-            </div>
+            )}
           </div>
-        )}
+
+          {/* Bottom Line: Status Indicator Pill */}
+          <div
+            onClick={() => handleTabClick('settings')}
+            className={`flex items-center justify-between px-2.5 py-1 rounded-xl text-[10px] font-bold cursor-pointer transition-all ${
+              isLiveMode
+                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                : 'bg-amber-50 text-amber-700 border border-amber-200'
+            }`}
+          >
+            <div className="flex items-center space-x-1.5">
+              {isLiveMode ? (
+                <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+              ) : (
+                <AlertCircle className="w-3 h-3 text-amber-600" />
+              )}
+              <span>{isLiveMode ? 'Cloud Sync Active' : 'Demo Mode Active'}</span>
+            </div>
+            <span className="text-[9px] underline">Cấu hình</span>
+          </div>
+        </div>
 
         {/* Quick Add Button */}
         {onOpenAddModal && (
@@ -273,20 +260,44 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {user && (
             <div
               onClick={() => handleTabClick('user')}
-              className="p-3 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between cursor-pointer"
+              className="p-3 bg-slate-50 rounded-2xl border border-slate-200 space-y-2 cursor-pointer"
             >
-              <div className="flex items-center space-x-2.5 min-w-0">
-                <div className="w-8 h-8 rounded-full bg-slate-900 text-rose-400 font-bold text-xs flex items-center justify-center shrink-0">
-                  {user.full_name?.charAt(0).toUpperCase() || 'U'}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2.5 min-w-0">
+                  <div className="w-8 h-8 rounded-full bg-slate-900 text-rose-400 font-bold text-xs flex items-center justify-center shrink-0">
+                    {user.full_name?.charAt(0).toUpperCase() || 'U'}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center space-x-1">
+                      <p className="text-xs font-bold text-slate-900 truncate">
+                        {user.full_name || user.username}
+                      </p>
+                      {user.role === 'admin' && (
+                        <span className="text-[8px] font-black px-1.5 py-0.2 rounded bg-rose-500 text-white uppercase">
+                          ADMIN
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-[10px] text-slate-500">@{user.username || 'admin'}</p>
+                  </div>
                 </div>
-                <div className="min-w-0">
-                  <p className="text-xs font-bold text-slate-900 truncate">
-                    {user.full_name || user.username}
-                  </p>
-                  <p className="text-[10px] text-slate-500">@{user.username || 'admin'}</p>
-                </div>
+                <ChevronRight className="w-4 h-4 text-slate-400 shrink-0" />
               </div>
-              <ChevronRight className="w-4 h-4 text-slate-400" />
+
+              <div
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleTabClick('settings');
+                }}
+                className={`flex items-center justify-between px-2 py-0.5 rounded-lg text-[10px] font-bold ${
+                  isLiveMode
+                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                    : 'bg-amber-50 text-amber-700 border border-amber-200'
+                }`}
+              >
+                <span>{isLiveMode ? 'Cloud Sync Active' : 'Demo Mode Active'}</span>
+                <span className="underline text-[9px]">Cấu hình</span>
+              </div>
             </div>
           )}
 
