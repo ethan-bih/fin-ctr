@@ -71,14 +71,14 @@ export const SavingsGoals: React.FC = () => {
   return (
     <div className="space-y-6 animate-fade-in pb-12">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">Quỹ Tiết Kiệm & Mục Tiêu Tích Lũy</h2>
-          <p className="text-sm text-slate-500">Thiết lập các mục tiêu tài chính dài hạn (Mua xe, Du lịch, Quỹ dự phòng...)</p>
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-900">Quỹ Tiết Kiệm &amp; Mục Tiêu Tích Lũy</h2>
+          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">Thiết lập các mục tiêu tài chính dài hạn (Mua xe, Du lịch, Quỹ dự phòng...)</p>
         </div>
         <button
           onClick={() => setIsAdding(!isAdding)}
-          className="flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl shadow-xs transition-all self-start sm:self-auto"
+          className="flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-semibold px-4 py-2.5 rounded-xl shadow-xs transition-all shrink-0"
         >
           <Plus className="w-4 h-4" />
           <span>Tạo Mục Tiêu Mới</span>

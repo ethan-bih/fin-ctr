@@ -149,7 +149,7 @@ export const SixJarsTracker: React.FC = () => {
             })}
           </div>
 
-          <div className="flex justify-between items-center pt-2">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-2">
             <button
               onClick={() => setTempRatios({ NEC: 55, FFA: 10, LTSS: 10, EDU: 10, PLAY: 10, GIVE: 5 })}
               className="flex items-center space-x-1.5 text-xs text-slate-500 hover:text-slate-900"

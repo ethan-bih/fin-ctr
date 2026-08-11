@@ -117,12 +117,12 @@ export const WeddingEventsTab: React.FC<WeddingEventsTabProps> = ({ onOpenEventM
                   {evt.note && <p className="text-xs text-slate-500">{evt.note}</p>}
 
                   {/* Linked Data Indicators */}
-                  <div className="pt-2 flex items-center space-x-4 text-xs font-medium text-slate-600">
+                  <div className="pt-2 flex flex-wrap items-center gap-2 text-xs font-medium text-slate-600">
                     <span className="bg-slate-100 px-2.5 py-1 rounded-lg text-slate-700 border border-slate-200">
-                      Ngân sách liên kết: <strong className="text-emerald-600">{formatCurrency(totalEstCost)}</strong> ({linkedBudgets.length} hạng mục)
+                      Ngân sách: <strong className="text-emerald-600">{formatCurrency(totalEstCost)}</strong> ({linkedBudgets.length} mục)
                     </span>
                     <span className="bg-slate-100 px-2.5 py-1 rounded-lg text-slate-700 border border-slate-200">
-                      Công việc liên kết: <strong className="text-blue-600">{linkedTasks.length} tác vụ</strong>
+                      Công việc: <strong className="text-blue-600">{linkedTasks.length} tác vụ</strong>
                     </span>
                   </div>
                 </div>

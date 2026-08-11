@@ -17,9 +17,9 @@ export const SettingsConfig: React.FC = () => {
   return (
     <div className="space-y-6 animate-fade-in pb-12">
       {/* Header */}
-      <div>
-        <h2 className="text-2xl font-bold text-slate-900">Cấu Hình Kết Nối Supabase & Google OAuth</h2>
-        <p className="text-sm text-slate-500">Hướng dẫn từng bước để đồng bộ dữ liệu thực tế và deploy trên Vercel</p>
+      <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs">
+        <h2 className="text-xl sm:text-2xl font-bold text-slate-900">Cấu Hình Kết Nối Supabase &amp; Google OAuth</h2>
+        <p className="text-xs sm:text-sm text-slate-500 mt-0.5">Hướng dẫn từng bước để đồng bộ dữ liệu thực tế và deploy trên Vercel</p>
       </div>
 
       {/* Connection Status Box */}

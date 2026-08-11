@@ -93,9 +93,9 @@ export const WeddingOverviewTab: React.FC<WeddingOverviewTabProps> = ({
           </div>
 
           {/* Countdown Clock Widget */}
-          <div className="w-full lg:w-auto bg-rose-50/50 border border-rose-200/80 rounded-2xl p-4 sm:p-4.5 flex items-center justify-between lg:justify-start gap-6 shadow-2xs shrink-0">
+          <div className="w-full lg:w-auto bg-rose-50/50 border border-rose-200/80 rounded-2xl p-4 sm:p-4.5 flex flex-col sm:flex-row items-start sm:items-center justify-between lg:justify-start gap-4 sm:gap-6 shadow-2xs shrink-0">
             <div className="flex items-center space-x-3">
-              <div className="w-11 h-11 rounded-xl bg-rose-600 text-white flex items-center justify-center shadow-xs shrink-0">
+              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-rose-600 text-white flex items-center justify-center shadow-xs shrink-0">
                 <Clock className="w-5 h-5" />
               </div>
               <div>
@@ -106,7 +106,7 @@ export const WeddingOverviewTab: React.FC<WeddingOverviewTabProps> = ({
               </div>
             </div>
 
-            <div className="text-right border-l border-rose-200/80 pl-5">
+            <div className="w-full sm:w-auto text-left sm:text-right border-t sm:border-t-0 sm:border-l border-rose-200/80 pt-3 sm:pt-0 pl-0 sm:pl-5">
               <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Ngày cưới dự kiến</div>
               {isEditingDate ? (
                 <div className="flex items-center gap-1 mt-1">
@@ -126,7 +126,7 @@ export const WeddingOverviewTab: React.FC<WeddingOverviewTabProps> = ({
               ) : (
                 <button
                   onClick={() => setIsEditingDate(true)}
-                  className="text-xs sm:text-sm font-bold text-rose-700 hover:text-rose-800 flex items-center justify-end gap-1.5 transition-colors mt-1"
+                  className="text-xs sm:text-sm font-bold text-rose-700 hover:text-rose-800 flex items-center sm:justify-end gap-1.5 transition-colors mt-1"
                 >
                   <Calendar className="w-4 h-4 text-rose-500" />
                   <span>{new Date(weddingDate).toLocaleDateString('vi-VN')}</span>
@@ -138,7 +138,7 @@ export const WeddingOverviewTab: React.FC<WeddingOverviewTabProps> = ({
       </div>
 
       {/* KPI Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {/* Card 1: Budget */}
         <div
           onClick={() => onSwitchTab('budget')}
