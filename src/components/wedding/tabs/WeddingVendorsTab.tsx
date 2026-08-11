@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useWedding } from '@/context/WeddingContext';
 import { WeddingVendor, VendorStatus } from '@/lib/weddingTypes';
-import { Plus, Search, Store, Phone, Calendar, Trash2 } from 'lucide-react';
+import { Plus, Search, Trash2, SlidersHorizontal, X, RotateCcw } from 'lucide-react';
 
 interface WeddingVendorsTabProps {
   onOpenVendorModal: (vendorToEdit?: WeddingVendor) => void;
@@ -13,6 +13,7 @@ export const WeddingVendorsTab: React.FC<WeddingVendorsTabProps> = ({ onOpenVend
   const { vendors, updateVendor, deleteVendor } = useWedding();
   const [search, setSearch] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(val);
@@ -27,6 +28,13 @@ export const WeddingVendorsTab: React.FC<WeddingVendorsTabProps> = ({ onOpenVend
     const matchesStatus = selectedStatus === 'ALL' || v.status === selectedStatus;
     return matchesSearch && matchesStatus;
   });
+
+  const activeFilterCount = selectedStatus !== 'ALL' ? 1 : 0;
+
+  const resetFilters = () => {
+    setSelectedStatus('ALL');
+    setSearch('');
+  };
 
   const totalQuoted = filteredVendors.reduce((acc, v) => acc + v.quoted_price, 0);
   const totalDeposited = filteredVendors.reduce((acc, v) => acc + v.deposit_amount, 0);
@@ -72,31 +80,91 @@ export const WeddingVendorsTab: React.FC<WeddingVendorsTabProps> = ({ onOpenVend
         </div>
       </div>
 
-      {/* Filters Bar */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-        <div className="relative">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+      {/* Sleek Compact Filter Bar */}
+      <div className="flex items-center gap-2">
+        <div className="relative flex-1">
+          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Tìm tên đơn vị, loại dịch vụ..."
+            placeholder="Tìm tên đơn vị, dịch vụ..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-rose-500 shadow-2xs"
+            className="w-full bg-white border border-slate-200 rounded-xl pl-9 pr-3 py-2 text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-rose-500 shadow-2xs"
           />
         </div>
 
-        <select
-          value={selectedStatus}
-          onChange={(e) => setSelectedStatus(e.target.value)}
-          className="bg-white border border-slate-200 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-slate-800 focus:outline-none focus:border-rose-500 shadow-2xs"
+        <button
+          onClick={() => setIsFilterModalOpen(true)}
+          className={`flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-bold border transition-all shrink-0 ${
+            activeFilterCount > 0
+              ? 'bg-rose-50 text-rose-700 border-rose-200'
+              : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 shadow-2xs'
+          }`}
         >
-          <option value="ALL">Tất cả trạng thái hợp đồng</option>
-          <option value="Đang liên hệ">Đang liên hệ</option>
-          <option value="Đã báo giá">Đã báo giá</option>
-          <option value="Đã đặt cọc">Đã đặt cọc</option>
-          <option value="Đã thanh toán hết">Đã thanh toán hết</option>
-        </select>
+          <SlidersHorizontal className="w-4 h-4 text-rose-600" />
+          <span>Bộ Lọc</span>
+          {activeFilterCount > 0 && (
+            <span className="w-4 h-4 rounded-full bg-rose-600 text-white text-[10px] font-extrabold flex items-center justify-center">
+              {activeFilterCount}
+            </span>
+          )}
+        </button>
       </div>
+
+      {/* Filter Modal */}
+      {isFilterModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-xs">
+          <div className="w-full max-w-md bg-white p-5 rounded-2xl border border-slate-200 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
+                <SlidersHorizontal className="w-4 h-4 text-rose-600" />
+                <span>Lọc Nhà Cung Cấp Dịch Vụ</span>
+              </h3>
+              <button
+                onClick={() => setIsFilterModalOpen(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3.5 text-xs text-slate-700">
+              <div>
+                <label className="block font-semibold mb-1">Trạng thái hợp đồng</label>
+                <select
+                  value={selectedStatus}
+                  onChange={(e) => setSelectedStatus(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-rose-500"
+                >
+                  <option value="ALL">Tất cả trạng thái hợp đồng</option>
+                  <option value="Đang liên hệ">Đang liên hệ</option>
+                  <option value="Đã báo giá">Đã báo giá</option>
+                  <option value="Đã đặt cọc">Đã đặt cọc</option>
+                  <option value="Đã thanh toán hết">Đã thanh toán hết</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={resetFilters}
+                className="flex items-center space-x-1 text-xs font-semibold text-slate-500 hover:text-rose-600"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>Đặt lại</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsFilterModalOpen(false)}
+                className="px-5 py-2 bg-slate-900 text-white font-bold text-xs rounded-xl shadow-2xs"
+              >
+                Áp Dụng
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* MOBILE CARD VIEW (<640px) */}
       <div className="block sm:hidden space-y-3">
