@@ -10,6 +10,7 @@ import {
   WeddingEventDate,
   WeddingSummary,
   DEFAULT_WEDDING_DATE,
+  DEFAULT_TARGET_BUDGET,
   INITIAL_WEDDING_EVENTS,
   INITIAL_WEDDING_TASKS,
   INITIAL_WEDDING_BUDGETS,
@@ -21,6 +22,9 @@ import {
 interface WeddingContextType {
   weddingDate: string;
   setWeddingDate: (date: string) => void;
+
+  targetBudget: number;
+  setTargetBudget: (budget: number) => void;
 
   eventDates: WeddingEventDate[];
   addEventDate: (evt: Omit<WeddingEventDate, 'id'>) => void;
@@ -59,6 +63,7 @@ interface WeddingContextType {
 const WeddingContext = createContext<WeddingContextType | undefined>(undefined);
 
 const LOCAL_STORAGE_DATE_KEY = 'pf_wedding_date_v1';
+const LOCAL_STORAGE_TARGET_BUDGET_KEY = 'pf_wedding_target_budget_v1';
 const LOCAL_STORAGE_EVENTS_KEY = 'pf_wedding_event_dates_v1';
 const LOCAL_STORAGE_TASKS_KEY = 'pf_wedding_tasks_v1';
 const LOCAL_STORAGE_BUDGETS_KEY = 'pf_wedding_budgets_v1';
@@ -68,6 +73,7 @@ const LOCAL_STORAGE_GIFTS_KEY = 'pf_wedding_gifts_v1';
 
 export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [weddingDate, setWeddingDateState] = useState<string>(DEFAULT_WEDDING_DATE);
+  const [targetBudget, setTargetBudgetState] = useState<number>(DEFAULT_TARGET_BUDGET);
   const [eventDates, setEventDates] = useState<WeddingEventDate[]>([]);
   const [tasks, setTasks] = useState<WeddingTask[]>([]);
   const [budgets, setBudgets] = useState<WeddingBudgetItem[]>([]);
@@ -79,6 +85,7 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   useEffect(() => {
     try {
       const sDate = localStorage.getItem(LOCAL_STORAGE_DATE_KEY);
+      const sTargetBudget = localStorage.getItem(LOCAL_STORAGE_TARGET_BUDGET_KEY);
       const sEvents = localStorage.getItem(LOCAL_STORAGE_EVENTS_KEY);
       const sTasks = localStorage.getItem(LOCAL_STORAGE_TASKS_KEY);
       const sBudgets = localStorage.getItem(LOCAL_STORAGE_BUDGETS_KEY);
@@ -87,6 +94,7 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
       const sGifts = localStorage.getItem(LOCAL_STORAGE_GIFTS_KEY);
 
       if (sDate) setWeddingDateState(sDate);
+      if (sTargetBudget) setTargetBudgetState(Number(sTargetBudget) || DEFAULT_TARGET_BUDGET);
       setEventDates(sEvents ? JSON.parse(sEvents) : INITIAL_WEDDING_EVENTS);
       setTasks(sTasks ? JSON.parse(sTasks) : INITIAL_WEDDING_TASKS);
       setBudgets(sBudgets ? JSON.parse(sBudgets) : INITIAL_WEDDING_BUDGETS);
@@ -110,39 +118,44 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     localStorage.setItem(LOCAL_STORAGE_DATE_KEY, date);
   };
 
-  const saveEvents = (newEvents: WeddingEventDate[]) => {
-    setEventDates(newEvents);
-    localStorage.setItem(LOCAL_STORAGE_EVENTS_KEY, JSON.stringify(newEvents));
+  const setTargetBudget = (amount: number) => {
+    setTargetBudgetState(amount);
+    localStorage.setItem(LOCAL_STORAGE_TARGET_BUDGET_KEY, amount.toString());
   };
 
-  const saveTasks = (newTasks: WeddingTask[]) => {
-    setTasks(newTasks);
-    localStorage.setItem(LOCAL_STORAGE_TASKS_KEY, JSON.stringify(newTasks));
+  const saveEvents = (data: WeddingEventDate[]) => {
+    setEventDates(data);
+    localStorage.setItem(LOCAL_STORAGE_EVENTS_KEY, JSON.stringify(data));
   };
 
-  const saveBudgets = (newBudgets: WeddingBudgetItem[]) => {
-    setBudgets(newBudgets);
-    localStorage.setItem(LOCAL_STORAGE_BUDGETS_KEY, JSON.stringify(newBudgets));
+  const saveTasks = (data: WeddingTask[]) => {
+    setTasks(data);
+    localStorage.setItem(LOCAL_STORAGE_TASKS_KEY, JSON.stringify(data));
   };
 
-  const saveGuests = (newGuests: WeddingGuest[]) => {
-    setGuests(newGuests);
-    localStorage.setItem(LOCAL_STORAGE_GUESTS_KEY, JSON.stringify(newGuests));
+  const saveBudgets = (data: WeddingBudgetItem[]) => {
+    setBudgets(data);
+    localStorage.setItem(LOCAL_STORAGE_BUDGETS_KEY, JSON.stringify(data));
   };
 
-  const saveVendors = (newVendors: WeddingVendor[]) => {
-    setVendors(newVendors);
-    localStorage.setItem(LOCAL_STORAGE_VENDORS_KEY, JSON.stringify(newVendors));
+  const saveGuests = (data: WeddingGuest[]) => {
+    setGuests(data);
+    localStorage.setItem(LOCAL_STORAGE_GUESTS_KEY, JSON.stringify(data));
   };
 
-  const saveGifts = (newGifts: WeddingBetrothalGift[]) => {
-    setGifts(newGifts);
-    localStorage.setItem(LOCAL_STORAGE_GIFTS_KEY, JSON.stringify(newGifts));
+  const saveVendors = (data: WeddingVendor[]) => {
+    setVendors(data);
+    localStorage.setItem(LOCAL_STORAGE_VENDORS_KEY, JSON.stringify(data));
+  };
+
+  const saveGifts = (data: WeddingBetrothalGift[]) => {
+    setGifts(data);
+    localStorage.setItem(LOCAL_STORAGE_GIFTS_KEY, JSON.stringify(data));
   };
 
   // CRUD Events
   const addEventDate = (evt: Omit<WeddingEventDate, 'id'>) => {
-    const newEvt: WeddingEventDate = { ...evt, id: `evt-${Date.now()}` };
+    const newEvt: WeddingEventDate = { ...evt, id: `w-evt-${Date.now()}` };
     saveEvents([...eventDates, newEvt]);
   };
 
@@ -156,7 +169,7 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   // CRUD Tasks
   const addTask = (task: Omit<WeddingTask, 'id'>) => {
-    const newTask: WeddingTask = { ...task, id: `w-task-${Date.now()}` };
+    const newTask: WeddingTask = { ...task, id: `w-tsk-${Date.now()}` };
     saveTasks([...tasks, newTask]);
   };
 
@@ -170,7 +183,7 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   // CRUD Budgets
   const addBudgetItem = (item: Omit<WeddingBudgetItem, 'id'>) => {
-    const newItem: WeddingBudgetItem = { ...item, id: `w-bgt-${Date.now()}` };
+    const newItem: WeddingBudgetItem = { ...item, id: `w-bdg-${Date.now()}` };
     saveBudgets([...budgets, newItem]);
   };
 
@@ -225,9 +238,14 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   // Summary Metrics
+  const totalEst = budgets.reduce((acc, b) => acc + b.estimated_cost, 0);
+  const totalAct = budgets.reduce((acc, b) => acc + b.actual_cost, 0);
+
   const summary: WeddingSummary = {
-    totalEstimatedBudget: budgets.reduce((acc, b) => acc + b.estimated_cost, 0),
-    totalActualExpense: budgets.reduce((acc, b) => acc + b.actual_cost, 0),
+    targetBudget,
+    totalEstimatedBudget: totalEst,
+    totalActualExpense: totalAct,
+    remainingBudget: targetBudget - totalAct,
     totalTasks: tasks.length,
     completedTasks: tasks.filter((t) => t.status === 'Hoàn thành').length,
     totalGuests: guests.length,
@@ -239,6 +257,7 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   const resetWeddingData = useCallback(() => {
     setWeddingDateState(DEFAULT_WEDDING_DATE);
+    setTargetBudgetState(DEFAULT_TARGET_BUDGET);
     saveEvents(INITIAL_WEDDING_EVENTS);
     saveTasks(INITIAL_WEDDING_TASKS);
     saveBudgets(INITIAL_WEDDING_BUDGETS);
@@ -252,6 +271,8 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
       value={{
         weddingDate,
         setWeddingDate,
+        targetBudget,
+        setTargetBudget,
         eventDates,
         addEventDate,
         updateEventDate,

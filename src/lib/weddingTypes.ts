@@ -81,8 +81,10 @@ export interface WeddingBetrothalGift {
 }
 
 export interface WeddingSummary {
+  targetBudget: number;
   totalEstimatedBudget: number;
   totalActualExpense: number;
+  remainingBudget: number;
   totalTasks: number;
   completedTasks: number;
   totalGuests: number;
@@ -94,6 +96,7 @@ export interface WeddingSummary {
 
 // Initial Mock Data from W Plan QH&YN.xlsx
 export const DEFAULT_WEDDING_DATE = '2026-11-20'; // Target wedding date (can be changed by user)
+export const DEFAULT_TARGET_BUDGET = 200000000; // 200,000,000 VNĐ default target budget
 
 export const INITIAL_WEDDING_EVENTS: WeddingEventDate[] = [
   {

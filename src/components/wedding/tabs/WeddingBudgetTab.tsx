@@ -3,18 +3,21 @@
 import React, { useState } from 'react';
 import { useWedding } from '@/context/WeddingContext';
 import { WeddingBudgetItem } from '@/lib/weddingTypes';
-import { Plus, Search, Wallet, CheckSquare, Square, Trash2, SlidersHorizontal, X, RotateCcw } from 'lucide-react';
+import { Plus, Search, Wallet, CheckSquare, Square, Trash2, SlidersHorizontal, X, RotateCcw, Pencil } from 'lucide-react';
 
 interface WeddingBudgetTabProps {
   onOpenBudgetModal: (itemToEdit?: WeddingBudgetItem) => void;
 }
 
 export const WeddingBudgetTab: React.FC<WeddingBudgetTabProps> = ({ onOpenBudgetModal }) => {
-  const { budgets, eventDates, updateBudgetItem, deleteBudgetItem } = useWedding();
+  const { budgets, eventDates, targetBudget, setTargetBudget, updateBudgetItem, deleteBudgetItem } = useWedding();
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const [selectedEventId, setSelectedEventId] = useState<string>('ALL');
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+
+  const [isEditingBudget, setIsEditingBudget] = useState(false);
+  const [tempBudget, setTempBudget] = useState(targetBudget);
 
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(val);
@@ -74,19 +77,64 @@ export const WeddingBudgetTab: React.FC<WeddingBudgetTabProps> = ({ onOpenBudget
       </div>
 
       {/* Summary Cards Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-        <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
-          <div className="text-xs text-slate-500 font-medium">Tổng Ngân Sách Dự Kiến</div>
-          <div className="text-lg sm:text-xl font-bold text-slate-900 mt-1">{formatCurrency(totalEst)}</div>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4">
+        {/* Card 1: Target Budget */}
+        <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-xs relative">
+          <div className="text-[11px] sm:text-xs text-slate-500 font-medium flex items-center justify-between">
+            <span>Ngân Sách Mục Tiêu</span>
+            <button
+              onClick={() => setIsEditingBudget(!isEditingBudget)}
+              className="p-1 text-slate-400 hover:text-rose-600 rounded-md transition-colors"
+              title="Nhập số tiền ngân sách ban đầu"
+            >
+              <Pencil className="w-3.5 h-3.5" />
+            </button>
+          </div>
+          {isEditingBudget ? (
+            <div className="flex items-center gap-1 mt-1">
+              <input
+                type="number"
+                value={tempBudget}
+                onChange={(e) => setTempBudget(Number(e.target.value))}
+                className="w-full bg-slate-50 border border-slate-300 rounded-lg px-2 py-1 text-xs font-bold text-slate-900 focus:outline-none focus:border-rose-500"
+              />
+              <button
+                onClick={() => {
+                  setTargetBudget(tempBudget);
+                  setIsEditingBudget(false);
+                }}
+                className="bg-rose-600 hover:bg-rose-700 text-white text-xs px-2 py-1 rounded-lg font-bold shadow-2xs shrink-0"
+              >
+                Lưu
+              </button>
+            </div>
+          ) : (
+            <div
+              onClick={() => setIsEditingBudget(true)}
+              className="text-base sm:text-xl font-extrabold text-slate-900 mt-1 cursor-pointer hover:text-rose-600 transition-colors"
+            >
+              {formatCurrency(targetBudget)}
+            </div>
+          )}
         </div>
-        <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
-          <div className="text-xs text-slate-500 font-medium">Tổng Đã Chi Thực Tế</div>
-          <div className="text-lg sm:text-xl font-bold text-emerald-600 mt-1">{formatCurrency(totalAct)}</div>
+
+        {/* Card 2: Estimated Sum */}
+        <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-xs">
+          <div className="text-[11px] sm:text-xs text-slate-500 font-medium">Tổng Hạng Mục (Dự Kiến)</div>
+          <div className="text-base sm:text-xl font-bold text-slate-900 mt-1">{formatCurrency(totalEst)}</div>
         </div>
-        <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
-          <div className="text-xs text-slate-500 font-medium">Dư Hạn Mức Ngân Sách</div>
-          <div className={`text-lg sm:text-xl font-bold mt-1 ${totalDiff >= 0 ? 'text-blue-600' : 'text-rose-600'}`}>
-            {formatCurrency(totalDiff)}
+
+        {/* Card 3: Actual Cost */}
+        <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-xs">
+          <div className="text-[11px] sm:text-xs text-slate-500 font-medium">Tổng Đã Chi Thực Tế</div>
+          <div className="text-base sm:text-xl font-bold text-emerald-600 mt-1">{formatCurrency(totalAct)}</div>
+        </div>
+
+        {/* Card 4: Remaining */}
+        <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-xs">
+          <div className="text-[11px] sm:text-xs text-slate-500 font-medium">Còn Lại Chi Được</div>
+          <div className={`text-base sm:text-xl font-bold mt-1 ${targetBudget - totalAct >= 0 ? 'text-blue-600' : 'text-rose-600'}`}>
+            {formatCurrency(targetBudget - totalAct)}
           </div>
         </div>
       </div>

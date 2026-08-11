@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useWedding } from '@/context/WeddingContext';
-import { Heart, Calendar, Wallet, CheckSquare, Users, Store, Plus, Sparkles, Clock } from 'lucide-react';
+import { Heart, Calendar, Wallet, CheckSquare, Users, Store, Plus, Sparkles, Clock, Pencil } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 
 interface WeddingOverviewTabProps {
@@ -18,9 +18,11 @@ export const WeddingOverviewTab: React.FC<WeddingOverviewTabProps> = ({
   onOpenBudgetModal,
   onOpenGuestModal,
 }) => {
-  const { weddingDate, setWeddingDate, eventDates, summary, tasks, budgets, guests, vendors, gifts } = useWedding();
+  const { weddingDate, setWeddingDate, targetBudget, setTargetBudget, eventDates, summary, tasks, budgets, guests, vendors, gifts } = useWedding();
   const [isEditingDate, setIsEditingDate] = useState(false);
   const [tempDate, setTempDate] = useState(weddingDate);
+  const [isEditingBudget, setIsEditingBudget] = useState(false);
+  const [tempBudget, setTempBudget] = useState(targetBudget);
 
   // Calculate Days Remaining
   const calculateDaysLeft = () => {
@@ -140,30 +142,74 @@ export const WeddingOverviewTab: React.FC<WeddingOverviewTabProps> = ({
       {/* KPI Cards Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {/* Card 1: Budget */}
-        <div
-          onClick={() => onSwitchTab('budget')}
-          className="bg-white p-5 rounded-2xl border border-slate-200 hover:border-slate-300 transition-all cursor-pointer shadow-xs group"
-        >
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold text-slate-500">Ngân Sách Dự Kiến</span>
-            <div className="p-2 rounded-xl bg-emerald-50 text-emerald-600">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 hover:border-slate-300 transition-all shadow-xs group relative">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-semibold text-slate-500 flex items-center gap-1">
+              <span>Ngân Sách Mục Tiêu</span>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsEditingBudget(true);
+                }}
+                className="p-1 text-slate-400 hover:text-rose-600 rounded-md transition-colors"
+                title="Chỉnh sửa ngân sách tổng ban đầu"
+              >
+                <Pencil className="w-3.5 h-3.5" />
+              </button>
+            </span>
+            <div
+              onClick={() => onSwitchTab('budget')}
+              className="p-2 rounded-xl bg-emerald-50 text-emerald-600 cursor-pointer"
+            >
               <Wallet className="w-5 h-5" />
             </div>
           </div>
-          <div className="text-xl sm:text-2xl font-bold text-slate-900 mb-1">
-            {formatCurrency(summary.totalEstimatedBudget)}
-          </div>
-          <div className="flex items-center justify-between text-xs text-slate-500">
+
+          {isEditingBudget ? (
+            <div className="flex items-center gap-1.5 my-1">
+              <input
+                type="number"
+                value={tempBudget}
+                onChange={(e) => setTempBudget(Number(e.target.value))}
+                className="w-full bg-slate-50 border border-slate-300 rounded-lg px-2 py-1 text-xs font-bold text-slate-900 focus:outline-none focus:border-rose-500"
+                placeholder="Nhập số tiền..."
+              />
+              <button
+                onClick={() => {
+                  setTargetBudget(tempBudget);
+                  setIsEditingBudget(false);
+                }}
+                className="bg-rose-600 hover:bg-rose-700 text-white text-xs px-2.5 py-1 rounded-lg font-bold shadow-2xs shrink-0"
+              >
+                Lưu
+              </button>
+            </div>
+          ) : (
+            <div
+              onClick={() => setIsEditingBudget(true)}
+              className="text-xl sm:text-2xl font-extrabold text-slate-900 mb-1 cursor-pointer hover:text-rose-600 transition-colors"
+            >
+              {formatCurrency(summary.targetBudget)}
+            </div>
+          )}
+
+          <div className="flex items-center justify-between text-xs text-slate-500 mt-2">
             <span>Đã chi: <strong className="text-emerald-600">{formatCurrency(summary.totalActualExpense)}</strong></span>
-            <span>{summary.totalEstimatedBudget > 0 ? Math.round((summary.totalActualExpense / summary.totalEstimatedBudget) * 100) : 0}%</span>
+            <span>{summary.targetBudget > 0 ? Math.round((summary.totalActualExpense / summary.targetBudget) * 100) : 0}%</span>
           </div>
-          <div className="w-full bg-slate-100 rounded-full h-1.5 mt-3 overflow-hidden">
+
+          <div className="w-full bg-slate-100 rounded-full h-1.5 mt-2.5 overflow-hidden">
             <div
               className="bg-emerald-600 h-1.5 rounded-full transition-all duration-500"
               style={{
-                width: `${summary.totalEstimatedBudget > 0 ? Math.min(100, (summary.totalActualExpense / summary.totalEstimatedBudget) * 100) : 0}%`,
+                width: `${summary.targetBudget > 0 ? Math.min(100, (summary.totalActualExpense / summary.targetBudget) * 100) : 0}%`,
               }}
             />
+          </div>
+
+          <div className="text-[11px] text-slate-400 mt-2 flex items-center justify-between">
+            <span>Hạng mục dự kiến:</span>
+            <span className="font-semibold text-slate-600">{formatCurrency(summary.totalEstimatedBudget)}</span>
           </div>
         </div>
 
