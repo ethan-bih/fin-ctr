@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { FinanceProvider, useFinance } from '@/context/FinanceContext';
 import { WeddingProvider } from '@/context/WeddingContext';
-import { Navbar } from '@/components/Navbar';
 import { Sidebar } from '@/components/Sidebar';
 import { DashboardOverview } from '@/components/DashboardOverview';
 import { SixJarsTracker } from '@/components/SixJarsTracker';
@@ -36,15 +35,9 @@ function MainAppContent() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-rose-500 selection:text-white">
-      {/* Top App Header Navbar */}
-      <Navbar
-        onOpenAddModal={handleOpenAddModal}
-        onToggleMobileDrawer={() => setIsMobileDrawerOpen(!isMobileDrawerOpen)}
-      />
-
       {/* Main Layout Area */}
       <div className="flex-1 flex max-w-7xl w-full mx-auto">
-        {/* Left Sidebar */}
+        {/* Left Sidebar Pane (Handles all navigation & user profile actions) */}
         <Sidebar
           isMobileDrawerOpen={isMobileDrawerOpen}
           setIsMobileDrawerOpen={setIsMobileDrawerOpen}
