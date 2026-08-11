@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { useFinance } from '@/context/FinanceContext';
 import { DynamicIcon } from './DynamicIcon';
-import { Search, Filter, Download, Trash2, Plus, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { Search, Filter, Download, Trash2, Plus, ArrowUpRight, ArrowDownRight, Calendar } from 'lucide-react';
 
 interface TransactionListProps {
   onOpenAddModal: () => void;
@@ -56,24 +56,24 @@ export const TransactionList: React.FC<TransactionListProps> = ({ onOpenAddModal
   };
 
   return (
-    <div className="space-y-6 animate-fade-in pb-12">
+    <div className="space-y-5 animate-fade-in pb-12">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-100">Sổ Giao Dịch Thu Chi</h2>
-          <p className="text-sm text-slate-400">Danh sách toàn bộ lịch sử thu chi tài chính của bạn</p>
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-900">Sổ Giao Dịch Thu Chi</h2>
+          <p className="text-xs sm:text-sm text-slate-500">Danh sách toàn bộ lịch sử thu chi tài chính của bạn</p>
         </div>
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-2.5">
           <button
             onClick={handleExportCSV}
-            className="flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-semibold px-3.5 py-2.5 rounded-xl border border-slate-700 transition-all"
+            className="flex-1 sm:flex-none flex items-center justify-center space-x-1.5 bg-white hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-semibold px-3 py-2 rounded-xl border border-slate-200 shadow-2xs transition-all"
           >
-            <Download className="w-4 h-4 text-indigo-400" />
+            <Download className="w-4 h-4 text-indigo-600" />
             <span>Xuất CSV</span>
           </button>
           <button
             onClick={onOpenAddModal}
-            className="flex items-center space-x-2 bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-semibold px-4 py-2.5 rounded-xl shadow-lg shadow-emerald-500/20 transition-all"
+            className="flex-1 sm:flex-none flex items-center justify-center space-x-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-xl shadow-xs transition-all"
           >
             <Plus className="w-4 h-4" />
             <span>Thêm Mới</span>
@@ -81,121 +81,185 @@ export const TransactionList: React.FC<TransactionListProps> = ({ onOpenAddModal
         </div>
       </div>
 
-      {/* Filter & Search Bar */}
-      <div className="glass-card rounded-2xl p-4 border border-slate-800 space-y-4">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {/* Search Box */}
-          <div className="relative">
-            <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              placeholder="Tìm kiếm theo ghi chú, danh mục..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-slate-900/90 text-sm text-slate-200 border border-slate-700 focus:border-emerald-500 rounded-xl pl-9 pr-4 py-2.5 outline-none placeholder:text-slate-500 transition-all"
-            />
-          </div>
-
-          {/* Type Filter */}
-          <div className="flex items-center space-x-1 p-1 bg-slate-900/80 rounded-xl border border-slate-800">
-            {(['all', 'income', 'expense'] as const).map((type) => (
-              <button
-                key={type}
-                onClick={() => setSelectedType(type)}
-                className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  selectedType === type
-                    ? 'bg-slate-800 text-white shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                {type === 'all' ? 'Tất cả' : type === 'income' ? 'Tiền Thu' : 'Tiền Chi'}
-              </button>
-            ))}
-          </div>
-
-          {/* Category Filter */}
-          <div className="relative">
-            <Filter className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full bg-slate-900/90 text-sm text-slate-200 border border-slate-700 focus:border-emerald-500 rounded-xl pl-9 pr-4 py-2.5 outline-none cursor-pointer"
-            >
-              <option value="all">Tất cả danh mục</option>
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.type === 'income' ? '🟢' : '🔴'} {c.name}
-                </option>
-              ))}
-            </select>
-          </div>
+      {/* Filter Bar */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-xs">
+        {/* Search */}
+        <div className="relative">
+          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            placeholder="Tìm ghi chú, danh mục..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white"
+          />
         </div>
+
+        {/* Type Filter */}
+        <select
+          value={selectedType}
+          onChange={(e) => setSelectedType(e.target.value as 'all' | 'income' | 'expense')}
+          className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white"
+        >
+          <option value="all">Tất cả loại (Thu & Chi)</option>
+          <option value="income">Chỉ Thu Nhập (+)</option>
+          <option value="expense">Chỉ Chi Tiêu (-)</option>
+        </select>
+
+        {/* Category Filter */}
+        <select
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+          className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white"
+        >
+          <option value="all">Tất cả danh mục</option>
+          {categories.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name} ({c.type === 'income' ? 'Thu' : 'Chi'})
+            </option>
+          ))}
+        </select>
       </div>
 
-      {/* Transactions Table / Cards */}
-      <div className="glass-card rounded-2xl border border-slate-800 overflow-hidden">
+      {/* MOBILE CARD VIEW (<640px) */}
+      <div className="block sm:hidden space-y-3">
         {filteredTransactions.length > 0 ? (
-          <div className="divide-y divide-slate-800">
-            {filteredTransactions.map((tx) => (
-              <div
-                key={tx.id}
-                className="flex items-center justify-between p-4 hover:bg-slate-800/50 transition-colors group"
-              >
-                <div className="flex items-center space-x-4">
+          filteredTransactions.map((tx) => (
+            <div key={tx.id} className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center space-x-3">
                   <div
-                    className="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0"
-                    style={{ backgroundColor: `${tx.category_color}20` }}
+                    className="w-10 h-10 rounded-xl flex items-center justify-center text-white shrink-0 shadow-2xs"
+                    style={{ backgroundColor: tx.category_color || '#10b981' }}
                   >
-                    <DynamicIcon name={tx.category_icon} color={tx.category_color} className="w-5 h-5" />
+                    <DynamicIcon name={tx.category_icon || 'Wallet'} className="w-5 h-5" />
                   </div>
                   <div>
-                    <div className="flex items-center gap-2">
-                      <h4 className="font-semibold text-slate-200 text-sm">{tx.category_name}</h4>
-                      <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
-                          tx.type === 'income'
-                            ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                            : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
-                        }`}
-                      >
-                        {tx.type === 'income' ? 'Thu Nhập' : 'Chi Tiêu'}
-                      </span>
-                    </div>
-                    <p className="text-xs text-slate-400 mt-0.5 flex items-center gap-2">
-                      <span>{tx.note || 'Không có ghi chú'}</span>
-                      <span>•</span>
-                      <span>{tx.date}</span>
-                    </p>
+                    <div className="font-bold text-slate-900 text-sm">{tx.category_name}</div>
+                    <span
+                      className={`text-[10px] font-bold px-2 py-0.2 rounded-full inline-block mt-0.5 ${
+                        tx.type === 'income'
+                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                          : 'bg-rose-50 text-rose-700 border border-rose-200'
+                      }`}
+                    >
+                      {tx.type === 'income' ? 'Thu nhập' : 'Chi tiêu'}
+                    </span>
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-4">
-                  <div className="text-right">
-                    <span
-                      className={`font-bold text-base block ${
-                        tx.type === 'income' ? 'text-emerald-400' : 'text-rose-400'
+                <div className="text-right">
+                  <div className={`font-extrabold text-base ${tx.type === 'income' ? 'text-emerald-600' : 'text-slate-900'}`}>
+                    {tx.type === 'income' ? '+' : '-'}{formatCurrency(tx.amount)}
+                  </div>
+                  <div className="text-[11px] text-slate-400 flex items-center justify-end gap-1 mt-0.5">
+                    <Calendar className="w-3 h-3" />
+                    <span>{new Date(tx.date).toLocaleDateString('vi-VN')}</span>
+                  </div>
+                </div>
+              </div>
+
+              {tx.note && (
+                <div className="text-xs text-slate-600 bg-slate-50 p-2 rounded-lg border border-slate-100 font-medium">
+                  {tx.note}
+                </div>
+              )}
+
+              <div className="flex justify-end pt-1 border-t border-slate-100">
+                <button
+                  onClick={() => deleteTransaction(tx.id)}
+                  className="text-xs text-slate-400 hover:text-rose-600 flex items-center space-x-1 px-2 py-1 rounded hover:bg-slate-100"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>Xóa</span>
+                </button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="bg-white p-8 text-center text-slate-400 text-xs rounded-2xl border border-slate-200">
+            Không tìm thấy giao dịch nào.
+          </div>
+        )}
+      </div>
+
+      {/* DESKTOP TABLE VIEW (>=640px) */}
+      <div className="hidden sm:block bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm text-slate-700">
+            <thead className="bg-slate-50 text-xs uppercase tracking-wider text-slate-500 border-b border-slate-200 font-semibold">
+              <tr>
+                <th className="py-3.5 px-4 font-semibold">Danh mục</th>
+                <th className="py-3.5 px-4 font-semibold">Ghi chú</th>
+                <th className="py-3.5 px-4 font-semibold">Ngày</th>
+                <th className="py-3.5 px-4 font-semibold text-right">Số tiền (VNĐ)</th>
+                <th className="py-3.5 px-4 font-semibold text-right">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {filteredTransactions.length > 0 ? (
+                filteredTransactions.map((tx) => (
+                  <tr key={tx.id} className="hover:bg-slate-50/80 transition-colors">
+                    <td className="py-4 px-4 whitespace-nowrap">
+                      <div className="flex items-center space-x-3">
+                        <div
+                          className="w-9 h-9 rounded-xl flex items-center justify-center text-white shrink-0 shadow-2xs"
+                          style={{ backgroundColor: tx.category_color || '#10b981' }}
+                        >
+                          <DynamicIcon name={tx.category_icon || 'Wallet'} className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <div className="font-semibold text-slate-900">{tx.category_name}</div>
+                          <span
+                            className={`text-[10px] font-bold px-2 py-0.2 rounded-full ${
+                              tx.type === 'income'
+                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                : 'bg-rose-50 text-rose-700 border border-rose-200'
+                            }`}
+                          >
+                            {tx.type === 'income' ? 'Thu nhập' : 'Chi tiêu'}
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td className="py-4 px-4 font-medium text-slate-700">
+                      {tx.note || <span className="text-slate-400 italic">Không có ghi chú</span>}
+                    </td>
+
+                    <td className="py-4 px-4 whitespace-nowrap text-xs text-slate-500">
+                      {new Date(tx.date).toLocaleDateString('vi-VN')}
+                    </td>
+
+                    <td
+                      className={`py-4 px-4 text-right font-extrabold whitespace-nowrap text-base ${
+                        tx.type === 'income' ? 'text-emerald-600' : 'text-slate-900'
                       }`}
                     >
                       {tx.type === 'income' ? '+' : '-'}{formatCurrency(tx.amount)}
-                    </span>
-                  </div>
+                    </td>
 
-                  <button
-                    onClick={() => deleteTransaction(tx.id)}
-                    className="opacity-0 group-hover:opacity-100 p-2 text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all"
-                    title="Xóa giao dịch"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="py-12 text-center text-slate-500 text-sm">
-            Không tìm thấy giao dịch nào phù hợp với bộ lọc.
-          </div>
-        )}
+                    <td className="py-4 px-4 text-right whitespace-nowrap">
+                      <button
+                        onClick={() => deleteTransaction(tx.id)}
+                        className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-slate-100 rounded-lg transition-colors"
+                        title="Xóa giao dịch"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5} className="py-8 text-center text-slate-400 text-sm">
+                    Không tìm thấy giao dịch nào phù hợp.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

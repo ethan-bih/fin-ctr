@@ -5,7 +5,7 @@ import { Transaction, Budget, SavingsGoal, Category, UserProfile, JarType } from
 import { DEFAULT_CATEGORIES, INITIAL_MOCK_TRANSACTIONS, INITIAL_MOCK_BUDGETS, INITIAL_MOCK_SAVINGS, DEFAULT_JARS } from '@/lib/constants';
 import { createClient } from '@/lib/supabase/client';
 
-export type ActiveTabType = 'dashboard' | 'transactions' | 'budgets' | 'savings' | 'reports' | 'settings' | 'jars';
+export type ActiveTabType = 'dashboard' | 'transactions' | 'budgets' | 'savings' | 'reports' | 'settings' | 'jars' | 'wedding';
 
 interface FinanceContextType {
   user: UserProfile | null;

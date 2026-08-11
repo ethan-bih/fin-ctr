@@ -2,50 +2,67 @@
 
 import React from 'react';
 import { useFinance } from '@/context/FinanceContext';
-import { Wallet, Plus, LogIn, LogOut, CheckCircle2, AlertCircle, ShieldCheck } from 'lucide-react';
+import { Sparkles, Plus, LogOut, CheckCircle2, AlertCircle, ShieldCheck, Menu, HeartHandshake } from 'lucide-react';
 
 interface NavbarProps {
   onOpenAddModal: () => void;
+  onToggleMobileDrawer?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ onOpenAddModal }) => {
-  const { user, isLiveMode, loginWithGoogle, logout, setActiveTab } = useFinance();
+export const Navbar: React.FC<NavbarProps> = ({ onOpenAddModal, onToggleMobileDrawer }) => {
+  const { user, isLiveMode, loginWithGoogle, logout, setActiveTab, activeTab } = useFinance();
 
   return (
-    <header className="sticky top-0 z-40 w-full glass-panel border-b border-slate-800 px-4 lg:px-8 py-3.5 flex items-center justify-between">
+    <header className="sticky top-0 z-40 w-full bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-3.5 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between shadow-2xs">
       {/* Brand & Logo */}
-      <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setActiveTab('dashboard')}>
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 via-teal-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-          <Wallet className="w-5 h-5 text-white" />
-        </div>
-        <div>
-          <h1 className="font-bold text-lg text-slate-100 leading-tight flex items-center gap-2">
-            Sổ Thu Chi <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Pro</span>
-          </h1>
-          <p className="text-xs text-slate-400">Quản lý tài chính cá nhân an toàn</p>
+      <div className="flex items-center space-x-3">
+        {/* Mobile Menu Button */}
+        <button
+          onClick={onToggleMobileDrawer}
+          className="lg:hidden p-1.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+          title="Mở menu"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
+
+        <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setActiveTab('dashboard')}>
+          <div className="w-9 h-9 rounded-xl bg-slate-900 text-rose-500 flex items-center justify-center shadow-2xs shrink-0">
+            <HeartHandshake className="w-5 h-5" />
+          </div>
+          <div>
+            <h1 className="font-extrabold text-sm sm:text-base text-slate-900 tracking-tight flex items-center gap-2">
+              <span>Finance &amp; Wedding Hub</span>
+              <span className="text-[10px] font-bold px-2 py-0.2 rounded-full bg-rose-50 text-rose-700 border border-rose-200">
+                QH &amp; YN
+              </span>
+            </h1>
+            <p className="text-[11px] text-slate-500 font-medium hidden sm:block">
+              Quản lý tài chính cá nhân &amp; Kế hoạch đám cưới
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* Mode Indicator & User Actions */}
-      <div className="flex items-center space-x-3 lg:space-x-4">
+      {/* Mode Indicator & Actions */}
+      <div className="flex items-center space-x-2 sm:space-x-3">
         {/* Status Badge */}
         <div
           onClick={() => setActiveTab('settings')}
-          className={`hidden sm:flex items-center space-x-2 text-xs px-3 py-1.5 rounded-full border cursor-pointer transition-all ${
+          className={`hidden md:flex items-center space-x-1.5 text-xs px-3 py-1 rounded-full border cursor-pointer font-semibold transition-all ${
             isLiveMode
-              ? 'bg-emerald-950/40 text-emerald-400 border-emerald-500/30 hover:bg-emerald-900/50'
-              : 'bg-amber-950/40 text-amber-400 border-amber-500/30 hover:bg-amber-900/50'
+              ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
+              : 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200'
           }`}
         >
           {isLiveMode ? (
             <>
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
               <span>Supabase Cloud Active</span>
             </>
           ) : (
             <>
-              <AlertCircle className="w-3.5 h-3.5 text-amber-400" />
-              <span>Chế độ Demo (Offline)</span>
+              <AlertCircle className="w-3.5 h-3.5 text-amber-600" />
+              <span>Chế độ Offline (Demo)</span>
             </>
           )}
         </div>
@@ -53,16 +70,15 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAddModal }) => {
         {/* Quick Add Button */}
         <button
           onClick={onOpenAddModal}
-          className="flex items-center space-x-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-medium text-xs lg:text-sm px-3.5 py-2 rounded-xl shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+          className="flex items-center space-x-1.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm px-3.5 py-1.5 sm:py-2 rounded-xl shadow-xs transition-all active:scale-[0.98]"
         >
-          <Plus className="w-4 h-4" />
-          <span className="hidden sm:inline">Thêm Thu/Chi</span>
-          <span className="sm:hidden">Thêm</span>
+          <Plus className="w-4 h-4 text-emerald-400" />
+          <span>Ghi Chép Thu/Chi</span>
         </button>
 
         {/* User Auth Section */}
         {isLiveMode ? (
-          <div className="flex items-center space-x-3 bg-slate-800/60 p-1.5 pl-3 rounded-full border border-slate-700/60">
+          <div className="flex items-center space-x-2 bg-slate-100 p-1 pl-2.5 rounded-full border border-slate-200">
             {user?.avatar_url ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={user.avatar_url} alt={user.full_name} className="w-7 h-7 rounded-full border border-emerald-500/40" />
@@ -71,22 +87,21 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAddModal }) => {
                 {user?.full_name?.charAt(0) || 'U'}
               </div>
             )}
-            <span className="text-xs font-medium text-slate-200 max-w-[100px] truncate hidden md:inline">{user?.full_name}</span>
             <button
               onClick={logout}
               title="Đăng xuất"
-              className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-slate-700/60 rounded-full transition-colors"
+              className="p-1 text-slate-500 hover:text-rose-600 hover:bg-slate-200 rounded-full transition-colors"
             >
-              <LogOut className="w-4 h-4" />
+              <LogOut className="w-3.5 h-3.5" />
             </button>
           </div>
         ) : (
           <button
             onClick={loginWithGoogle}
-            className="flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium px-3.5 py-2 rounded-xl border border-slate-700 transition-all"
+            className="hidden sm:flex items-center space-x-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-xl border border-slate-200 transition-all"
           >
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
-            <span>Đăng nhập Gmail</span>
+            <ShieldCheck className="w-4 h-4 text-emerald-600" />
+            <span>Đăng nhập</span>
           </button>
         )}
       </div>

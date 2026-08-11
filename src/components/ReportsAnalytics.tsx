@@ -58,111 +58,114 @@ export const ReportsAnalytics: React.FC = () => {
   // Top spending category
   const topCategory = useMemo(() => {
     const map: { [name: string]: { name: string; amount: number; color: string; icon: string } } = {};
-    const curMonth = new Date().getMonth();
 
     transactions
-      .filter((t) => t.type === 'expense' && new Date(t.date).getMonth() === curMonth)
-      .forEach((t) => {
-        if (!map[t.category_id]) {
-          map[t.category_id] = { name: t.category_name, amount: 0, color: t.category_color, icon: t.category_icon };
+      .filter((tx) => tx.type === 'expense')
+      .forEach((tx) => {
+        if (!map[tx.category_name]) {
+          map[tx.category_name] = {
+            name: tx.category_name,
+            amount: 0,
+            color: tx.category_color || '#3b82f6',
+            icon: tx.category_icon || 'PieChart',
+          };
         }
-        map[t.category_id].amount += t.amount;
+        map[tx.category_name].amount += tx.amount;
       });
 
     const sorted = Object.values(map).sort((a, b) => b.amount - a.amount);
-    return sorted[0] || null;
+    return sorted.length > 0 ? sorted[0] : null;
   }, [transactions]);
 
-  // Bar chart data for top categories
-  const barChartData = useMemo(() => {
-    const map: { [name: string]: { name: string; amount: number; color: string } } = {};
+  // Monthly Comparison Chart Data
+  const chartData = useMemo(() => {
+    const monthsMap: { [key: string]: { month: string; Chi_tiêu: number } } = {};
 
-    transactions
-      .filter((t) => t.type === 'expense')
-      .forEach((t) => {
-        if (!map[t.category_name]) {
-          map[t.category_name] = { name: t.category_name, amount: 0, color: t.category_color || '#3b82f6' };
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date();
+      d.setMonth(d.getMonth() - i);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      const label = `Thg ${d.getMonth() + 1}`;
+      monthsMap[key] = { month: label, Chi_tiêu: 0 };
+    }
+
+    transactions.forEach((tx) => {
+      if (tx.type === 'expense') {
+        const key = tx.date.substring(0, 7);
+        if (monthsMap[key]) {
+          monthsMap[key].Chi_tiêu += tx.amount;
         }
-        map[t.category_name].amount += t.amount;
-      });
+      }
+    });
 
-    return Object.values(map).sort((a, b) => b.amount - a.amount).slice(0, 6);
+    return Object.values(monthsMap);
   }, [transactions]);
 
   return (
     <div className="space-y-6 animate-fade-in pb-12">
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold text-slate-100">Báo Cáo & Phân Tích Tài Chính</h2>
-        <p className="text-sm text-slate-400">Phân tích chuyên sâu về thói quen chi tiêu và tăng trưởng số dư</p>
+        <h2 className="text-2xl font-bold text-slate-900">Báo Cáo Phân Tích Tài Chính</h2>
+        <p className="text-sm text-slate-500">Tổng hợp xu hướng chi tiêu và so sánh giữa các tháng</p>
       </div>
 
       {/* Metrics Row */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {/* Metric 1 */}
-        <div className="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
-          <div className="flex items-center justify-between text-xs font-semibold text-slate-400">
-            <span>Chi Tiêu Trung Bình / Ngày</span>
-            <Calendar className="w-4 h-4 text-emerald-400" />
-          </div>
-          <div className="text-2xl font-black text-slate-100">
-            {formatCurrency(metrics.avgDailyExpense)}
-          </div>
-          <p className="text-xs text-slate-400">Tính trên số ngày đã qua trong tháng</p>
+        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs">
+          <div className="text-xs text-slate-500 font-medium">Trung Bình Chi Tiêu Hàng Ngày</div>
+          <div className="text-2xl font-bold text-slate-900 mt-1">{formatCurrency(metrics.avgDailyExpense)}</div>
+          <p className="text-xs text-slate-500 mt-1">Dựa trên số ngày thực tế tháng này</p>
         </div>
 
-        {/* Metric 2 */}
-        <div className="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
-          <div className="flex items-center justify-between text-xs font-semibold text-slate-400">
-            <span>So Với Tháng Trước</span>
+        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs">
+          <div className="text-xs text-slate-500 font-medium">So Với Tháng Trước</div>
+          <div className="flex items-center space-x-2 mt-1">
+            <span className={`text-2xl font-bold ${metrics.expenseDiffPercent > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
+              {metrics.expenseDiffPercent > 0 ? `+${metrics.expenseDiffPercent}%` : `${metrics.expenseDiffPercent}%`}
+            </span>
             {metrics.expenseDiffPercent > 0 ? (
-              <TrendingUp className="w-4 h-4 text-rose-400" />
+              <TrendingUp className="w-5 h-5 text-rose-600" />
             ) : (
-              <TrendingDown className="w-4 h-4 text-emerald-400" />
+              <TrendingDown className="w-5 h-5 text-emerald-600" />
             )}
           </div>
-          <div className={`text-2xl font-black ${metrics.expenseDiffPercent > 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
-            {metrics.expenseDiffPercent > 0 ? `+${metrics.expenseDiffPercent}%` : `${metrics.expenseDiffPercent}%`}
-          </div>
-          <p className="text-xs text-slate-400">
-            {metrics.expenseDiffPercent > 0 ? 'Chi tiêu tăng hơn tháng trước' : 'Tiết kiệm hơn so với tháng trước'}
-          </p>
+          <p className="text-xs text-slate-500 mt-1">Biến động chi tiêu so tháng cũ</p>
         </div>
 
-        {/* Metric 3 */}
-        <div className="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
-          <div className="flex items-center justify-between text-xs font-semibold text-slate-400">
-            <span>Danh Mục Chi Nhiều Nhất</span>
-            <Award className="w-4 h-4 text-amber-400" />
-          </div>
+        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs">
+          <div className="text-xs text-slate-500 font-medium">Danh Mục Chi Nhiều Nhất</div>
           {topCategory ? (
-            <div>
-              <div className="text-xl font-bold text-amber-400 truncate">{topCategory.name}</div>
-              <p className="text-xs text-slate-300 font-semibold">{formatCurrency(topCategory.amount)}</p>
+            <div className="flex items-center space-x-2 mt-1">
+              <div
+                className="w-7 h-7 rounded-lg flex items-center justify-center text-white shrink-0"
+                style={{ backgroundColor: topCategory.color }}
+              >
+                <DynamicIcon name={topCategory.icon} className="w-4 h-4" />
+              </div>
+              <div className="truncate">
+                <div className="font-bold text-slate-900 text-sm truncate">{topCategory.name}</div>
+                <div className="text-xs text-slate-500">{formatCurrency(topCategory.amount)}</div>
+              </div>
             </div>
           ) : (
-            <div className="text-sm font-semibold text-slate-500">Chưa có dữ liệu</div>
+            <div className="text-sm font-semibold text-slate-400 mt-1">Chưa có dữ liệu</div>
           )}
         </div>
       </div>
 
-      {/* Bar Chart Section */}
-      <div className="glass-card rounded-2xl p-5 border border-slate-800 space-y-4">
-        <h3 className="font-bold text-slate-200">Top Danh Mục Chi Tiêu Cao Nhất</h3>
+      {/* Bar Chart */}
+      <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs space-y-4">
+        <h3 className="font-bold text-slate-900 text-base">So Sánh Chi Tiêu 6 Tháng Gần Đây</h3>
         <div className="h-64 w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={barChartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
-              <XAxis dataKey="name" stroke="#64748b" fontSize={12} tickLine={false} />
-              <YAxis stroke="#64748b" fontSize={11} tickLine={false} tickFormatter={(v) => `${v / 1000000}M`} />
+            <BarChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+              <XAxis dataKey="month" stroke="#94a3b8" fontSize={12} tickLine={false} />
+              <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} tickFormatter={(v) => `${v / 1000000}M`} />
               <Tooltip
-                contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '12px', fontSize: '12px' }}
-                formatter={(val) => [formatCurrency(Number(val)), 'Số tiền chi']}
+                contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', color: '#0f172a', borderRadius: '8px' }}
+                formatter={(val: any) => [formatCurrency(Number(val || 0)), 'Chi tiêu']}
               />
-              <Bar dataKey="amount" radius={[8, 8, 0, 0]}>
-                {barChartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Bar>
+              <Bar dataKey="Chi_tiêu" fill="#4f46e5" radius={[6, 6, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

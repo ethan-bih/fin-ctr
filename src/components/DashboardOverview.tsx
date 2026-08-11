@@ -108,12 +108,12 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onOpenAddM
       {/* Top Banner & Stats */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-100">Tổng Quan Tài Chính</h2>
-          <p className="text-sm text-slate-400">Theo dõi thu chi và tình hình tài chính tháng này</p>
+          <h2 className="text-2xl font-bold text-slate-900">Tổng Quan Tài Chính</h2>
+          <p className="text-sm text-slate-500">Theo dõi thu chi và tình hình tài chính cá nhân</p>
         </div>
         <button
           onClick={onOpenAddModal}
-          className="self-start sm:self-auto flex items-center space-x-2 bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-semibold px-4 py-2.5 rounded-xl shadow-lg shadow-emerald-500/20 transition-all"
+          className="self-start sm:self-auto flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl shadow-xs transition-all"
         >
           <Plus className="w-4 h-4" />
           <span>Ghi Nhận Giao Dịch</span>
@@ -123,76 +123,76 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onOpenAddM
       {/* 4 Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Total Balance */}
-        <div className="glass-card glass-card-hover rounded-2xl p-5 border-l-4 border-l-indigo-500 relative overflow-hidden">
+        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs relative overflow-hidden">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Tổng Số Dư Tích Lũy</span>
-            <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-400">
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Tổng Số Dư Tích Lũy</span>
+            <div className="p-2.5 rounded-xl bg-indigo-50 text-indigo-600">
               <Wallet className="w-5 h-5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-slate-100 mb-1">
+          <div className="text-2xl font-black text-slate-900 mb-1">
             {formatCurrency(stats.allTimeBalance)}
           </div>
-          <p className="text-xs text-slate-400">Tất cả tài sản hiện có</p>
+          <p className="text-xs text-slate-500">Tất cả tài sản hiện có</p>
         </div>
 
         {/* Monthly Income */}
-        <div className="glass-card glass-card-hover rounded-2xl p-5 border-l-4 border-l-emerald-500 relative overflow-hidden">
+        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs relative overflow-hidden">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Thu Nhập Tháng Này</span>
-            <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400">
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Thu Nhập Tháng Này</span>
+            <div className="p-2.5 rounded-xl bg-emerald-50 text-emerald-600">
               <ArrowUpRight className="w-5 h-5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-emerald-400 mb-1">
+          <div className="text-2xl font-black text-emerald-600 mb-1">
             +{formatCurrency(stats.totalIncomeMonth)}
           </div>
-          <p className="text-xs text-emerald-500/80 font-medium">Tổng thu nhập phát sinh</p>
+          <p className="text-xs text-emerald-700 font-medium">Tổng thu nhập phát sinh</p>
         </div>
 
         {/* Monthly Expense */}
-        <div className="glass-card glass-card-hover rounded-2xl p-5 border-l-4 border-l-rose-500 relative overflow-hidden">
+        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs relative overflow-hidden">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Chi Tiêu Tháng Này</span>
-            <div className="p-2.5 rounded-xl bg-rose-500/10 text-rose-400">
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Chi Tiêu Tháng Này</span>
+            <div className="p-2.5 rounded-xl bg-rose-50 text-rose-600">
               <ArrowDownRight className="w-5 h-5" />
             </div>
           </div>
-          <div className="text-2xl font-black text-rose-400 mb-1">
+          <div className="text-2xl font-black text-rose-600 mb-1">
             -{formatCurrency(stats.totalExpenseMonth)}
           </div>
-          <p className="text-xs text-rose-500/80 font-medium">Tổng khoản đã chi tiêu</p>
+          <p className="text-xs text-rose-700 font-medium">Tổng khoản đã chi tiêu</p>
         </div>
 
         {/* Net Savings */}
-        <div className="glass-card glass-card-hover rounded-2xl p-5 border-l-4 border-l-teal-500 relative overflow-hidden">
+        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs relative overflow-hidden">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Tiết Kiệm Tháng Này</span>
-            <div className="p-2.5 rounded-xl bg-teal-500/10 text-teal-400">
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Tiết Kiệm Tháng Này</span>
+            <div className="p-2.5 rounded-xl bg-teal-50 text-teal-600">
               <PiggyBank className="w-5 h-5" />
             </div>
           </div>
-          <div className={`text-2xl font-black mb-1 ${stats.netSavingsMonth >= 0 ? 'text-teal-400' : 'text-rose-400'}`}>
+          <div className={`text-2xl font-black mb-1 ${stats.netSavingsMonth >= 0 ? 'text-teal-600' : 'text-rose-600'}`}>
             {formatCurrency(stats.netSavingsMonth)}
           </div>
-          <p className="text-xs text-slate-400">Thu nhập dư ra sau chi tiêu</p>
+          <p className="text-xs text-slate-500">Thu nhập dư ra sau chi tiêu</p>
         </div>
       </div>
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Area Chart: Cash Flow */}
-        <div className="lg:col-span-2 glass-card rounded-2xl p-5 border border-slate-800 flex flex-col justify-between">
+        <div className="lg:col-span-2 bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="font-bold text-slate-200">Xu Hướng Dòng Tiền (6 Tháng)</h3>
-              <p className="text-xs text-slate-400">So sánh Thu nhập vs Chi tiêu theo thời gian</p>
+              <h3 className="font-bold text-slate-900">Xu Hướng Dòng Tiền (6 Tháng)</h3>
+              <p className="text-xs text-slate-500">So sánh Thu nhập vs Chi tiêu theo thời gian</p>
             </div>
             <div className="flex items-center space-x-4 text-xs font-medium">
-              <span className="flex items-center gap-1.5 text-emerald-400">
+              <span className="flex items-center gap-1.5 text-emerald-600">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Thu nhập
               </span>
-              <span className="flex items-center gap-1.5 text-rose-400">
+              <span className="flex items-center gap-1.5 text-rose-600">
                 <span className="w-2.5 h-2.5 rounded-full bg-rose-500"></span> Chi tiêu
               </span>
             </div>
@@ -203,19 +203,19 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onOpenAddM
               <AreaChart data={monthlyChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.4} />
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
                     <stop offset="95%" stopColor="#10b981" stopOpacity={0.0} />
                   </linearGradient>
                   <linearGradient id="colorExpense" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.4} />
+                    <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.3} />
                     <stop offset="95%" stopColor="#f43f5e" stopOpacity={0.0} />
                   </linearGradient>
                 </defs>
-                <XAxis dataKey="month" stroke="#64748b" fontSize={12} tickLine={false} />
-                <YAxis stroke="#64748b" fontSize={11} tickLine={false} tickFormatter={(v) => `${v / 1000000}M`} />
+                <XAxis dataKey="month" stroke="#94a3b8" fontSize={12} tickLine={false} />
+                <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} tickFormatter={(v) => `${v / 1000000}M`} />
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '12px', fontSize: '12px' }}
-                  formatter={(val) => [formatCurrency(Number(val)), '']}
+                  contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', color: '#0f172a', borderRadius: '12px', fontSize: '12px' }}
+                  formatter={(val: any) => [formatCurrency(Number(val || 0)), '']}
                 />
                 <Area type="monotone" dataKey="income" stroke="#10b981" strokeWidth={2.5} fillOpacity={1} fill="url(#colorIncome)" />
                 <Area type="monotone" dataKey="expense" stroke="#f43f5e" strokeWidth={2.5} fillOpacity={1} fill="url(#colorExpense)" />
@@ -225,10 +225,10 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onOpenAddM
         </div>
 
         {/* Pie Chart: Expense Breakdown */}
-        <div className="glass-card rounded-2xl p-5 border border-slate-800 flex flex-col justify-between">
+        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex flex-col justify-between">
           <div>
-            <h3 className="font-bold text-slate-200 mb-1">Tỷ Trọng Chi Tiêu</h3>
-            <p className="text-xs text-slate-400 mb-4">Phân bổ khoản chi theo danh mục</p>
+            <h3 className="font-bold text-slate-900 mb-1">Tỷ Trọng Chi Tiêu</h3>
+            <p className="text-xs text-slate-500 mb-4">Phân bổ khoản chi theo danh mục</p>
 
             {categoryPieData.length > 0 ? (
               <div className="h-48 w-full flex items-center justify-center">
@@ -248,28 +248,28 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onOpenAddM
                       ))}
                     </Pie>
                     <Tooltip
-                      contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '12px', fontSize: '12px' }}
-                      formatter={(val) => [formatCurrency(Number(val)), 'Số tiền']}
+                      contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', color: '#0f172a', borderRadius: '8px' }}
+                      formatter={(val: any) => [formatCurrency(Number(val || 0)), '']}
                     />
                   </RePieChart>
                 </ResponsiveContainer>
               </div>
             ) : (
-              <div className="h-48 flex items-center justify-center text-slate-500 text-xs">
+              <div className="h-48 flex items-center justify-center text-xs text-slate-400">
                 Chưa có dữ liệu chi tiêu
               </div>
             )}
           </div>
 
-          {/* Top 3 list */}
-          <div className="space-y-2 mt-2 pt-3 border-t border-slate-800">
-            {categoryPieData.slice(0, 3).map((item) => (
-              <div key={item.name} className="flex items-center justify-between text-xs">
-                <div className="flex items-center space-x-2">
-                  <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }} />
-                  <span className="text-slate-300 font-medium">{item.name}</span>
+          {/* Top 3 categories summary */}
+          <div className="space-y-2 pt-3 border-t border-slate-100">
+            {categoryPieData.slice(0, 3).map((item, i) => (
+              <div key={i} className="flex items-center justify-between text-xs">
+                <div className="flex items-center space-x-2 truncate">
+                  <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
+                  <span className="text-slate-700 truncate">{item.name}</span>
                 </div>
-                <span className="font-semibold text-slate-200">{formatCurrency(item.value)}</span>
+                <span className="font-semibold text-slate-900 shrink-0">{formatCurrency(item.value)}</span>
               </div>
             ))}
           </div>
@@ -277,68 +277,50 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onOpenAddM
       </div>
 
       {/* Recent Transactions List */}
-      <div className="glass-card rounded-2xl p-5 border border-slate-800">
-        <div className="flex items-center justify-between mb-4">
+      <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs space-y-4">
+        <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-bold text-slate-200">Giao Dịch Gần Đây</h3>
-            <p className="text-xs text-slate-400">Các khoản thu chi vừa được cập nhật</p>
+            <h3 className="font-bold text-slate-900">Giao Dịch Gần Đây</h3>
+            <p className="text-xs text-slate-500">Các khoản thu chi mới nhất</p>
           </div>
           <button
             onClick={() => setActiveTab('transactions')}
-            className="text-xs font-semibold text-emerald-400 hover:text-emerald-300 transition-colors"
+            className="text-xs font-semibold text-indigo-600 hover:text-indigo-700"
           >
-            Xem tất cả ({transactions.length}) →
+            Xem tất cả sổ giao dịch &rarr;
           </button>
         </div>
 
-        {recentTransactions.length > 0 ? (
-          <div className="space-y-2">
-            {recentTransactions.map((tx) => (
-              <div
-                key={tx.id}
-                className="flex items-center justify-between p-3 rounded-xl bg-slate-900/60 hover:bg-slate-800/80 border border-slate-800/80 transition-all group"
-              >
-                <div className="flex items-center space-x-3">
-                  <div
-                    className="w-10 h-10 rounded-xl flex items-center justify-center"
-                    style={{ backgroundColor: `${tx.category_color}20` }}
-                  >
-                    <DynamicIcon name={tx.category_icon} color={tx.category_color} className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-semibold text-slate-200">{tx.category_name}</h4>
-                    <p className="text-xs text-slate-400 flex items-center gap-2">
-                      <span>{tx.note || 'Không có ghi chú'}</span>
-                      <span>•</span>
-                      <span>{tx.date}</span>
-                    </p>
-                  </div>
+        <div className="divide-y divide-slate-100">
+          {recentTransactions.map((tx) => (
+            <div key={tx.id} className="py-3 flex items-center justify-between hover:bg-slate-50/60 transition-colors px-2 rounded-xl">
+              <div className="flex items-center space-x-3.5 min-w-0">
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center text-white shrink-0 shadow-xs"
+                  style={{ backgroundColor: tx.category_color || '#10b981' }}
+                >
+                  <DynamicIcon name={tx.category_icon || 'Wallet'} className="w-5 h-5" />
                 </div>
-
-                <div className="flex items-center space-x-3">
-                  <span
-                    className={`font-bold text-sm ${
-                      tx.type === 'income' ? 'text-emerald-400' : 'text-rose-400'
-                    }`}
-                  >
-                    {tx.type === 'income' ? '+' : '-'}{formatCurrency(tx.amount)}
-                  </span>
-                  <button
-                    onClick={() => deleteTransaction(tx.id)}
-                    className="opacity-0 group-hover:opacity-100 p-1.5 text-slate-500 hover:text-rose-400 transition-all"
-                    title="Xóa giao dịch"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                <div className="truncate">
+                  <div className="font-semibold text-slate-900 text-sm truncate">{tx.category_name}</div>
+                  <div className="text-xs text-slate-500 truncate">{tx.note || tx.date}</div>
                 </div>
               </div>
-            ))}
-          </div>
-        ) : (
-          <div className="py-8 text-center text-slate-500 text-sm">
-            Chưa có giao dịch nào được ghi nhận. Hãy bấm &quot;Ghi Nhận Giao Dịch&quot; để bắt đầu!
-          </div>
-        )}
+
+              <div className="text-right shrink-0 flex items-center space-x-3">
+                <div className={`font-bold text-sm ${tx.type === 'income' ? 'text-emerald-600' : 'text-slate-900'}`}>
+                  {tx.type === 'income' ? '+' : '-'}{formatCurrency(tx.amount)}
+                </div>
+                <button
+                  onClick={() => deleteTransaction(tx.id)}
+                  className="text-slate-400 hover:text-rose-600 p-1 rounded hover:bg-slate-100 transition-colors"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

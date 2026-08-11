@@ -59,158 +59,139 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen, onCl
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in">
-      <div className="w-full max-w-md glass-card rounded-2xl p-6 border border-slate-700/80 shadow-2xl relative">
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white bg-slate-800/60 hover:bg-slate-700 rounded-full transition-colors"
-        >
-          <X className="w-4 h-4" />
-        </button>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-xs">
+      <div className="w-full max-w-md bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-2xl relative space-y-4 max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+          <h3 className="text-lg font-bold text-slate-900">Ghi Nhận Giao Dịch Mới</h3>
+          <button onClick={onClose} className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
 
-        <h2 className="text-xl font-bold text-slate-100 mb-6 flex items-center gap-2">
-          Ghi Nhận Giao Dịch Mới
-        </h2>
-
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Type Toggle */}
-          <div className="grid grid-cols-2 gap-3 p-1 bg-slate-900/80 rounded-xl border border-slate-800">
-            <button
-              type="button"
-              onClick={() => {
-                setType('expense');
-                const firstExp = categories.find((c) => c.type === 'expense');
-                if (firstExp) setCategoryId(firstExp.id);
-              }}
-              className={`flex items-center justify-center space-x-2 py-2.5 rounded-lg text-sm font-semibold transition-all ${
-                type === 'expense'
-                  ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40 shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              <ArrowDownRight className="w-4 h-4 text-rose-400" />
-              <span>Tiền Chi (Khoản chi)</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setType('income');
-                const firstInc = categories.find((c) => c.type === 'income');
-                if (firstInc) setCategoryId(firstInc.id);
-              }}
-              className={`flex items-center justify-center space-x-2 py-2.5 rounded-lg text-sm font-semibold transition-all ${
-                type === 'income'
-                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              <ArrowUpRight className="w-4 h-4 text-emerald-400" />
-              <span>Tiền Thu (Thu nhập)</span>
-            </button>
-          </div>
-
-          {/* Amount Input */}
-          <div>
-            <label className="block text-xs font-semibold text-slate-400 mb-1.5 flex items-center gap-1.5">
-              <Banknote className="w-3.5 h-3.5 text-emerald-400" />
-              Số tiền (VNĐ)
-            </label>
-            <div className="relative">
-              <input
-                type="text"
-                required
-                placeholder="0"
-                value={amount ? Number(amount.replace(/[^0-9]/g, '')).toLocaleString('vi-VN') : ''}
-                onChange={(e) => {
-                  const raw = e.target.value.replace(/[^0-9]/g, '');
-                  setAmount(raw);
-                }}
-                className="w-full bg-slate-900/90 text-2xl font-bold text-slate-100 border border-slate-700 focus:border-emerald-500 rounded-xl px-4 py-3 outline-none transition-all placeholder:text-slate-600"
-              />
-              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400">
-                đ
-              </span>
-            </div>
-            {amount && !isNaN(Number(amount)) && (
-              <p className="text-xs text-emerald-400 font-medium mt-1">
-                = {formatCurrency(Number(amount))}
-              </p>
-            )}
-          </div>
-
-          {/* Category Selector */}
-          <div>
-            <label className="block text-xs font-semibold text-slate-400 mb-1.5 flex items-center gap-1.5">
-              <Tag className="w-3.5 h-3.5 text-indigo-400" />
-              Danh mục
-            </label>
-            <div className="grid grid-cols-4 gap-2 max-h-36 overflow-y-auto pr-1">
-              {filteredCategories.map((cat) => {
-                const isSelected = selectedCategory?.id === cat.id;
-
-                return (
-                  <button
-                    key={cat.id}
-                    type="button"
-                    onClick={() => setCategoryId(cat.id)}
-                    className={`flex flex-col items-center justify-center p-2.5 rounded-xl border text-xs transition-all ${
-                      isSelected
-                        ? 'bg-slate-800 border-slate-500 text-white shadow-md'
-                        : 'bg-slate-900/60 border-slate-800/80 text-slate-400 hover:bg-slate-800/50'
-                    }`}
-                  >
-                    <DynamicIcon name={cat.icon} color={cat.color} className="w-5 h-5 mb-1" />
-                    <span className="truncate w-full text-center text-[11px] font-medium">{cat.name}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Date & Note */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1.5 flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-blue-400" />
-                Ngày giao dịch
-              </label>
-              <input
-                type="date"
-                required
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                className="w-full bg-slate-900/90 text-sm text-slate-200 border border-slate-700 focus:border-emerald-500 rounded-xl px-3 py-2.5 outline-none"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1.5 flex items-center gap-1.5">
-                <FileText className="w-3.5 h-3.5 text-amber-400" />
-                Ghi chú
-              </label>
-              <input
-                type="text"
-                placeholder="Vd: Đi ăn tối, Mua đồ..."
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                className="w-full bg-slate-900/90 text-sm text-slate-200 border border-slate-700 focus:border-emerald-500 rounded-xl px-3 py-2.5 outline-none placeholder:text-slate-600"
-              />
-            </div>
-          </div>
-
-          {/* Submit Button */}
+        {/* Type Toggle */}
+        <div className="grid grid-cols-2 gap-2 bg-slate-100 p-1 rounded-xl">
           <button
-            type="submit"
-            disabled={isSubmitting}
-            className={`w-full py-3.5 rounded-xl font-bold text-sm text-white shadow-lg transition-all ${
+            type="button"
+            onClick={() => {
+              setType('expense');
+              const firstExp = categories.find((c) => c.type === 'expense');
+              if (firstExp) setCategoryId(firstExp.id);
+            }}
+            className={`flex items-center justify-center space-x-2 py-2 rounded-lg text-xs font-bold transition-all ${
               type === 'expense'
-                ? 'bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-400 hover:to-pink-500 shadow-rose-500/25'
-                : 'bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 shadow-emerald-500/25'
+                ? 'bg-rose-600 text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            {isSubmitting ? 'Đang lưu...' : type === 'expense' ? 'Xác Nhận Chi Tiêu' : 'Xác Nhận Thu Nhập'}
+            <ArrowDownRight className="w-4 h-4" />
+            <span>Khoản Chi Tiêu (-)</span>
           </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setType('income');
+              const firstInc = categories.find((c) => c.type === 'income');
+              if (firstInc) setCategoryId(firstInc.id);
+            }}
+            className={`flex items-center justify-center space-x-2 py-2 rounded-lg text-xs font-bold transition-all ${
+              type === 'income'
+                ? 'bg-emerald-600 text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <ArrowUpRight className="w-4 h-4" />
+            <span>Khoản Thu Nhập (+)</span>
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4 text-sm text-slate-700">
+          {/* Amount Input */}
+          <div>
+            <label className="block text-xs font-semibold text-slate-600 mb-1 flex items-center gap-1">
+              <Banknote className="w-3.5 h-3.5 text-slate-400" />
+              <span>Số tiền (VNĐ) (*)</span>
+            </label>
+            <input
+              type="number"
+              required
+              autoFocus
+              placeholder="0"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-3 text-slate-900 text-lg font-bold focus:outline-none focus:border-indigo-500 focus:bg-white"
+            />
+          </div>
+
+          {/* Category Select */}
+          <div>
+            <label className="block text-xs font-semibold text-slate-600 mb-1 flex items-center gap-1">
+              <Tag className="w-3.5 h-3.5 text-slate-400" />
+              <span>Danh mục giao dịch</span>
+            </label>
+            <select
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-indigo-500 focus:bg-white"
+            >
+              {filteredCategories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Date Input */}
+          <div>
+            <label className="block text-xs font-semibold text-slate-600 mb-1 flex items-center gap-1">
+              <Calendar className="w-3.5 h-3.5 text-slate-400" />
+              <span>Ngày phát sinh</span>
+            </label>
+            <input
+              type="date"
+              required
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-indigo-500 focus:bg-white"
+            />
+          </div>
+
+          {/* Note Input */}
+          <div>
+            <label className="block text-xs font-semibold text-slate-600 mb-1 flex items-center gap-1">
+              <FileText className="w-3.5 h-3.5 text-slate-400" />
+              <span>Ghi chú thêm</span>
+            </label>
+            <input
+              type="text"
+              placeholder="VD: Ăn sáng, Lương tháng 8..."
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-indigo-500 focus:bg-white"
+            />
+          </div>
+
+          {/* Form Actions */}
+          <div className="flex items-center justify-end space-x-3 pt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 font-medium"
+            >
+              Hủy
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className={`px-5 py-2.5 rounded-xl font-bold text-white shadow-xs transition-all ${
+                type === 'income' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-rose-600 hover:bg-rose-700'
+              }`}
+            >
+              {isSubmitting ? 'Đang lưu...' : 'Lưu Giao Dịch'}
+            </button>
+          </div>
         </form>
       </div>
     </div>

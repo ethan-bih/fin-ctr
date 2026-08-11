@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { FinanceProvider, useFinance } from '@/context/FinanceContext';
-import { Navbar } from '@/components/Navbar';
+import { WeddingProvider } from '@/context/WeddingContext';
 import { Sidebar } from '@/components/Sidebar';
 import { DashboardOverview } from '@/components/DashboardOverview';
 import { SixJarsTracker } from '@/components/SixJarsTracker';
@@ -11,28 +11,32 @@ import { BudgetTracker } from '@/components/BudgetTracker';
 import { SavingsGoals } from '@/components/SavingsGoals';
 import { ReportsAnalytics } from '@/components/ReportsAnalytics';
 import { SettingsConfig } from '@/components/SettingsConfig';
+import { WeddingModule } from '@/components/wedding/WeddingModule';
 import { TransactionModal } from '@/components/TransactionModal';
 
 function MainAppContent() {
   const { activeTab } = useFinance();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
   const handleOpenAddModal = () => setIsAddModalOpen(true);
   const handleCloseAddModal = () => setIsAddModalOpen(false);
 
   return (
-    <div className="min-h-screen bg-[#090d16] text-slate-100 flex flex-col selection:bg-emerald-500 selection:text-black">
-      {/* Top Navbar */}
-      <Navbar onOpenAddModal={handleOpenAddModal} />
-
-      {/* Main Layout Area */}
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-emerald-500 selection:text-white">
+      {/* Main Layout Area Without Top Header */}
       <div className="flex-1 flex max-w-7xl w-full mx-auto">
         {/* Left Sidebar */}
-        <Sidebar />
+        <Sidebar
+          isMobileDrawerOpen={isMobileDrawerOpen}
+          setIsMobileDrawerOpen={setIsMobileDrawerOpen}
+          onOpenAddModal={handleOpenAddModal}
+        />
 
         {/* Dynamic Content View */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 min-w-0">
+        <main className="flex-1 p-3.5 sm:p-6 lg:p-8 min-w-0 pb-20 lg:pb-8">
           {activeTab === 'dashboard' && <DashboardOverview onOpenAddModal={handleOpenAddModal} />}
+          {activeTab === 'wedding' && <WeddingModule />}
           {activeTab === 'jars' && <SixJarsTracker />}
           {activeTab === 'transactions' && <TransactionList onOpenAddModal={handleOpenAddModal} />}
           {activeTab === 'budgets' && <BudgetTracker />}
@@ -51,7 +55,9 @@ function MainAppContent() {
 export default function Home() {
   return (
     <FinanceProvider>
-      <MainAppContent />
+      <WeddingProvider>
+        <MainAppContent />
+      </WeddingProvider>
     </FinanceProvider>
   );
 }
