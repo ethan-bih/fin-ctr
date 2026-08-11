@@ -1,11 +1,11 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { Transaction, Budget, SavingsGoal, Category, UserProfile, JarType } from '@/lib/types';
+import { Transaction, Budget, SavingsGoal, Category, UserProfile, JarType, UserAccount, UserRole } from '@/lib/types';
 import { DEFAULT_CATEGORIES, INITIAL_MOCK_TRANSACTIONS, INITIAL_MOCK_BUDGETS, INITIAL_MOCK_SAVINGS, DEFAULT_JARS } from '@/lib/constants';
 import { createClient } from '@/lib/supabase/client';
 
-export type ActiveTabType = 'dashboard' | 'transactions' | 'budgets' | 'savings' | 'reports' | 'settings' | 'jars' | 'wedding';
+export type ActiveTabType = 'dashboard' | 'transactions' | 'budgets' | 'savings' | 'reports' | 'settings' | 'jars' | 'wedding' | 'user' | 'login';
 
 interface FinanceContextType {
   user: UserProfile | null;
@@ -13,6 +13,12 @@ interface FinanceContextType {
   activeTab: ActiveTabType;
   setActiveTab: (tab: ActiveTabType) => void;
   
+  usersList: UserAccount[];
+  loginWithCredentials: (usernameOrEmail: string, pass: string) => { success: boolean; message: string };
+  createUserAccount: (acc: Omit<UserAccount, 'id' | 'created_at'>) => { success: boolean; message: string };
+  deleteUserAccount: (id: string) => void;
+  updateUserProfile: (updates: Partial<UserProfile>) => void;
+
   transactions: Transaction[];
   categories: Category[];
   budgets: Budget[];
@@ -42,6 +48,18 @@ const LOCAL_STORAGE_TX_KEY = 'pf_transactions_v1';
 const LOCAL_STORAGE_BGT_KEY = 'pf_budgets_v1';
 const LOCAL_STORAGE_SAVING_KEY = 'pf_savings_v1';
 const LOCAL_STORAGE_JAR_RATIOS_KEY = 'pf_jar_ratios_v1';
+const LOCAL_STORAGE_USERS_KEY = 'pf_users_v1';
+const LOCAL_STORAGE_CURRENT_USER_KEY = 'pf_current_user_v1';
+
+const DEFAULT_ADMIN_ACCOUNT: UserAccount = {
+  id: 'usr-admin',
+  username: 'admin',
+  email: 'admin@system.local',
+  password: '123',
+  full_name: 'Quản trị viên (Admin)',
+  role: 'admin',
+  created_at: new Date().toISOString(),
+};
 
 const DEFAULT_RATIOS: Record<JarType, number> = {
   NEC: 55,
@@ -53,14 +71,10 @@ const DEFAULT_RATIOS: Record<JarType, number> = {
 };
 
 export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [activeTab, setActiveTab] = useState<ActiveTabType>('dashboard');
-  const [user, setUser] = useState<UserProfile | null>({
-    id: 'demo-user',
-    email: 'banbe@demo.vn',
-    full_name: 'Dùng thử (Demo)',
-    currency: 'VND',
-  });
+  const [activeTab, setActiveTab] = useState<ActiveTabType>('login');
+  const [user, setUser] = useState<UserProfile | null>(null);
   const [isLiveMode, setIsLiveMode] = useState<boolean>(false);
+  const [usersList, setUsersList] = useState<UserAccount[]>([DEFAULT_ADMIN_ACCOUNT]);
 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [categories] = useState<Category[]>(DEFAULT_CATEGORIES);
@@ -83,6 +97,87 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     localStorage.setItem(LOCAL_STORAGE_JAR_RATIOS_KEY, JSON.stringify(newRatios));
   };
 
+  // Login with Credentials
+  const loginWithCredentials = (usernameOrEmail: string, pass: string) => {
+    const trimmedInput = usernameOrEmail.trim().toLowerCase();
+    const found = usersList.find(
+      (u) =>
+        (u.username.toLowerCase() === trimmedInput || u.email.toLowerCase() === trimmedInput) &&
+        u.password === pass
+    );
+
+    if (found) {
+      const loggedUser: UserProfile = {
+        id: found.id,
+        username: found.username,
+        email: found.email,
+        full_name: found.full_name,
+        role: found.role,
+        avatar_url: found.avatar_url,
+        currency: 'VND',
+        couple_partner_name: 'Quang Huy & Yến Nhi',
+      };
+      setUser(loggedUser);
+      localStorage.setItem(LOCAL_STORAGE_CURRENT_USER_KEY, JSON.stringify(loggedUser));
+      setActiveTab('dashboard');
+      return { success: true, message: 'Đăng nhập thành công!' };
+    }
+
+    return { success: false, message: 'Tên đăng nhập hoặc mật khẩu không chính xác.' };
+  };
+
+  // Create User Account (Admin feature)
+  const createUserAccount = (accInput: Omit<UserAccount, 'id' | 'created_at'>) => {
+    const usernameExist = usersList.some(
+      (u) => u.username.toLowerCase() === accInput.username.trim().toLowerCase()
+    );
+    if (usernameExist) {
+      return { success: false, message: 'Tên đăng nhập (username) này đã tồn tại!' };
+    }
+
+    const newUser: UserAccount = {
+      ...accInput,
+      id: 'usr-' + Date.now(),
+      created_at: new Date().toISOString(),
+    };
+
+    const updated = [...usersList, newUser];
+    setUsersList(updated);
+    localStorage.setItem(LOCAL_STORAGE_USERS_KEY, JSON.stringify(updated));
+    return { success: true, message: 'Đã tạo tài khoản thành công!' };
+  };
+
+  // Delete User Account
+  const deleteUserAccount = (id: string) => {
+    if (id === DEFAULT_ADMIN_ACCOUNT.id) {
+      alert('Không thể xóa tài khoản Admin hệ thống mặc định!');
+      return;
+    }
+    const updated = usersList.filter((u) => u.id !== id);
+    setUsersList(updated);
+    localStorage.setItem(LOCAL_STORAGE_USERS_KEY, JSON.stringify(updated));
+  };
+
+  // Update User Profile
+  const updateUserProfile = (updates: Partial<UserProfile>) => {
+    setUser((prev) => (prev ? { ...prev, ...updates } : null));
+    if (user?.id) {
+      const updatedList = usersList.map((u) => {
+        if (u.id === user.id) {
+          return {
+            ...u,
+            full_name: updates.full_name ?? u.full_name,
+            email: updates.email ?? u.email,
+            avatar_url: updates.avatar_url ?? u.avatar_url,
+          };
+        }
+        return u;
+      });
+      setUsersList(updatedList);
+      localStorage.setItem(LOCAL_STORAGE_USERS_KEY, JSON.stringify(updatedList));
+    }
+  };
+
   // Initialize Data
   useEffect(() => {
     const supabase = createClient();
@@ -97,6 +192,7 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
             full_name: authUser.user_metadata?.full_name || authUser.user_metadata?.name || authUser.email || 'Người dùng',
             avatar_url: authUser.user_metadata?.avatar_url,
             currency: 'VND',
+            role: 'admin',
           });
           fetchSupabaseData(authUser.id);
         } else {
@@ -113,16 +209,11 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
             full_name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email || 'Người dùng',
             avatar_url: session.user.user_metadata?.avatar_url,
             currency: 'VND',
+            role: 'admin',
           });
           fetchSupabaseData(session.user.id);
         } else {
           setIsLiveMode(false);
-          setUser({
-            id: 'demo-user',
-            email: 'banbe@demo.vn',
-            full_name: 'Dùng thử (Demo)',
-            currency: 'VND',
-          });
           loadLocalStorageData();
         }
       });
@@ -137,10 +228,26 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   const loadLocalStorageData = () => {
     try {
+      const savedUsers = localStorage.getItem(LOCAL_STORAGE_USERS_KEY);
+      const savedCurrentUser = localStorage.getItem(LOCAL_STORAGE_CURRENT_USER_KEY);
       const savedTx = localStorage.getItem(LOCAL_STORAGE_TX_KEY);
       const savedBgt = localStorage.getItem(LOCAL_STORAGE_BGT_KEY);
       const savedSvg = localStorage.getItem(LOCAL_STORAGE_SAVING_KEY);
       const savedRatios = localStorage.getItem(LOCAL_STORAGE_JAR_RATIOS_KEY);
+
+      if (savedUsers) {
+        setUsersList(JSON.parse(savedUsers));
+      } else {
+        localStorage.setItem(LOCAL_STORAGE_USERS_KEY, JSON.stringify([DEFAULT_ADMIN_ACCOUNT]));
+      }
+
+      if (savedCurrentUser) {
+        setUser(JSON.parse(savedCurrentUser));
+        setActiveTab('dashboard');
+      } else {
+        setUser(null);
+        setActiveTab('login');
+      }
 
       setTransactions(savedTx ? JSON.parse(savedTx) : INITIAL_MOCK_TRANSACTIONS);
       setBudgets(savedBgt ? JSON.parse(savedBgt) : INITIAL_MOCK_BUDGETS);
@@ -340,13 +447,9 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
       await supabase.auth.signOut();
     }
     setIsLiveMode(false);
-    setUser({
-      id: 'demo-user',
-      email: 'banbe@demo.vn',
-      full_name: 'Dùng thử (Demo)',
-      currency: 'VND',
-    });
-    loadLocalStorageData();
+    localStorage.removeItem(LOCAL_STORAGE_CURRENT_USER_KEY);
+    setUser(null);
+    setActiveTab('login');
   };
 
   const resetDemoData = () => {
@@ -354,6 +457,18 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     localStorage.removeItem(LOCAL_STORAGE_BGT_KEY);
     localStorage.removeItem(LOCAL_STORAGE_SAVING_KEY);
     localStorage.removeItem(LOCAL_STORAGE_JAR_RATIOS_KEY);
+    localStorage.removeItem(LOCAL_STORAGE_USERS_KEY);
+    localStorage.removeItem(LOCAL_STORAGE_CURRENT_USER_KEY);
+    setUsersList([DEFAULT_ADMIN_ACCOUNT]);
+    setUser({
+      id: DEFAULT_ADMIN_ACCOUNT.id,
+      username: DEFAULT_ADMIN_ACCOUNT.username,
+      email: DEFAULT_ADMIN_ACCOUNT.email,
+      full_name: DEFAULT_ADMIN_ACCOUNT.full_name,
+      role: DEFAULT_ADMIN_ACCOUNT.role,
+      currency: 'VND',
+      couple_partner_name: 'Quang Huy & Yến Nhi',
+    });
     setTransactions(INITIAL_MOCK_TRANSACTIONS);
     setBudgets(INITIAL_MOCK_BUDGETS);
     setSavingsGoals(INITIAL_MOCK_SAVINGS);
@@ -367,6 +482,11 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
         isLiveMode,
         activeTab,
         setActiveTab,
+        usersList,
+        loginWithCredentials,
+        createUserAccount,
+        deleteUserAccount,
+        updateUserProfile,
         transactions,
         categories,
         budgets,

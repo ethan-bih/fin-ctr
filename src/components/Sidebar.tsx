@@ -16,6 +16,9 @@ import {
   ChevronRight,
   Plus,
   Wallet,
+  User,
+  LogIn,
+  ShieldCheck,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -29,7 +32,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   setIsMobileDrawerOpen,
   onOpenAddModal,
 }) => {
-  const { activeTab, setActiveTab } = useFinance();
+  const { activeTab, setActiveTab, user } = useFinance();
 
   const navItems: { id: ActiveTabType; label: string; icon: React.ElementType }[] = [
     { id: 'dashboard', label: 'Tổng Quan', icon: LayoutDashboard },
@@ -39,6 +42,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { id: 'budgets', label: 'Hạn Mức Chi', icon: PieChart },
     { id: 'savings', label: 'Quỹ Tiết Kiệm', icon: Target },
     { id: 'reports', label: 'Báo Cáo Thống Kê', icon: BarChart3 },
+    { id: 'user', label: 'Tài Khoản User', icon: User },
     { id: 'settings', label: 'Cấu Hình Supabase', icon: Settings },
   ];
 
@@ -47,12 +51,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
     if (setIsMobileDrawerOpen) setIsMobileDrawerOpen(false);
   };
 
-  // Quick 4 items for mobile bottom bar
+  // Quick 5 items for mobile bottom bar
   const mainBottomTabs: { id: ActiveTabType; label: string; icon: React.ElementType }[] = [
     { id: 'dashboard', label: 'Tổng quan', icon: LayoutDashboard },
     { id: 'wedding', label: 'Đám cưới', icon: HeartHandshake },
     { id: 'transactions', label: 'Giao dịch', icon: Receipt },
-    { id: 'jars', label: '6 Hũ', icon: Coins },
+    { id: 'user', label: 'Cá nhân', icon: User },
   ];
 
   return (

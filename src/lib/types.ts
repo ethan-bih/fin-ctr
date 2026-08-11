@@ -59,12 +59,28 @@ export interface SavingsGoal {
   icon: string;
 }
 
+export type UserRole = 'admin' | 'user';
+
+export interface UserAccount {
+  id: string;
+  username: string;
+  email: string;
+  password?: string;
+  full_name: string;
+  role: UserRole;
+  avatar_url?: string;
+  created_at: string;
+}
+
 export interface UserProfile {
   id: string;
+  username?: string;
   email: string;
   full_name: string;
   avatar_url?: string;
   currency: 'VND' | 'USD';
+  role?: UserRole;
+  couple_partner_name?: string;
 }
 
 export interface FinanceSummary {

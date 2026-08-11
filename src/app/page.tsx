@@ -14,14 +14,25 @@ import { ReportsAnalytics } from '@/components/ReportsAnalytics';
 import { SettingsConfig } from '@/components/SettingsConfig';
 import { WeddingModule } from '@/components/wedding/WeddingModule';
 import { TransactionModal } from '@/components/TransactionModal';
+import { LoginPage } from '@/components/auth/LoginPage';
+import { UserProfilePage } from '@/components/user/UserProfilePage';
 
 function MainAppContent() {
-  const { activeTab } = useFinance();
+  const { user, activeTab } = useFinance();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
   const handleOpenAddModal = () => setIsAddModalOpen(true);
   const handleCloseAddModal = () => setIsAddModalOpen(false);
+
+  // If user is not logged in or active tab is login, show Full-Screen Login Page cleanly!
+  if (!user || activeTab === 'login') {
+    return (
+      <div className="min-h-screen bg-white text-slate-900 flex items-center justify-center p-4 selection:bg-rose-500 selection:text-white">
+        <LoginPage />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-rose-500 selection:text-white">
@@ -42,6 +53,7 @@ function MainAppContent() {
 
         {/* Dynamic Content View */}
         <main className="flex-1 p-3.5 sm:p-6 lg:p-8 min-w-0 pb-24 lg:pb-8">
+          {activeTab === 'user' && <UserProfilePage />}
           {activeTab === 'dashboard' && <DashboardOverview onOpenAddModal={handleOpenAddModal} />}
           {activeTab === 'wedding' && <WeddingModule />}
           {activeTab === 'jars' && <SixJarsTracker />}
