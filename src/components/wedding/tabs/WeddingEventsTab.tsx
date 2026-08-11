@@ -37,25 +37,25 @@ export const WeddingEventsTab: React.FC<WeddingEventsTabProps> = ({ onOpenEventM
   return (
     <div className="space-y-6">
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+      <div className="flex items-center justify-between gap-2 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs">
         <div>
-          <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-            <span>Lịch Lễ & Các Ngày Sự Kiện Cưới</span>
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">
-              {eventDates.length} ngày lễ
+          <h2 className="text-base sm:text-xl font-bold text-slate-900 flex items-center gap-2">
+            <span>Lịch Lễ &amp; Sự Kiện</span>
+            <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200 shrink-0">
+              {eventDates.length} ngày
             </span>
           </h2>
-          <p className="text-xs text-slate-500 mt-1">
-            Thiết lập lịch trình cho từng ngày lễ (Dạm ngõ, Đám hỏi, Tiệc nhà trai, Tiệc nhà gái...) và liên kết với ngân sách &amp; công việc
+          <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 hidden sm:block">
+            Quản lý lịch trình các ngày lễ (Dạm ngõ, Đám hỏi, Tiệc nhà trai, Tiệc nhà gái...)
           </p>
         </div>
 
         <button
           onClick={() => onOpenEventModal()}
-          className="flex items-center justify-center space-x-2 px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-medium text-sm shadow-xs transition-all shrink-0"
+          className="flex items-center justify-center space-x-1 px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs sm:text-sm shadow-2xs transition-all shrink-0"
         >
-          <Plus className="w-4 h-4" />
-          <span>Thêm Ngày Lễ Mới</span>
+          <Plus className="w-3.5 h-3.5" />
+          <span>Thêm Ngày Lễ</span>
         </button>
       </div>
 

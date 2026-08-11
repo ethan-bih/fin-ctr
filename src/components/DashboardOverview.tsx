@@ -105,18 +105,18 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onOpenAddM
 
   return (
     <div className="space-y-6 animate-fade-in pb-12">
-      {/* Top Banner & Stats */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Top Banner */}
+      <div className="flex items-center justify-between gap-2 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">Tổng Quan Tài Chính</h2>
-          <p className="text-sm text-slate-500">Theo dõi thu chi và tình hình tài chính cá nhân</p>
+          <h2 className="text-base sm:text-xl font-bold text-slate-900">Tổng Quan Tài Chính</h2>
+          <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 hidden sm:block">Theo dõi thu chi và tình hình tài chính cá nhân</p>
         </div>
         <button
           onClick={onOpenAddModal}
-          className="self-start sm:self-auto flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl shadow-xs transition-all"
+          className="flex items-center justify-center space-x-1 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-2xs transition-all shrink-0"
         >
-          <Plus className="w-4 h-4" />
-          <span>Ghi Nhận Giao Dịch</span>
+          <Plus className="w-3.5 h-3.5" />
+          <span>Ghi Thu/Chi</span>
         </button>
       </div>
 

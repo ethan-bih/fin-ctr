@@ -57,26 +57,26 @@ export const TransactionList: React.FC<TransactionListProps> = ({ onOpenAddModal
 
   return (
     <div className="space-y-5 animate-fade-in pb-12">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Header Banner */}
+      <div className="flex items-center justify-between gap-2 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-900">Sổ Giao Dịch Thu Chi</h2>
-          <p className="text-xs sm:text-sm text-slate-500">Danh sách toàn bộ lịch sử thu chi tài chính của bạn</p>
+          <h2 className="text-base sm:text-xl font-bold text-slate-900">Sổ Giao Dịch Thu Chi</h2>
+          <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 hidden sm:block">Danh sách toàn bộ lịch sử thu chi tài chính của bạn</p>
         </div>
-        <div className="flex items-center space-x-2.5">
+        <div className="flex items-center space-x-2 shrink-0">
           <button
             onClick={handleExportCSV}
-            className="flex-1 sm:flex-none flex items-center justify-center space-x-1.5 bg-white hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-semibold px-3 py-2 rounded-xl border border-slate-200 shadow-2xs transition-all"
+            className="flex items-center space-x-1 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold px-2.5 py-1.5 rounded-xl border border-slate-200 shadow-2xs transition-all"
           >
-            <Download className="w-4 h-4 text-indigo-600" />
-            <span>Xuất CSV</span>
+            <Download className="w-3.5 h-3.5 text-indigo-600" />
+            <span>CSV</span>
           </button>
           <button
             onClick={onOpenAddModal}
-            className="flex-1 sm:flex-none flex items-center justify-center space-x-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-xl shadow-xs transition-all"
+            className="flex items-center space-x-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-2xs transition-all"
           >
-            <Plus className="w-4 h-4" />
-            <span>Thêm Mới</span>
+            <Plus className="w-3.5 h-3.5" />
+            <span>Thêm</span>
           </button>
         </div>
       </div>

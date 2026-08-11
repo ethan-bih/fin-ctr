@@ -78,14 +78,10 @@ export const SixJarsTracker: React.FC = () => {
   return (
     <div className="space-y-6 animate-fade-in pb-12">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+      <div className="flex items-center justify-between gap-2 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs">
         <div>
-          <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-            <span>Quy Tắc 6 Hũ Tài Chính (JARS System)</span>
-          </h2>
-          <p className="text-xs text-slate-500 mt-1">
-            Phương pháp phân bổ thu nhập thông minh theo tỷ lệ chuẩn 55-10-10-10-10-5
-          </p>
+          <h2 className="text-base sm:text-xl font-bold text-slate-900">Quy Tắc 6 Hũ Tài Chính</h2>
+          <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 hidden sm:block">Phương pháp phân bổ thu nhập thông minh (JARS System)</p>
         </div>
 
         <button
@@ -93,10 +89,10 @@ export const SixJarsTracker: React.FC = () => {
             setTempRatios(jarRatios);
             setIsConfiguring(!isConfiguring);
           }}
-          className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-xs transition-all shrink-0"
+          className="flex items-center justify-center space-x-1 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm shadow-2xs transition-all shrink-0"
         >
-          <Sliders className="w-4 h-4 text-emerald-400" />
-          <span>Tùy Chỉnh Tỷ Lệ % Hũ</span>
+          <Sliders className="w-3.5 h-3.5 text-emerald-400" />
+          <span>Tỷ Lệ %</span>
         </button>
       </div>
 

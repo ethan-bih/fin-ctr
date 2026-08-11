@@ -36,26 +36,26 @@ export const WeddingBudgetTab: React.FC<WeddingBudgetTabProps> = ({ onOpenBudget
 
   return (
     <div className="space-y-5">
-      {/* Header & Controls */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs">
+      {/* Header Banner */}
+      <div className="flex items-center justify-between gap-2 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs">
         <div>
-          <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-            <span>Ngân Sách & Chi Phí Đám Cưới</span>
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-              {filteredBudgets.length} hạng mục
+          <h2 className="text-base sm:text-xl font-bold text-slate-900 flex items-center gap-2">
+            <span>Ngân Sách &amp; Chi Phí</span>
+            <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
+              {filteredBudgets.length} mục
             </span>
           </h2>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 hidden sm:block">
             Theo dõi ngân sách dự kiến, chi phí thực tế và tiền đặt cọc
           </p>
         </div>
 
         <button
           onClick={() => onOpenBudgetModal()}
-          className="flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs sm:text-sm shadow-xs transition-all shrink-0"
+          className="flex items-center justify-center space-x-1 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-2xs transition-all shrink-0"
         >
-          <Plus className="w-4 h-4" />
-          <span>Thêm Hạng Mục Chi Phí</span>
+          <Plus className="w-3.5 h-3.5" />
+          <span>Thêm Chi Phí</span>
         </button>
       </div>
 

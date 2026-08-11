@@ -76,18 +76,18 @@ export const WeddingModule: React.FC = () => {
 
   const subNavItems: { id: SubTabType; label: string; icon: React.ElementType }[] = [
     { id: 'overview', label: 'Tổng Quan', icon: LayoutDashboard },
-    { id: 'events', label: 'Lịch Các Ngày Lễ', icon: CalendarDays },
-    { id: 'timeline', label: 'Timeline & Task', icon: CheckSquare },
+    { id: 'events', label: 'Lịch Ngày Lễ', icon: CalendarDays },
+    { id: 'timeline', label: 'Công Việc', icon: CheckSquare },
     { id: 'budget', label: 'Ngân Sách', icon: Wallet },
-    { id: 'guests', label: 'Khách Mời (RSVP)', icon: Users },
-    { id: 'vendors', label: 'Nhà Cung Cấp', icon: Store },
-    { id: 'gifts', label: 'Mâm Quả Đám Hỏi', icon: Gift },
+    { id: 'guests', label: 'Khách Mời', icon: Users },
+    { id: 'vendors', label: 'Cung Cấp', icon: Store },
+    { id: 'gifts', label: 'Mâm Quả', icon: Gift },
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Sub-navigation Tabs */}
-      <div className="bg-white p-1.5 rounded-2xl border border-slate-200 shadow-xs flex items-center space-x-1.5 overflow-x-auto scrollbar-none scroll-smooth">
+      <div className="bg-white p-1 rounded-2xl border border-slate-200 shadow-2xs flex items-center space-x-1 overflow-x-auto scrollbar-none scroll-smooth">
         {subNavItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeSubTab === item.id;
@@ -95,13 +95,13 @@ export const WeddingModule: React.FC = () => {
             <button
               key={item.id}
               onClick={() => setActiveSubTab(item.id)}
-              className={`flex items-center space-x-2 px-3.5 py-2 rounded-xl font-semibold text-xs sm:text-sm whitespace-nowrap transition-all duration-150 shrink-0 ${
+              className={`flex items-center space-x-1.5 px-3 py-2 rounded-xl font-bold text-xs sm:text-sm whitespace-nowrap transition-all duration-150 shrink-0 ${
                 isActive
-                  ? 'bg-rose-50 text-rose-700 font-bold border border-rose-200/80 shadow-2xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-transparent'
+                  ? 'bg-rose-600 text-white shadow-2xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent'
               }`}
             >
-              <Icon className={`w-4 h-4 ${isActive ? 'text-rose-600' : 'text-slate-400'}`} />
+              <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-slate-400'}`} />
               <span>{item.label}</span>
             </button>
           );

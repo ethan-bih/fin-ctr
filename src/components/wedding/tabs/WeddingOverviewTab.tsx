@@ -73,20 +73,20 @@ export const WeddingOverviewTab: React.FC<WeddingOverviewTabProps> = ({
   return (
     <div className="space-y-6">
       {/* Romantic Banner & Countdown Timer */}
-      <div className="relative overflow-hidden rounded-2xl bg-white border border-rose-200/80 p-5 sm:p-6 shadow-xs">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-          <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-600 text-xs font-bold border border-rose-200/80">
-              <Sparkles className="w-3.5 h-3.5 text-rose-500" />
-              <span>WEDDING PLAN & EVENT DASHBOARD</span>
+      <div className="relative overflow-hidden rounded-2xl bg-white border border-rose-200/80 p-3.5 sm:p-6 shadow-xs">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 sm:gap-6">
+          <div className="space-y-1.5 max-w-2xl">
+            <div className="inline-flex items-center space-x-1.5 px-2 py-0.5 rounded-full bg-rose-50 text-rose-600 text-[11px] font-bold border border-rose-200/80">
+              <Sparkles className="w-3 h-3 text-rose-500" />
+              <span>WEDDING PLANNER</span>
             </div>
             
             <div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight flex flex-wrap items-center gap-x-2.5 gap-y-1 leading-snug">
+              <h1 className="text-lg sm:text-3xl font-extrabold text-slate-900 tracking-tight flex flex-wrap items-center gap-x-2 gap-y-1 leading-snug">
                 <span>Kế Hoạch Đám Cưới:</span>
-                <span className="text-rose-600 flex items-center gap-1.5 font-black whitespace-nowrap">
+                <span className="text-rose-600 flex items-center gap-1 font-black whitespace-nowrap">
                   Quốc Huy &amp; Yến Nhi
-                  <Heart className="w-5 h-5 text-rose-500 fill-rose-500 shrink-0 inline-block" />
+                  <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-rose-500 fill-rose-500 shrink-0 inline-block" />
                 </span>
               </h1>
             </div>

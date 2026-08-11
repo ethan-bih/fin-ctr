@@ -70,18 +70,18 @@ export const SavingsGoals: React.FC = () => {
 
   return (
     <div className="space-y-6 animate-fade-in pb-12">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs">
+      {/* Header Banner */}
+      <div className="flex items-center justify-between gap-2 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-900">Quỹ Tiết Kiệm &amp; Mục Tiêu Tích Lũy</h2>
-          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">Thiết lập các mục tiêu tài chính dài hạn (Mua xe, Du lịch, Quỹ dự phòng...)</p>
+          <h2 className="text-base sm:text-xl font-bold text-slate-900">Quỹ Tiết Kiệm</h2>
+          <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 hidden sm:block">Thiết lập các mục tiêu tài chính tích lũy dài hạn</p>
         </div>
         <button
           onClick={() => setIsAdding(!isAdding)}
-          className="flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-semibold px-4 py-2.5 rounded-xl shadow-xs transition-all shrink-0"
+          className="flex items-center justify-center space-x-1 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-2xs transition-all shrink-0"
         >
-          <Plus className="w-4 h-4" />
-          <span>Tạo Mục Tiêu Mới</span>
+          <Plus className="w-3.5 h-3.5" />
+          <span>Thêm Mục Tiêu</span>
         </button>
       </div>
 

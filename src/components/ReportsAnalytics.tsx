@@ -103,10 +103,10 @@ export const ReportsAnalytics: React.FC = () => {
 
   return (
     <div className="space-y-6 animate-fade-in pb-12">
-      {/* Header */}
-      <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs">
-        <h2 className="text-xl sm:text-2xl font-bold text-slate-900">Báo Cáo Phân Tích Tài Chính</h2>
-        <p className="text-xs sm:text-sm text-slate-500 mt-0.5">Tổng hợp xu hướng chi tiêu và so sánh giữa các tháng</p>
+      {/* Header Banner */}
+      <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs">
+        <h2 className="text-base sm:text-xl font-bold text-slate-900">Báo Cáo &amp; Phân Tích</h2>
+        <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 hidden sm:block">Tổng hợp xu hướng chi tiêu và so sánh giữa các tháng</p>
       </div>
 
       {/* Metrics Row */}

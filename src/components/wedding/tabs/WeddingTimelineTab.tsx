@@ -41,26 +41,26 @@ export const WeddingTimelineTab: React.FC<WeddingTimelineTabProps> = ({ onOpenTa
 
   return (
     <div className="space-y-5">
-      {/* Header & Controls */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs">
+      {/* Header Banner */}
+      <div className="flex items-center justify-between gap-2 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs">
         <div>
-          <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-            <span>Kế Hoạch &amp; Timeline Công Việc</span>
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
-              {filteredTasks.length} / {tasks.length} công việc
+          <h2 className="text-base sm:text-xl font-bold text-slate-900 flex items-center gap-2">
+            <span>Tiến Độ Công Việc</span>
+            <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 shrink-0">
+              {filteredTasks.length}/{tasks.length}
             </span>
           </h2>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 hidden sm:block">
             Phân công công việc giữa Chú rể, Cô dâu và theo dõi tiến độ
           </p>
         </div>
 
         <button
           onClick={() => onOpenTaskModal()}
-          className="flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs sm:text-sm shadow-xs transition-all shrink-0"
+          className="flex items-center justify-center space-x-1 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm shadow-2xs transition-all shrink-0"
         >
-          <Plus className="w-4 h-4" />
-          <span>Thêm Công Việc Mới</span>
+          <Plus className="w-3.5 h-3.5" />
+          <span>Thêm Việc</span>
         </button>
       </div>
 

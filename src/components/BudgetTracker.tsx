@@ -57,18 +57,18 @@ export const BudgetTracker: React.FC = () => {
 
   return (
     <div className="space-y-6 animate-fade-in pb-12">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs">
+      {/* Header Banner */}
+      <div className="flex items-center justify-between gap-2 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-900">Quản Lý Hạn Mức Chi Tiêu</h2>
-          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">Đặt hạn mức ngân sách hàng tháng cho từng danh mục để tránh vượt chi</p>
+          <h2 className="text-base sm:text-xl font-bold text-slate-900">Hạn Mức Chi Tiêu</h2>
+          <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 hidden sm:block">Đặt hạn mức ngân sách hàng tháng cho từng danh mục</p>
         </div>
         <button
           onClick={() => setIsAdding(!isAdding)}
-          className="flex items-center justify-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-semibold px-4 py-2.5 rounded-xl shadow-xs transition-all shrink-0"
+          className="flex items-center justify-center space-x-1 px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs sm:text-sm shadow-2xs transition-all shrink-0"
         >
-          <Plus className="w-4 h-4" />
-          <span>Thêm Hạn Mức Mới</span>
+          <Plus className="w-3.5 h-3.5" />
+          <span>Thêm Hạn Mức</span>
         </button>
       </div>
 
