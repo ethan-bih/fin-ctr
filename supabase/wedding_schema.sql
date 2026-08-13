@@ -53,6 +53,7 @@ CREATE TABLE IF NOT EXISTS public.wedding_budgets (
     title TEXT NOT NULL,
     estimated_cost NUMERIC(15, 2) NOT NULL DEFAULT 0 CHECK (estimated_cost >= 0),
     actual_cost NUMERIC(15, 2) NOT NULL DEFAULT 0 CHECK (actual_cost >= 0),
+    deposit_amount NUMERIC(15, 2) NOT NULL DEFAULT 0 CHECK (deposit_amount >= 0),
     is_deposited BOOLEAN DEFAULT false,
     note TEXT,
     created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
@@ -111,6 +112,7 @@ CREATE TABLE IF NOT EXISTS public.wedding_gifts (
 -- Compatibility for projects that previously ran the older wedding_schema.sql.
 ALTER TABLE public.wedding_tasks ADD COLUMN IF NOT EXISTS event_id UUID REFERENCES public.wedding_events(id) ON DELETE SET NULL;
 ALTER TABLE public.wedding_budgets ADD COLUMN IF NOT EXISTS event_id UUID REFERENCES public.wedding_events(id) ON DELETE SET NULL;
+ALTER TABLE public.wedding_budgets ADD COLUMN IF NOT EXISTS deposit_amount NUMERIC(15, 2) NOT NULL DEFAULT 0 CHECK (deposit_amount >= 0);
 ALTER TABLE public.wedding_guests ADD COLUMN IF NOT EXISTS event_id UUID REFERENCES public.wedding_events(id) ON DELETE SET NULL;
 ALTER TABLE public.wedding_vendors ADD COLUMN IF NOT EXISTS event_id UUID REFERENCES public.wedding_events(id) ON DELETE SET NULL;
 

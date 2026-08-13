@@ -38,6 +38,7 @@ export interface WeddingBudgetItem {
   title: string;
   estimated_cost: number;
   actual_cost: number;
+  deposit_amount: number;
   is_deposited: boolean;
   event_id?: string;
   note?: string;
@@ -84,6 +85,8 @@ export interface WeddingSummary {
   targetBudget: number;
   totalEstimatedBudget: number;
   totalActualExpense: number;
+  totalDepositedBudget: number;
+  totalRemainingPayment: number;
   remainingBudget: number;
   totalTasks: number;
   completedTasks: number;

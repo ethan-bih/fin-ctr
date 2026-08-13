@@ -98,6 +98,11 @@ const defaultSnapshot = (): WeddingSnapshot => ({
   gifts: INITIAL_WEDDING_GIFTS,
 });
 
+const normalizeBudgetItem = (budget: WeddingBudgetItem): WeddingBudgetItem => ({
+  ...budget,
+  deposit_amount: budget.deposit_amount ?? 0,
+});
+
 const readLocalSnapshot = (): WeddingSnapshot => {
   const fallback = defaultSnapshot();
 
@@ -162,7 +167,7 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setTargetBudgetState(snapshot.settings?.target_budget || DEFAULT_TARGET_BUDGET);
     setEventDates(snapshot.eventDates);
     setTasks(snapshot.tasks);
-    setBudgets(snapshot.budgets);
+    setBudgets(snapshot.budgets.map(normalizeBudgetItem));
     setGuests(snapshot.guests);
     setVendors(snapshot.vendors);
     setGifts(snapshot.gifts);
@@ -558,11 +563,15 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   const totalEst = budgets.reduce((acc, budget) => acc + budget.estimated_cost, 0);
   const totalAct = budgets.reduce((acc, budget) => acc + budget.actual_cost, 0);
+  const totalDepositedBudget = budgets.reduce((acc, budget) => acc + budget.deposit_amount, 0);
+  const totalRemainingPayment = budgets.reduce((acc, budget) => acc + Math.max(budget.actual_cost - budget.deposit_amount, 0), 0);
 
   const summary: WeddingSummary = {
     targetBudget,
     totalEstimatedBudget: totalEst,
     totalActualExpense: totalAct,
+    totalDepositedBudget,
+    totalRemainingPayment,
     remainingBudget: targetBudget - totalAct,
     totalTasks: tasks.length,
     completedTasks: tasks.filter((task) => task.status === 'Hoàn thành').length,
