@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useWedding } from '@/context/WeddingContext';
 import { WeddingBudgetItem } from '@/lib/weddingTypes';
-import { Plus, Search, Wallet, CheckSquare, Square, Trash2, SlidersHorizontal, X, RotateCcw, Pencil } from 'lucide-react';
+import { Plus, Search, CheckSquare, Square, Trash2, SlidersHorizontal, X, RotateCcw, Pencil } from 'lucide-react';
 
 interface WeddingBudgetTabProps {
   onOpenBudgetModal: (itemToEdit?: WeddingBudgetItem) => void;
@@ -45,7 +45,11 @@ export const WeddingBudgetTab: React.FC<WeddingBudgetTabProps> = ({ onOpenBudget
   // Calculations
   const totalEst = filteredBudgets.reduce((acc, b) => acc + b.estimated_cost, 0);
   const totalAct = filteredBudgets.reduce((acc, b) => acc + b.actual_cost, 0);
-  const totalDiff = totalEst - totalAct;
+  const totalDeposits = filteredBudgets.reduce((acc, b) => acc + b.deposit_amount, 0);
+  const totalRemainingPayment = filteredBudgets.reduce(
+    (acc, b) => acc + Math.max(b.actual_cost - b.deposit_amount, 0),
+    0
+  );
 
   const toggleDeposit = (item: WeddingBudgetItem) => {
     updateBudgetItem(item.id, { is_deposited: !item.is_deposited });
@@ -77,7 +81,7 @@ export const WeddingBudgetTab: React.FC<WeddingBudgetTabProps> = ({ onOpenBudget
       </div>
 
       {/* Summary Cards Row */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 sm:gap-4">
         {/* Card 1: Target Budget */}
         <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-xs relative">
           <div className="text-[11px] sm:text-xs text-slate-500 font-medium flex items-center justify-between">
@@ -116,6 +120,12 @@ export const WeddingBudgetTab: React.FC<WeddingBudgetTabProps> = ({ onOpenBudget
               {formatCurrency(targetBudget)}
             </div>
           )}
+          <div className="text-[10px] text-slate-500 mt-1">
+            Còn lại chi được:{' '}
+            <span className={targetBudget - totalAct >= 0 ? 'text-blue-600 font-bold' : 'text-rose-600 font-bold'}>
+              {formatCurrency(targetBudget - totalAct)}
+            </span>
+          </div>
         </div>
 
         {/* Card 2: Estimated Sum */}
@@ -130,11 +140,17 @@ export const WeddingBudgetTab: React.FC<WeddingBudgetTabProps> = ({ onOpenBudget
           <div className="text-base sm:text-xl font-bold text-emerald-600 mt-1">{formatCurrency(totalAct)}</div>
         </div>
 
-        {/* Card 4: Remaining */}
+        {/* Card 4: Deposits */}
         <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-xs">
-          <div className="text-[11px] sm:text-xs text-slate-500 font-medium">Còn Lại Chi Được</div>
-          <div className={`text-base sm:text-xl font-bold mt-1 ${targetBudget - totalAct >= 0 ? 'text-blue-600' : 'text-rose-600'}`}>
-            {formatCurrency(targetBudget - totalAct)}
+          <div className="text-[11px] sm:text-xs text-slate-500 font-medium">Tổng Đã Cọc</div>
+          <div className="text-base sm:text-xl font-bold text-amber-600 mt-1">{formatCurrency(totalDeposits)}</div>
+        </div>
+
+        {/* Card 5: Remaining Payment */}
+        <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-xs">
+          <div className="text-[11px] sm:text-xs text-slate-500 font-medium">Còn Phải Trả</div>
+          <div className="text-base sm:text-xl font-bold text-blue-600 mt-1">
+            {formatCurrency(totalRemainingPayment)}
           </div>
         </div>
       </div>
@@ -246,6 +262,7 @@ export const WeddingBudgetTab: React.FC<WeddingBudgetTabProps> = ({ onOpenBudget
           filteredBudgets.map((item) => {
             const linkedEvent = eventDates.find((e) => e.id === item.event_id);
             const diff = item.estimated_cost - item.actual_cost;
+            const remainingPayment = Math.max(item.actual_cost - item.deposit_amount, 0);
 
             return (
               <div key={item.id} className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
@@ -267,16 +284,16 @@ export const WeddingBudgetTab: React.FC<WeddingBudgetTabProps> = ({ onOpenBudget
                   <button
                     onClick={() => toggleDeposit(item)}
                     className={`text-[11px] font-bold px-2 py-0.5 rounded-full border shrink-0 ${
-                      item.is_deposited
+                      item.deposit_amount > 0
                         ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                         : 'bg-slate-100 text-slate-500 border-slate-200'
                     }`}
                   >
-                    {item.is_deposited ? 'Đã cọc' : 'Chưa cọc'}
+                    {item.deposit_amount > 0 ? 'Đã cọc' : 'Chưa cọc'}
                   </button>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-xs">
+                <div className="grid grid-cols-3 gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-xs">
                   <div>
                     <span className="text-slate-500">Dự kiến:</span>
                     <div className="font-bold text-slate-900">{formatCurrency(item.estimated_cost)}</div>
@@ -285,14 +302,21 @@ export const WeddingBudgetTab: React.FC<WeddingBudgetTabProps> = ({ onOpenBudget
                     <span className="text-slate-500">Thực tế:</span>
                     <div className="font-bold text-emerald-600">{formatCurrency(item.actual_cost)}</div>
                   </div>
+                  <div>
+                    <span className="text-slate-500">Đã cọc:</span>
+                    <div className="font-bold text-amber-600">{formatCurrency(item.deposit_amount)}</div>
+                  </div>
                 </div>
 
                 {item.note && <p className="text-xs text-slate-500 bg-slate-50 p-2.5 rounded-xl">{item.note}</p>}
 
-                <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-100">
-                  <span className={`font-semibold ${diff >= 0 ? 'text-blue-600' : 'text-rose-600'}`}>
-                    {diff >= 0 ? `Dư: ${formatCurrency(diff)}` : `Vượt: ${formatCurrency(Math.abs(diff))}`}
-                  </span>
+                <div className="flex items-center justify-between gap-2 text-xs pt-1 border-t border-slate-100">
+                  <div className="flex flex-col gap-0.5">
+                    <span className={`font-semibold ${diff >= 0 ? 'text-blue-600' : 'text-rose-600'}`}>
+                      {diff >= 0 ? `Dư: ${formatCurrency(diff)}` : `Vượt: ${formatCurrency(Math.abs(diff))}`}
+                    </span>
+                    <span className="font-semibold text-blue-600">Còn phải trả: {formatCurrency(remainingPayment)}</span>
+                  </div>
 
                   <div className="flex items-center space-x-2">
                     <button
@@ -329,6 +353,8 @@ export const WeddingBudgetTab: React.FC<WeddingBudgetTabProps> = ({ onOpenBudget
                 <th className="py-3.5 px-4 font-semibold">Nhóm & Sự kiện</th>
                 <th className="py-3.5 px-4 font-semibold text-right">Dự kiến (VNĐ)</th>
                 <th className="py-3.5 px-4 font-semibold text-right">Thực tế (VNĐ)</th>
+                <th className="py-3.5 px-4 font-semibold text-right">Đã cọc (VNĐ)</th>
+                <th className="py-3.5 px-4 font-semibold text-right">Còn phải trả</th>
                 <th className="py-3.5 px-4 font-semibold text-center">Đặt cọc</th>
                 <th className="py-3.5 px-4 font-semibold text-right">Thao tác</th>
               </tr>
@@ -337,6 +363,7 @@ export const WeddingBudgetTab: React.FC<WeddingBudgetTabProps> = ({ onOpenBudget
               {filteredBudgets.length > 0 ? (
                 filteredBudgets.map((item) => {
                   const linkedEvent = eventDates.find((e) => e.id === item.event_id);
+                  const remainingPayment = Math.max(item.actual_cost - item.deposit_amount, 0);
 
                   return (
                     <tr key={item.id} className="hover:bg-slate-50/80 transition-colors group">
@@ -368,17 +395,25 @@ export const WeddingBudgetTab: React.FC<WeddingBudgetTabProps> = ({ onOpenBudget
                         {formatCurrency(item.actual_cost)}
                       </td>
 
+                      <td className="py-4 px-4 text-right font-bold text-amber-600 whitespace-nowrap">
+                        {formatCurrency(item.deposit_amount)}
+                      </td>
+
+                      <td className="py-4 px-4 text-right font-bold text-blue-600 whitespace-nowrap">
+                        {formatCurrency(remainingPayment)}
+                      </td>
+
                       <td className="py-4 px-4 text-center whitespace-nowrap">
                         <button
                           onClick={() => toggleDeposit(item)}
                           className={`flex items-center space-x-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg border transition-all mx-auto ${
-                            item.is_deposited
+                            item.deposit_amount > 0
                               ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                               : 'bg-slate-100 text-slate-500 border-slate-200'
                           }`}
                         >
-                          {item.is_deposited ? <CheckSquare className="w-3.5 h-3.5 text-emerald-600" /> : <Square className="w-3.5 h-3.5 text-slate-400" />}
-                          <span>{item.is_deposited ? 'Đã cọc' : 'Chưa cọc'}</span>
+                          {item.deposit_amount > 0 ? <CheckSquare className="w-3.5 h-3.5 text-emerald-600" /> : <Square className="w-3.5 h-3.5 text-slate-400" />}
+                          <span>{item.deposit_amount > 0 ? 'Đã cọc' : 'Chưa cọc'}</span>
                         </button>
                       </td>
 
@@ -401,7 +436,7 @@ export const WeddingBudgetTab: React.FC<WeddingBudgetTabProps> = ({ onOpenBudget
                 })
               ) : (
                 <tr>
-                  <td colSpan={6} className="py-8 text-center text-slate-400 text-sm">
+                  <td colSpan={8} className="py-8 text-center text-slate-400 text-sm">
                     Không tìm thấy khoản chi nào phù hợp.
                   </td>
                 </tr>

@@ -198,6 +198,14 @@ export const WeddingOverviewTab: React.FC<WeddingOverviewTabProps> = ({
               <strong className="text-emerald-600 font-bold">{formatCurrency(summary.totalActualExpense)}</strong>
             </div>
             <div className="flex items-center justify-between">
+              <span>Đã cọc:</span>
+              <strong className="text-amber-600 font-bold">{formatCurrency(summary.totalDepositedBudget)}</strong>
+            </div>
+            <div className="flex items-center justify-between">
+              <span>Còn phải trả:</span>
+              <span className="font-semibold text-blue-600">{formatCurrency(summary.totalRemainingPayment)}</span>
+            </div>
+            <div className="flex items-center justify-between">
               <span>Hạng mục:</span>
               <span className="font-semibold text-slate-700">{formatCurrency(summary.totalEstimatedBudget)}</span>
             </div>
