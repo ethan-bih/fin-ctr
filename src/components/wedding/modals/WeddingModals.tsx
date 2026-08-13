@@ -345,7 +345,7 @@ export const BudgetModal: React.FC<BudgetModalProps> = ({ isOpen, onClose, itemT
   const [title, setTitle] = useState('');
   const [estimatedCost, setEstimatedCost] = useState('');
   const [actualCost, setActualCost] = useState('');
-  const [isDeposited, setIsDeposited] = useState(false);
+  const [depositAmount, setDepositAmount] = useState('');
   const [eventId, setEventId] = useState<string>('');
   const [note, setNote] = useState('');
 
@@ -355,7 +355,7 @@ export const BudgetModal: React.FC<BudgetModalProps> = ({ isOpen, onClose, itemT
       setTitle(itemToEdit.title);
       setEstimatedCost(itemToEdit.estimated_cost.toString());
       setActualCost(itemToEdit.actual_cost.toString());
-      setIsDeposited(itemToEdit.is_deposited);
+      setDepositAmount((itemToEdit.deposit_amount ?? 0).toString());
       setEventId(itemToEdit.event_id || '');
       setNote(itemToEdit.note || '');
     } else {
@@ -363,7 +363,7 @@ export const BudgetModal: React.FC<BudgetModalProps> = ({ isOpen, onClose, itemT
       setTitle('');
       setEstimatedCost('');
       setActualCost('');
-      setIsDeposited(false);
+      setDepositAmount('');
       setEventId('');
       setNote('');
     }
@@ -377,11 +377,30 @@ export const BudgetModal: React.FC<BudgetModalProps> = ({ isOpen, onClose, itemT
 
     const est = parseFloat(estimatedCost) || 0;
     const act = parseFloat(actualCost) || 0;
+    const deposit = parseFloat(depositAmount) || 0;
 
     if (itemToEdit) {
-      updateBudgetItem(itemToEdit.id, { category, title, estimated_cost: est, actual_cost: act, is_deposited: isDeposited, event_id: eventId, note });
+      updateBudgetItem(itemToEdit.id, {
+        category,
+        title,
+        estimated_cost: est,
+        actual_cost: act,
+        deposit_amount: deposit,
+        is_deposited: deposit > 0,
+        event_id: eventId,
+        note,
+      });
     } else {
-      addBudgetItem({ category, title, estimated_cost: est, actual_cost: act, is_deposited: isDeposited, event_id: eventId, note });
+      addBudgetItem({
+        category,
+        title,
+        estimated_cost: est,
+        actual_cost: act,
+        deposit_amount: deposit,
+        is_deposited: deposit > 0,
+        event_id: eventId,
+        note,
+      });
     }
     onClose();
   };
@@ -440,7 +459,7 @@ export const BudgetModal: React.FC<BudgetModalProps> = ({ isOpen, onClose, itemT
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <label className="block text-xs font-semibold text-slate-600 mb-1">Chi phí dự kiến (VNĐ)</label>
               <input
@@ -462,19 +481,17 @@ export const BudgetModal: React.FC<BudgetModalProps> = ({ isOpen, onClose, itemT
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-emerald-500 focus:bg-white"
               />
             </div>
-          </div>
 
-          <div className="flex items-center space-x-2 pt-1">
-            <input
-              type="checkbox"
-              id="is_deposited"
-              checked={isDeposited}
-              onChange={(e) => setIsDeposited(e.target.checked)}
-              className="w-4 h-4 rounded text-emerald-600 accent-emerald-600 bg-slate-100"
-            />
-            <label htmlFor="is_deposited" className="text-xs text-slate-700 font-medium cursor-pointer">
-              Đã thanh toán tiền đặt cọc khoản này?
-            </label>
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1">Tiền đã cọc (VNĐ)</label>
+              <input
+                type="number"
+                placeholder="0"
+                value={depositAmount}
+                onChange={(e) => setDepositAmount(e.target.value)}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-emerald-500 focus:bg-white"
+              />
+            </div>
           </div>
 
           <div>
