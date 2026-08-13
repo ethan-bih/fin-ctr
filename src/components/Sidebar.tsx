@@ -15,12 +15,10 @@ import {
   X,
   ChevronRight,
   Plus,
-  Wallet,
   User,
   LogOut,
   CheckCircle2,
   AlertCircle,
-  Shield,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -38,7 +36,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   const navItems: { id: ActiveTabType; label: string; icon: React.ElementType }[] = [
     { id: 'dashboard', label: 'Tổng Quan', icon: LayoutDashboard },
-    { id: 'wedding', label: 'Đám Cưới QH & YN', icon: HeartHandshake },
+    { id: 'wedding', label: 'Đám Cưới', icon: HeartHandshake },
     { id: 'jars', label: 'Quy Tắc 6 Hũ', icon: Coins },
     { id: 'transactions', label: 'Sổ Giao Dịch', icon: Receipt },
     { id: 'budgets', label: 'Hạn Mức Chi', icon: PieChart },
@@ -125,7 +123,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <h1 className="font-extrabold text-xs text-slate-900 tracking-tight leading-none">
                   F&amp;W Manager
                 </h1>
-                <p className="text-[10px] font-semibold text-rose-600 mt-0.5">QH &amp; YN</p>
+                <p className="text-[10px] font-semibold text-rose-600 mt-0.5">Personal</p>
               </div>
             </div>
 
@@ -162,7 +160,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               ) : (
                 <AlertCircle className="w-3 h-3 text-amber-600" />
               )}
-              <span>{isLiveMode ? 'Cloud Sync Active' : 'Demo Mode Active'}</span>
+              <span>{isLiveMode ? 'Cloud Sync Active' : 'Local Mode Active'}</span>
             </div>
             <span className="text-[9px] underline">Cấu hình</span>
           </div>
@@ -295,7 +293,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     : 'bg-amber-50 text-amber-700 border border-amber-200'
                 }`}
               >
-                <span>{isLiveMode ? 'Cloud Sync Active' : 'Demo Mode Active'}</span>
+                <span>{isLiveMode ? 'Cloud Sync Active' : 'Local Mode Active'}</span>
                 <span className="underline text-[9px]">Cấu hình</span>
               </div>
             </div>

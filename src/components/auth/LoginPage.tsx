@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { useFinance } from '@/context/FinanceContext';
 import {
-  ShieldCheck,
   User,
   KeyRound,
   LogIn,
@@ -14,7 +13,7 @@ import {
 } from 'lucide-react';
 
 export const LoginPage: React.FC = () => {
-  const { loginWithCredentials, loginWithGoogle } = useFinance();
+  const { loginWithCredentials } = useFinance();
 
   const [usernameOrEmail, setUsernameOrEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -70,7 +69,7 @@ export const LoginPage: React.FC = () => {
             Đăng Nhập F&amp;W Manager
           </h1>
           <p className="text-xs font-medium text-slate-500">
-            Quản lý Tài chính &amp; Đám cưới QH &amp; YN
+            Quản lý Tài chính &amp; Đám cưới cá nhân
           </p>
         </div>
       </div>
@@ -140,36 +139,14 @@ export const LoginPage: React.FC = () => {
             <span>{isSubmitting ? 'Đang xác thực...' : 'Đăng Nhập Tài Khoản'}</span>
           </button>
         </form>
-
-        {/* Divider */}
-        <div className="relative flex py-1 items-center">
-          <div className="flex-grow border-t border-slate-200" />
-          <span className="shrink mx-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">
-            HOẶC PHƯƠNG THỨC KHÁC
-          </span>
-          <div className="flex-grow border-t border-slate-200" />
-        </div>
-
-        {/* Alternative Auth Buttons */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <button
-            onClick={loginWithGoogle}
-            type="button"
-            className="flex items-center justify-center space-x-2 py-3 px-3 bg-white hover:bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold text-slate-700 shadow-2xs transition-all active:scale-95"
-          >
-            <ShieldCheck className="w-4 h-4 text-emerald-600" />
-            <span>Google OAuth</span>
-          </button>
-
-          <button
-            onClick={handleQuickAdminLogin}
-            type="button"
-            className="flex items-center justify-center space-x-1.5 py-3 px-3 bg-slate-100 hover:bg-slate-200 border border-transparent rounded-2xl text-xs font-bold text-slate-700 transition-all active:scale-95"
-          >
-            <span>Dùng thử Demo (Admin)</span>
-            <ArrowRight className="w-3.5 h-3.5 text-slate-500" />
-          </button>
-        </div>
+        <button
+          onClick={handleQuickAdminLogin}
+          type="button"
+          className="w-full flex items-center justify-center space-x-1.5 py-3 px-3 bg-slate-100 hover:bg-slate-200 border border-transparent rounded-2xl text-xs font-bold text-slate-700 transition-all active:scale-95"
+        >
+          <span>Đăng nhập nhanh Admin</span>
+          <ArrowRight className="w-3.5 h-3.5 text-slate-500" />
+        </button>
       </div>
     </div>
   );

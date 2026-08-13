@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useWedding } from '@/context/WeddingContext';
 import { WeddingBetrothalGift } from '@/lib/weddingTypes';
-import { Plus, Gift, CheckSquare, Square, Trash2 } from 'lucide-react';
+import { Plus, CheckSquare, Square, Trash2 } from 'lucide-react';
 
 interface WeddingGiftsTabProps {
   onOpenGiftModal: (giftToEdit?: WeddingBetrothalGift) => void;
@@ -30,7 +30,7 @@ export const WeddingGiftsTab: React.FC<WeddingGiftsTabProps> = ({ onOpenGiftModa
             </span>
           </h2>
           <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 hidden sm:block">
-            Checklist chuẩn bị mâm quả truyền thống (Trầu cau, Trà rượu, Bánh phu thê...)
+            Checklist chuẩn bị mâm quả theo kế hoạch của bạn
           </p>
         </div>
 

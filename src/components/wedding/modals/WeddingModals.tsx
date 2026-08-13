@@ -117,7 +117,7 @@ export const EventModal: React.FC<EventModalProps> = ({ isOpen, onClose, eventTo
             <label className="block text-xs font-semibold text-slate-600 mb-1">Địa điểm tổ chức</label>
             <input
               type="text"
-              placeholder="VD: Tư gia nhà gái, Nhà hàng White Palace..."
+              placeholder="Nhập địa điểm..."
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-rose-500 focus:bg-white"
@@ -602,7 +602,7 @@ export const GuestModal: React.FC<GuestModalProps> = ({ isOpen, onClose, guestTo
             <input
               type="text"
               required
-              placeholder="VD: Nguyễn Văn A..."
+              placeholder="Nhập tên khách..."
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-purple-500 focus:bg-white"
@@ -847,7 +847,7 @@ export const VendorModal: React.FC<VendorModalProps> = ({ isOpen, onClose, vendo
               <input
                 type="text"
                 required
-                placeholder="VD: Studio ABC..."
+                placeholder="Nhập tên nhà cung cấp..."
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-rose-500 focus:bg-white"
@@ -1017,7 +1017,7 @@ export const GiftModal: React.FC<GiftModalProps> = ({ isOpen, onClose, giftToEdi
             <input
               type="text"
               required
-              placeholder="VD: Trầu cau, Bánh phu thê..."
+              placeholder="Nhập tên hạng mục..."
               value={giftName}
               onChange={(e) => setGiftName(e.target.value)}
               className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-pink-500 focus:bg-white"

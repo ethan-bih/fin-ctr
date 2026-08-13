@@ -4,24 +4,18 @@ import React, { useState } from 'react';
 import { useFinance } from '@/context/FinanceContext';
 import { UserRole } from '@/lib/types';
 import {
-  User,
   ShieldCheck,
   Shield,
   UserPlus,
   Trash2,
   Edit,
-  Mail,
-  KeyRound,
   LogOut,
-  Sparkles,
   HeartHandshake,
   CheckCircle2,
   AlertCircle,
   Database,
-  Coins,
   Receipt,
   X,
-  Plus,
 } from 'lucide-react';
 
 export const UserProfilePage: React.FC = () => {
@@ -34,16 +28,13 @@ export const UserProfilePage: React.FC = () => {
     updateUserProfile,
     logout,
     transactions,
-    resetDemoData,
-    formatCurrency,
-    setActiveTab,
   } = useFinance();
 
   // Edit Profile State
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [fullNameInput, setFullNameInput] = useState(user?.full_name || '');
   const [emailInput, setEmailInput] = useState(user?.email || '');
-  const [partnerNameInput, setPartnerNameInput] = useState(user?.couple_partner_name || 'Quang Huy & Yến Nhi');
+  const [partnerNameInput, setPartnerNameInput] = useState(user?.couple_partner_name || '');
 
   // Create User Modal State (Admin)
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
@@ -142,7 +133,7 @@ export const UserProfilePage: React.FC = () => {
               <div className="pt-1 flex items-center space-x-2">
                 <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-white/10 text-rose-200 border border-white/10">
                   <HeartHandshake className="w-3 h-3 text-rose-400" />
-                  <span>Cặp đôi: {user?.couple_partner_name || 'Quang Huy & Yến Nhi'}</span>
+                  <span>Cặp đôi: {user?.couple_partner_name || 'Chưa cấu hình'}</span>
                 </span>
               </div>
             </div>
@@ -153,7 +144,7 @@ export const UserProfilePage: React.FC = () => {
               onClick={() => {
                 setFullNameInput(user?.full_name || '');
                 setEmailInput(user?.email || '');
-                setPartnerNameInput(user?.couple_partner_name || 'Quang Huy & Yến Nhi');
+                setPartnerNameInput(user?.couple_partner_name || '');
                 setIsEditingProfile(true);
               }}
               className="flex-1 md:flex-initial flex items-center justify-center space-x-1.5 px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-xl border border-white/15 backdrop-blur-md transition-all active:scale-95"
@@ -223,7 +214,7 @@ export const UserProfilePage: React.FC = () => {
                   type="text"
                   value={partnerNameInput}
                   onChange={(e) => setPartnerNameInput(e.target.value)}
-                  placeholder="Ví dụ: Quang Huy & Yến Nhi"
+                  placeholder="Nhập tên cặp đôi..."
                   className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-rose-500/30"
                 />
               </div>
@@ -391,7 +382,7 @@ export const UserProfilePage: React.FC = () => {
                   type="text"
                   value={newFullName}
                   onChange={(e) => setNewFullName(e.target.value)}
-                  placeholder="Ví dụ: Nguyễn Văn A..."
+                  placeholder="Nhập họ tên người dùng..."
                   className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-rose-500/30"
                   required
                 />
@@ -403,7 +394,7 @@ export const UserProfilePage: React.FC = () => {
                   type="email"
                   value={newEmail}
                   onChange={(e) => setNewEmail(e.target.value)}
-                  placeholder="user@demo.com"
+                  placeholder="user@example.com"
                   className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-rose-500/30"
                 />
               </div>
@@ -459,7 +450,7 @@ export const UserProfilePage: React.FC = () => {
           <div>
             <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider">Lưu Trữ Dữ Liệu</p>
             <h4 className="text-sm font-bold text-slate-900">
-              {isLiveMode ? 'Supabase Live Cloud' : 'LocalStorage & Local Demo'}
+              {isLiveMode ? 'Supabase Live Cloud' : 'LocalStorage cục bộ'}
             </h4>
           </div>
         </div>

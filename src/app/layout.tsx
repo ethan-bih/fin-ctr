@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin", "vietnamese"] });
 
 export const metadata: Metadata = {
   title: "F&W - Quản Lý Tài Chính & Đám Cưới (QH & YN)",
-  description: "Ứng dụng theo dõi thu chi cá nhân & đám cưới an toàn, bảo mật bằng Supabase và Google OAuth.",
+  description: "Ứng dụng theo dõi thu chi cá nhân & đám cưới an toàn, đồng bộ tự động bằng Supabase.",
 };
 
 export default function RootLayout({

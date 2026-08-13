@@ -1,8 +1,8 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { Transaction, Budget, SavingsGoal, Category, UserProfile, JarType, UserAccount, UserRole } from '@/lib/types';
-import { DEFAULT_CATEGORIES, INITIAL_MOCK_TRANSACTIONS, INITIAL_MOCK_BUDGETS, INITIAL_MOCK_SAVINGS, DEFAULT_JARS } from '@/lib/constants';
+import { Transaction, Budget, SavingsGoal, Category, UserProfile, JarType, UserAccount } from '@/lib/types';
+import { DEFAULT_CATEGORIES, INITIAL_MOCK_TRANSACTIONS, INITIAL_MOCK_BUDGETS, INITIAL_MOCK_SAVINGS } from '@/lib/constants';
 import { createClient } from '@/lib/supabase/client';
 
 export type ActiveTabType = 'dashboard' | 'transactions' | 'budgets' | 'savings' | 'reports' | 'settings' | 'jars' | 'wedding' | 'user' | 'login';
@@ -10,6 +10,7 @@ export type ActiveTabType = 'dashboard' | 'transactions' | 'budgets' | 'savings'
 interface FinanceContextType {
   user: UserProfile | null;
   isLiveMode: boolean;
+  cloudUserId: string | null;
   activeTab: ActiveTabType;
   setActiveTab: (tab: ActiveTabType) => void;
   
@@ -36,9 +37,8 @@ interface FinanceContextType {
   updateSavingsGoal: (id: string, amount: number) => Promise<void>;
   deleteSavingsGoal: (id: string) => Promise<void>;
   
-  loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
-  resetDemoData: () => void;
+  clearLocalData: () => void;
   formatCurrency: (amount: number) => string;
 }
 
@@ -50,6 +50,14 @@ const LOCAL_STORAGE_SAVING_KEY = 'pf_savings_v1';
 const LOCAL_STORAGE_JAR_RATIOS_KEY = 'pf_jar_ratios_v1';
 const LOCAL_STORAGE_USERS_KEY = 'pf_users_v1';
 const LOCAL_STORAGE_CURRENT_USER_KEY = 'pf_current_user_v1';
+const LOCAL_STORAGE_WEDDING_DATE_KEY = 'pf_wedding_date_v1';
+const LOCAL_STORAGE_WEDDING_TARGET_BUDGET_KEY = 'pf_wedding_target_budget_v1';
+const LOCAL_STORAGE_WEDDING_EVENTS_KEY = 'pf_wedding_event_dates_v1';
+const LOCAL_STORAGE_WEDDING_TASKS_KEY = 'pf_wedding_tasks_v1';
+const LOCAL_STORAGE_WEDDING_BUDGETS_KEY = 'pf_wedding_budgets_v1';
+const LOCAL_STORAGE_WEDDING_GUESTS_KEY = 'pf_wedding_guests_v1';
+const LOCAL_STORAGE_WEDDING_VENDORS_KEY = 'pf_wedding_vendors_v1';
+const LOCAL_STORAGE_WEDDING_GIFTS_KEY = 'pf_wedding_gifts_v1';
 
 const DEFAULT_ADMIN_ACCOUNT: UserAccount = {
   id: 'usr-admin',
@@ -74,6 +82,7 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [activeTab, setActiveTab] = useState<ActiveTabType>('login');
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isLiveMode, setIsLiveMode] = useState<boolean>(false);
+  const [cloudUserId, setCloudUserId] = useState<string | null>(null);
   const [usersList, setUsersList] = useState<UserAccount[]>([DEFAULT_ADMIN_ACCOUNT]);
 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -115,7 +124,7 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
         role: found.role,
         avatar_url: found.avatar_url,
         currency: 'VND',
-        couple_partner_name: 'Quang Huy & Yến Nhi',
+        couple_partner_name: '',
       };
       setUser(loggedUser);
       localStorage.setItem(LOCAL_STORAGE_CURRENT_USER_KEY, JSON.stringify(loggedUser));
@@ -178,55 +187,7 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   };
 
-  // Initialize Data
-  useEffect(() => {
-    const supabase = createClient();
-
-    if (supabase) {
-      supabase.auth.getUser().then(({ data: { user: authUser } }) => {
-        if (authUser) {
-          setIsLiveMode(true);
-          setUser({
-            id: authUser.id,
-            email: authUser.email || '',
-            full_name: authUser.user_metadata?.full_name || authUser.user_metadata?.name || authUser.email || 'Người dùng',
-            avatar_url: authUser.user_metadata?.avatar_url,
-            currency: 'VND',
-            role: 'admin',
-          });
-          fetchSupabaseData(authUser.id);
-        } else {
-          loadLocalStorageData();
-        }
-      });
-
-      const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-        if (session?.user) {
-          setIsLiveMode(true);
-          setUser({
-            id: session.user.id,
-            email: session.user.email || '',
-            full_name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email || 'Người dùng',
-            avatar_url: session.user.user_metadata?.avatar_url,
-            currency: 'VND',
-            role: 'admin',
-          });
-          fetchSupabaseData(session.user.id);
-        } else {
-          setIsLiveMode(false);
-          loadLocalStorageData();
-        }
-      });
-
-      return () => {
-        authListener.subscription.unsubscribe();
-      };
-    } else {
-      loadLocalStorageData();
-    }
-  }, []);
-
-  const loadLocalStorageData = () => {
+  function loadLocalStorageData() {
     try {
       const savedUsers = localStorage.getItem(LOCAL_STORAGE_USERS_KEY);
       const savedCurrentUser = localStorage.getItem(LOCAL_STORAGE_CURRENT_USER_KEY);
@@ -259,9 +220,9 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
       setSavingsGoals(INITIAL_MOCK_SAVINGS);
       setJarRatios(DEFAULT_RATIOS);
     }
-  };
+  }
 
-  const fetchSupabaseData = async (userId: string) => {
+  async function fetchSupabaseData(userId: string) {
     const supabase = createClient();
     if (!supabase) return;
 
@@ -278,11 +239,61 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
     const { data: svgData } = await supabase.from('savings_goals').select('*').eq('user_id', userId);
     if (svgData) setSavingsGoals(svgData);
-  };
+  }
+
+  // Initialize Data
+  useEffect(() => {
+    const supabase = createClient();
+
+    if (supabase) {
+      const activateCloudSession = (userId: string) => {
+        setCloudUserId(userId);
+        setIsLiveMode(true);
+        fetchSupabaseData(userId);
+        loadLocalStorageData();
+      };
+
+      supabase.auth.getUser().then(async ({ data: { user: authUser } }) => {
+        if (authUser?.id) {
+          activateCloudSession(authUser.id);
+        } else {
+          const { data, error } = await supabase.auth.signInAnonymously();
+          if (error || !data.user?.id) {
+            console.error('Failed to start Supabase anonymous session:', error);
+            setIsLiveMode(false);
+            setCloudUserId(null);
+            loadLocalStorageData();
+            return;
+          }
+
+          activateCloudSession(data.user.id);
+        }
+      });
+
+      const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+        if (session?.user?.id) {
+          setCloudUserId(session.user.id);
+          setIsLiveMode(true);
+          fetchSupabaseData(session.user.id);
+        } else {
+          setCloudUserId(null);
+          setIsLiveMode(false);
+          loadLocalStorageData();
+        }
+      });
+
+      return () => {
+        authListener.subscription.unsubscribe();
+      };
+    } else {
+      queueMicrotask(loadLocalStorageData);
+    }
+  }, []);
 
   // Add Transaction
   const addTransaction = async (txInput: Omit<Transaction, 'id' | 'user_id' | 'created_at'>) => {
     const supabase = createClient();
+    const storageUserId = cloudUserId || user?.id || 'local-user';
 
     // Map category to jar if missing
     const category = categories.find((c) => c.id === txInput.category_id);
@@ -292,15 +303,15 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
       ...txInput,
       jar_id: jarId,
       id: isLiveMode ? undefined! : 'tx-' + Date.now(),
-      user_id: user?.id || 'demo-user',
+      user_id: storageUserId,
       created_at: new Date().toISOString(),
     };
 
-    if (isLiveMode && supabase && user) {
+    if (isLiveMode && supabase && cloudUserId) {
       const { data, error } = await supabase
         .from('transactions')
         .insert([{
-          user_id: user.id,
+          user_id: cloudUserId,
           type: txInput.type,
           amount: txInput.amount,
           category_id: txInput.category_id,
@@ -338,15 +349,16 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
   // Add Budget
   const addBudget = async (bgtInput: Omit<Budget, 'id' | 'user_id'>) => {
     const supabase = createClient();
+    const storageUserId = cloudUserId || user?.id || 'local-user';
     const newBgt: Budget = {
       ...bgtInput,
       id: isLiveMode ? undefined! : 'bgt-' + Date.now(),
-      user_id: user?.id || 'demo-user',
+      user_id: storageUserId,
     };
 
-    if (isLiveMode && supabase && user) {
+    if (isLiveMode && supabase && cloudUserId) {
       const { data } = await supabase.from('budgets').upsert([{
-        user_id: user.id,
+        user_id: cloudUserId,
         category_id: bgtInput.category_id,
         category_name: bgtInput.category_name,
         category_icon: bgtInput.category_icon,
@@ -378,16 +390,17 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
   // Add Savings Goal
   const addSavingsGoal = async (goalInput: Omit<SavingsGoal, 'id' | 'user_id' | 'current_amount'>) => {
     const supabase = createClient();
+    const storageUserId = cloudUserId || user?.id || 'local-user';
     const newGoal: SavingsGoal = {
       ...goalInput,
       id: isLiveMode ? undefined! : 'svg-' + Date.now(),
-      user_id: user?.id || 'demo-user',
+      user_id: storageUserId,
       current_amount: 0,
     };
 
-    if (isLiveMode && supabase && user) {
+    if (isLiveMode && supabase && cloudUserId) {
       const { data } = await supabase.from('savings_goals').insert([{
-        user_id: user.id,
+        user_id: cloudUserId,
         title: goalInput.title,
         target_amount: goalInput.target_amount,
         current_amount: 0,
@@ -424,41 +437,27 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     if (!isLiveMode) localStorage.setItem(LOCAL_STORAGE_SAVING_KEY, JSON.stringify(updated));
   };
 
-  const loginWithGoogle = async () => {
-    const supabase = createClient();
-    if (!supabase) {
-      alert('Vui lòng cấu hình NEXT_PUBLIC_SUPABASE_URL và NEXT_PUBLIC_SUPABASE_ANON_KEY trong môi trường Vercel / .env.local để đăng nhập Google OAuth!');
-      return;
-    }
-
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}`,
-      },
-    });
-
-    if (error) alert('Lỗi đăng nhập Google: ' + error.message);
-  };
-
   const logout = async () => {
-    const supabase = createClient();
-    if (supabase) {
-      await supabase.auth.signOut();
-    }
-    setIsLiveMode(false);
     localStorage.removeItem(LOCAL_STORAGE_CURRENT_USER_KEY);
     setUser(null);
     setActiveTab('login');
   };
 
-  const resetDemoData = () => {
+  const clearLocalData = () => {
     localStorage.removeItem(LOCAL_STORAGE_TX_KEY);
     localStorage.removeItem(LOCAL_STORAGE_BGT_KEY);
     localStorage.removeItem(LOCAL_STORAGE_SAVING_KEY);
     localStorage.removeItem(LOCAL_STORAGE_JAR_RATIOS_KEY);
     localStorage.removeItem(LOCAL_STORAGE_USERS_KEY);
     localStorage.removeItem(LOCAL_STORAGE_CURRENT_USER_KEY);
+    localStorage.removeItem(LOCAL_STORAGE_WEDDING_DATE_KEY);
+    localStorage.removeItem(LOCAL_STORAGE_WEDDING_TARGET_BUDGET_KEY);
+    localStorage.removeItem(LOCAL_STORAGE_WEDDING_EVENTS_KEY);
+    localStorage.removeItem(LOCAL_STORAGE_WEDDING_TASKS_KEY);
+    localStorage.removeItem(LOCAL_STORAGE_WEDDING_BUDGETS_KEY);
+    localStorage.removeItem(LOCAL_STORAGE_WEDDING_GUESTS_KEY);
+    localStorage.removeItem(LOCAL_STORAGE_WEDDING_VENDORS_KEY);
+    localStorage.removeItem(LOCAL_STORAGE_WEDDING_GIFTS_KEY);
     setUsersList([DEFAULT_ADMIN_ACCOUNT]);
     setUser({
       id: DEFAULT_ADMIN_ACCOUNT.id,
@@ -467,7 +466,7 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
       full_name: DEFAULT_ADMIN_ACCOUNT.full_name,
       role: DEFAULT_ADMIN_ACCOUNT.role,
       currency: 'VND',
-      couple_partner_name: 'Quang Huy & Yến Nhi',
+      couple_partner_name: '',
     });
     setTransactions(INITIAL_MOCK_TRANSACTIONS);
     setBudgets(INITIAL_MOCK_BUDGETS);
@@ -480,6 +479,7 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
       value={{
         user,
         isLiveMode,
+        cloudUserId,
         activeTab,
         setActiveTab,
         usersList,
@@ -500,9 +500,8 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
         addSavingsGoal,
         updateSavingsGoal,
         deleteSavingsGoal,
-        loginWithGoogle,
         logout,
-        resetDemoData,
+        clearLocalData,
         formatCurrency,
       }}
     >
