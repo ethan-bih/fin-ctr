@@ -51,3 +51,13 @@ test('wedding budget views show deposited and remaining payment amounts', () => 
   assert.match(overviewTab, /summary\.totalDepositedBudget/);
   assert.match(overviewTab, /summary\.totalRemainingPayment/);
 });
+
+test('wedding overview falls back to the main event date for countdown display', () => {
+  const overviewTab = read('src/components/wedding/tabs/WeddingOverviewTab.tsx');
+
+  assert.match(overviewTab, /const mainEventDate = eventDates\.find\(\(event\) => event\.is_main_event\)\?\.date;/);
+  assert.match(overviewTab, /const displayWeddingDate = weddingDate \|\| mainEventDate \|\| '';/);
+  assert.match(overviewTab, /new Date\(displayWeddingDate\)/);
+  assert.match(overviewTab, /setTempDate\(displayWeddingDate\)/);
+  assert.doesNotMatch(overviewTab, /new Date\(weddingDate\)\.toLocaleDateString\('vi-VN'\)/);
+});

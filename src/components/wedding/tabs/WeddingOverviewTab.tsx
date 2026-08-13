@@ -20,10 +20,14 @@ export const WeddingOverviewTab: React.FC<WeddingOverviewTabProps> = ({
   const [tempDate, setTempDate] = useState(weddingDate);
   const [isEditingBudget, setIsEditingBudget] = useState(false);
   const [tempBudget, setTempBudget] = useState(targetBudget);
+  const mainEventDate = eventDates.find((event) => event.is_main_event)?.date;
+  const displayWeddingDate = weddingDate || mainEventDate || '';
 
   // Calculate Days Remaining
   const calculateDaysLeft = () => {
-    const target = new Date(weddingDate);
+    if (!displayWeddingDate) return 0;
+
+    const target = new Date(displayWeddingDate);
     const today = new Date();
     const diffTime = target.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -122,11 +126,14 @@ export const WeddingOverviewTab: React.FC<WeddingOverviewTabProps> = ({
                 </div>
               ) : (
                 <button
-                  onClick={() => setIsEditingDate(true)}
+                  onClick={() => {
+                    setTempDate(displayWeddingDate);
+                    setIsEditingDate(true);
+                  }}
                   className="text-xs font-bold text-rose-700 hover:text-rose-800 flex items-center gap-1 transition-colors"
                 >
                   <Calendar className="w-3.5 h-3.5 text-rose-500" />
-                  <span>{new Date(weddingDate).toLocaleDateString('vi-VN')}</span>
+                  <span>{displayWeddingDate ? new Date(displayWeddingDate).toLocaleDateString('vi-VN') : 'Chưa đặt ngày'}</span>
                 </button>
               )}
             </div>
