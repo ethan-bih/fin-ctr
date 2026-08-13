@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useWedding } from '@/context/WeddingContext';
-import { Heart, Calendar, Wallet, CheckSquare, Users, Store, Plus, Sparkles, Clock, Pencil } from 'lucide-react';
+import { Heart, Calendar, Wallet, CheckSquare, Users, Store, Sparkles, Clock, Pencil } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 
 interface WeddingOverviewTabProps {
@@ -14,11 +14,8 @@ interface WeddingOverviewTabProps {
 
 export const WeddingOverviewTab: React.FC<WeddingOverviewTabProps> = ({
   onSwitchTab,
-  onOpenTaskModal,
-  onOpenBudgetModal,
-  onOpenGuestModal,
 }) => {
-  const { weddingDate, setWeddingDate, targetBudget, setTargetBudget, eventDates, summary, tasks, budgets, guests, vendors, gifts } = useWedding();
+  const { weddingDate, setWeddingDate, targetBudget, setTargetBudget, eventDates, summary, budgets, guests, gifts } = useWedding();
   const [isEditingDate, setIsEditingDate] = useState(false);
   const [tempDate, setTempDate] = useState(weddingDate);
   const [isEditingBudget, setIsEditingBudget] = useState(false);
@@ -429,7 +426,7 @@ export const WeddingOverviewTab: React.FC<WeddingOverviewTabProps> = ({
                 <XAxis dataKey="name" stroke="#94a3b8" fontSize={11} />
                 <YAxis stroke="#94a3b8" fontSize={10} tickFormatter={(v) => `${v / 1000000}M`} />
                 <Tooltip
-                  formatter={(val: any) => formatCurrency(Number(val))}
+                  formatter={(val: unknown) => formatCurrency(Number(val))}
                   contentStyle={{ backgroundColor: '#fff', borderRadius: '12px', border: '1px solid #e2e8f0' }}
                 />
                 <Legend wrapperStyle={{ fontSize: '12px' }} />
@@ -469,7 +466,7 @@ export const WeddingOverviewTab: React.FC<WeddingOverviewTabProps> = ({
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(val: any) => [`${val} thiệp`, 'Số lượng']} />
+                  <Tooltip formatter={(val: unknown) => [`${val} thiệp`, 'Số lượng']} />
                   <Legend wrapperStyle={{ fontSize: '12px' }} />
                 </PieChart>
               </ResponsiveContainer>

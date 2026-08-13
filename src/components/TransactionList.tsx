@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { useFinance } from '@/context/FinanceContext';
 import { DynamicIcon } from './DynamicIcon';
-import { Search, Filter, Download, Trash2, Plus, ArrowUpRight, ArrowDownRight, Calendar } from 'lucide-react';
+import { Search, Download, Trash2, Plus, Calendar } from 'lucide-react';
 
 interface TransactionListProps {
   onOpenAddModal: () => void;

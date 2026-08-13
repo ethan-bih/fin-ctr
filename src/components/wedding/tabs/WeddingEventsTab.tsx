@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useWedding } from '@/context/WeddingContext';
 import { WeddingEventDate } from '@/lib/weddingTypes';
-import { Plus, Calendar, Clock, MapPin, Trash2, CheckCircle2, Star, Sparkles, Tag } from 'lucide-react';
+import { Plus, Calendar, Clock, MapPin, Trash2, Star } from 'lucide-react';
 
 interface WeddingEventsTabProps {
   onOpenEventModal: (eventToEdit?: WeddingEventDate) => void;

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useWedding } from '@/context/WeddingContext';
-import { WeddingGuest, GuestSide, RsvpStatus } from '@/lib/weddingTypes';
+import { WeddingGuest, RsvpStatus } from '@/lib/weddingTypes';
 import { Plus, Search, Phone, CheckSquare, Square, Trash2, SlidersHorizontal, X, RotateCcw } from 'lucide-react';
 
 interface WeddingGuestsTabProps {
@@ -10,7 +10,7 @@ interface WeddingGuestsTabProps {
 }
 
 export const WeddingGuestsTab: React.FC<WeddingGuestsTabProps> = ({ onOpenGuestModal }) => {
-  const { guests, eventDates, updateGuest, deleteGuest } = useWedding();
+  const { guests, updateGuest, deleteGuest } = useWedding();
   const [search, setSearch] = useState('');
   const [selectedSide, setSelectedSide] = useState<string>('ALL');
   const [selectedRsvp, setSelectedRsvp] = useState<string>('ALL');
@@ -200,8 +200,6 @@ export const WeddingGuestsTab: React.FC<WeddingGuestsTabProps> = ({ onOpenGuestM
       <div className="block sm:hidden space-y-3">
         {filteredGuests.length > 0 ? (
           filteredGuests.map((g) => {
-            const linkedEvent = eventDates.find((e) => e.id === g.event_id);
-
             return (
               <div key={g.id} className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
                 <div className="flex items-start justify-between">

@@ -3,7 +3,7 @@
 import React, { useMemo } from 'react';
 import { useFinance } from '@/context/FinanceContext';
 import { DynamicIcon } from './DynamicIcon';
-import { BarChart3, TrendingUp, TrendingDown, Calendar, Award } from 'lucide-react';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 import {
   ResponsiveContainer,
   BarChart,
@@ -11,7 +11,6 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  Cell,
 } from 'recharts';
 
 export const ReportsAnalytics: React.FC = () => {
@@ -29,7 +28,6 @@ export const ReportsAnalytics: React.FC = () => {
 
     let curIncome = 0;
     let curExpense = 0;
-    let prevIncome = 0;
     let prevExpense = 0;
 
     transactions.forEach((tx) => {
@@ -38,8 +36,7 @@ export const ReportsAnalytics: React.FC = () => {
         if (tx.type === 'income') curIncome += tx.amount;
         else curExpense += tx.amount;
       } else if (d.getMonth() === prevMonth && d.getFullYear() === prevYear) {
-        if (tx.type === 'income') prevIncome += tx.amount;
-        else prevExpense += tx.amount;
+        if (tx.type === 'expense') prevExpense += tx.amount;
       }
     });
 
@@ -163,7 +160,7 @@ export const ReportsAnalytics: React.FC = () => {
               <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} tickFormatter={(v) => `${v / 1000000}M`} />
               <Tooltip
                 contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', color: '#0f172a', borderRadius: '8px' }}
-                formatter={(val: any) => [formatCurrency(Number(val || 0)), 'Chi tiêu']}
+                formatter={(val: unknown) => [formatCurrency(Number(val || 0)), 'Chi tiêu']}
               />
               <Bar dataKey="Chi_tiêu" fill="#4f46e5" radius={[6, 6, 0, 0]} />
             </BarChart>

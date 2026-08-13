@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { useFinance } from '@/context/FinanceContext';
 import { TransactionType } from '@/lib/types';
-import { DynamicIcon } from './DynamicIcon';
 import { X, ArrowDownRight, ArrowUpRight, Calendar, FileText, Tag, Banknote } from 'lucide-react';
 
 interface TransactionModalProps {
@@ -12,7 +11,7 @@ interface TransactionModalProps {
 }
 
 export const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen, onClose }) => {
-  const { categories, addTransaction, formatCurrency } = useFinance();
+  const { categories, addTransaction } = useFinance();
 
   const [type, setType] = useState<TransactionType>('expense');
   const [amount, setAmount] = useState<string>('');

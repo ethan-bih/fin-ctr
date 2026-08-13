@@ -3,7 +3,7 @@
 import React, { useMemo } from 'react';
 import { useFinance } from '@/context/FinanceContext';
 import { DynamicIcon } from './DynamicIcon';
-import { Wallet, ArrowDownRight, ArrowUpRight, PiggyBank, Plus, Trash2 } from 'lucide-react';
+import { Wallet, ArrowDownRight, ArrowUpRight, PiggyBank, Trash2 } from 'lucide-react';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -20,7 +20,7 @@ interface DashboardOverviewProps {
   onOpenAddModal: () => void;
 }
 
-export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onOpenAddModal }) => {
+export const DashboardOverview: React.FC<DashboardOverviewProps> = () => {
   const { transactions, formatCurrency, deleteTransaction, setActiveTab } = useFinance();
 
   // Calculations
@@ -206,7 +206,7 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onOpenAddM
                 <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} tickFormatter={(v) => `${v / 1000000}M`} />
                 <Tooltip
                   contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', color: '#0f172a', borderRadius: '12px', fontSize: '12px' }}
-                  formatter={(val: any) => [formatCurrency(Number(val || 0)), '']}
+                  formatter={(val: unknown) => [formatCurrency(Number(val || 0)), '']}
                 />
                 <Area type="monotone" dataKey="income" stroke="#10b981" strokeWidth={2.5} fillOpacity={1} fill="url(#colorIncome)" />
                 <Area type="monotone" dataKey="expense" stroke="#f43f5e" strokeWidth={2.5} fillOpacity={1} fill="url(#colorExpense)" />
@@ -240,7 +240,7 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({ onOpenAddM
                     </Pie>
                     <Tooltip
                       contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', color: '#0f172a', borderRadius: '8px' }}
-                      formatter={(val: any) => [formatCurrency(Number(val || 0)), '']}
+                      formatter={(val: unknown) => [formatCurrency(Number(val || 0)), '']}
                     />
                   </RePieChart>
                 </ResponsiveContainer>

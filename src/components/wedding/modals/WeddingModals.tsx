@@ -1,5 +1,6 @@
 'use client';
 
+/* eslint-disable react-hooks/set-state-in-effect -- These modal forms intentionally hydrate local draft state when the edited record changes. */
 import React, { useState, useEffect } from 'react';
 import { useWedding } from '@/context/WeddingContext';
 import {

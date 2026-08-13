@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react';
 import { useWedding } from '@/context/WeddingContext';
-import { WeddingTask, TaskStatus, AssignedTo } from '@/lib/weddingTypes';
-import { Plus, Search, Calendar, User, CheckSquare, Clock, Trash2, SlidersHorizontal, X, RotateCcw } from 'lucide-react';
+import { WeddingTask, TaskStatus } from '@/lib/weddingTypes';
+import { Plus, Search, Calendar, Trash2, SlidersHorizontal, X, RotateCcw } from 'lucide-react';
 
 interface WeddingTimelineTabProps {
   onOpenTaskModal: (taskToEdit?: WeddingTask) => void;

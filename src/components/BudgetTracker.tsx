@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { useFinance } from '@/context/FinanceContext';
 import { DynamicIcon } from './DynamicIcon';
-import { PieChart, Plus, Trash2, AlertTriangle, CheckCircle, Banknote } from 'lucide-react';
+import { Plus, Trash2, AlertTriangle, CheckCircle } from 'lucide-react';
 
 export const BudgetTracker: React.FC = () => {
   const { budgets, categories, transactions, formatCurrency, addBudget, deleteBudget } = useFinance();

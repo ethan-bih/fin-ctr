@@ -5,7 +5,7 @@ import { useFinance } from '@/context/FinanceContext';
 import { DEFAULT_JARS } from '@/lib/constants';
 import { JarType } from '@/lib/types';
 import { DynamicIcon } from './DynamicIcon';
-import { Settings2, AlertCircle, CheckCircle2, Sliders, Info, RefreshCw } from 'lucide-react';
+import { Settings2, Sliders, RefreshCw } from 'lucide-react';
 
 export const SixJarsTracker: React.FC = () => {
   const { transactions, categories, jarRatios, updateJarRatios, formatCurrency } = useFinance();

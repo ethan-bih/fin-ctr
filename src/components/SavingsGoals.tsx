@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useFinance } from '@/context/FinanceContext';
 import { DynamicIcon } from './DynamicIcon';
-import { Target, Plus, Trash2, Calendar, Sparkles, PlusCircle } from 'lucide-react';
+import { Plus, Trash2, Calendar, Sparkles, PlusCircle } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export const SavingsGoals: React.FC = () => {
@@ -13,8 +13,8 @@ export const SavingsGoals: React.FC = () => {
   const [title, setTitle] = useState('');
   const [targetAmount, setTargetAmount] = useState('');
   const [targetDate, setTargetDate] = useState('');
-  const [color, setColor] = useState('#10b981');
-  const [icon, setIcon] = useState('Target');
+  const [color] = useState('#10b981');
+  const [icon] = useState('Target');
 
   // Quick Deposit modal state
   const [depositGoalId, setDepositGoalId] = useState<string | null>(null);
