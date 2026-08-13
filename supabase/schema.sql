@@ -5,16 +5,19 @@
 -- 1. Enable UUID Extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- 2. Profiles Table (Automatically synced from Supabase Auth / Google OAuth)
+-- 2. Profiles Table (Automatically synced from Supabase Auth)
 CREATE TABLE IF NOT EXISTS public.profiles (
     id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-    email TEXT UNIQUE NOT NULL,
+    email TEXT UNIQUE,
     full_name TEXT,
     avatar_url TEXT,
     currency TEXT DEFAULT 'VND',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
+
+-- Compatibility for projects that previously required an email from OAuth users.
+ALTER TABLE public.profiles ALTER COLUMN email DROP NOT NULL;
 
 -- 3. Categories Table
 CREATE TABLE IF NOT EXISTS public.categories (
@@ -81,35 +84,53 @@ ALTER TABLE public.budgets ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.savings_goals ENABLE ROW LEVEL SECURITY;
 
 -- Profiles Policies
+DROP POLICY IF EXISTS "Users can view own profile" ON public.profiles;
+DROP POLICY IF EXISTS "Users can update own profile" ON public.profiles;
 CREATE POLICY "Users can view own profile" ON public.profiles FOR SELECT USING (auth.uid() = id);
 CREATE POLICY "Users can update own profile" ON public.profiles FOR UPDATE USING (auth.uid() = id);
 
 -- Categories Policies (Users can view global categories OR their own custom categories)
+DROP POLICY IF EXISTS "Users can view categories" ON public.categories;
+DROP POLICY IF EXISTS "Users can create own categories" ON public.categories;
+DROP POLICY IF EXISTS "Users can update own categories" ON public.categories;
+DROP POLICY IF EXISTS "Users can delete own categories" ON public.categories;
 CREATE POLICY "Users can view categories" ON public.categories FOR SELECT USING (user_id IS NULL OR auth.uid() = user_id);
 CREATE POLICY "Users can create own categories" ON public.categories FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users can update own categories" ON public.categories FOR UPDATE USING (auth.uid() = user_id);
 CREATE POLICY "Users can delete own categories" ON public.categories FOR DELETE USING (auth.uid() = user_id);
 
 -- Transactions Policies (Strictly private per logged-in user)
+DROP POLICY IF EXISTS "Users can view own transactions" ON public.transactions;
+DROP POLICY IF EXISTS "Users can insert own transactions" ON public.transactions;
+DROP POLICY IF EXISTS "Users can update own transactions" ON public.transactions;
+DROP POLICY IF EXISTS "Users can delete own transactions" ON public.transactions;
 CREATE POLICY "Users can view own transactions" ON public.transactions FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Users can insert own transactions" ON public.transactions FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users can update own transactions" ON public.transactions FOR UPDATE USING (auth.uid() = user_id);
 CREATE POLICY "Users can delete own transactions" ON public.transactions FOR DELETE USING (auth.uid() = user_id);
 
 -- Budgets Policies
+DROP POLICY IF EXISTS "Users can view own budgets" ON public.budgets;
+DROP POLICY IF EXISTS "Users can insert own budgets" ON public.budgets;
+DROP POLICY IF EXISTS "Users can update own budgets" ON public.budgets;
+DROP POLICY IF EXISTS "Users can delete own budgets" ON public.budgets;
 CREATE POLICY "Users can view own budgets" ON public.budgets FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Users can insert own budgets" ON public.budgets FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users can update own budgets" ON public.budgets FOR UPDATE USING (auth.uid() = user_id);
 CREATE POLICY "Users can delete own budgets" ON public.budgets FOR DELETE USING (auth.uid() = user_id);
 
 -- Savings Goals Policies
+DROP POLICY IF EXISTS "Users can view own savings goals" ON public.savings_goals;
+DROP POLICY IF EXISTS "Users can insert own savings goals" ON public.savings_goals;
+DROP POLICY IF EXISTS "Users can update own savings goals" ON public.savings_goals;
+DROP POLICY IF EXISTS "Users can delete own savings goals" ON public.savings_goals;
 CREATE POLICY "Users can view own savings goals" ON public.savings_goals FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Users can insert own savings goals" ON public.savings_goals FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users can update own savings goals" ON public.savings_goals FOR UPDATE USING (auth.uid() = user_id);
 CREATE POLICY "Users can delete own savings goals" ON public.savings_goals FOR DELETE USING (auth.uid() = user_id);
 
 -- =========================================================
--- TRIGGER AUTOMATIC USER PROFILE CREATION ON GOOGLE OAUTH
+-- TRIGGER AUTOMATIC USER PROFILE CREATION ON AUTH SIGN-UP
 -- =========================================================
 
 CREATE OR REPLACE FUNCTION public.handle_new_user()
@@ -118,8 +139,8 @@ BEGIN
   INSERT INTO public.profiles (id, email, full_name, avatar_url)
   VALUES (
     NEW.id,
-    NEW.email,
-    COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'name', NEW.email),
+    COALESCE(NEW.email, NEW.id::text || '@anonymous.local'),
+    COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'name', NEW.email, 'Anonymous User'),
     NEW.raw_user_meta_data->>'avatar_url'
   )
   ON CONFLICT (id) DO UPDATE SET
