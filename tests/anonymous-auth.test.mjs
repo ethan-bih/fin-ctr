@@ -10,11 +10,21 @@ test('FinanceContext uses anonymous Supabase auth instead of Google OAuth', () =
   assert.doesNotMatch(source, /loginWithGoogle/);
 });
 
-test('auth and settings UI no longer show Google OAuth controls', () => {
+test('auth UI no longer shows Google OAuth controls', () => {
   const login = readFileSync('src/components/auth/LoginPage.tsx', 'utf8');
-  const settings = readFileSync('src/components/SettingsConfig.tsx', 'utf8');
 
-  assert.doesNotMatch(`${login}\n${settings}`, /Google OAuth|Đăng Nhập Google Auth|loginWithGoogle/);
+  assert.doesNotMatch(login, /Google OAuth|Đăng Nhập Google Auth|loginWithGoogle/);
+});
+
+test('Supabase configuration and sync status are hidden from the app UI', () => {
+  const uiSource = [
+    'src/app/page.tsx',
+    'src/components/Sidebar.tsx',
+    'src/context/FinanceContext.tsx',
+  ].map((file) => readFileSync(file, 'utf8')).join('\n');
+
+  assert.doesNotMatch(uiSource, /SettingsConfig|Cấu Hình Supabase|Cấu hình/);
+  assert.doesNotMatch(uiSource, /Cloud Sync Active|Local Mode Active/);
 });
 
 test('Supabase client normalizes a Vercel REST endpoint env var to the project URL', () => {

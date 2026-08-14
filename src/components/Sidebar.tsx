@@ -8,7 +8,6 @@ import {
   PieChart,
   Target,
   BarChart3,
-  Settings,
   Coins,
   HeartHandshake,
   Menu,
@@ -17,8 +16,6 @@ import {
   Plus,
   User,
   LogOut,
-  CheckCircle2,
-  AlertCircle,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -32,7 +29,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   setIsMobileDrawerOpen,
   onOpenAddModal,
 }) => {
-  const { activeTab, setActiveTab, user, isLiveMode, logout } = useFinance();
+  const { activeTab, setActiveTab, user, logout } = useFinance();
 
   const navItems: { id: ActiveTabType; label: string; icon: React.ElementType }[] = [
     { id: 'dashboard', label: 'Tổng Quan', icon: LayoutDashboard },
@@ -42,7 +39,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { id: 'budgets', label: 'Hạn Mức Chi', icon: PieChart },
     { id: 'savings', label: 'Quỹ Tiết Kiệm', icon: Target },
     { id: 'reports', label: 'Báo Cáo Thống Kê', icon: BarChart3 },
-    { id: 'settings', label: 'Cấu Hình Supabase', icon: Settings },
   ];
 
   const handleTabClick = (tabId: ActiveTabType) => {
@@ -109,8 +105,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Desktop Sidebar Navigation */}
       <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-slate-200 shrink-0 p-4 space-y-5 min-h-screen">
         {/* Unified Compact Brand & Profile Header Card */}
-        <div className="p-3 bg-slate-50 hover:bg-slate-100/90 rounded-2xl border border-slate-200/90 transition-all space-y-2">
-          {/* Top Line: Brand Logo & User Avatar */}
+        <div className="p-3 bg-slate-50 hover:bg-slate-100/90 rounded-2xl border border-slate-200/90 transition-all">
           <div className="flex items-center justify-between">
             <div
               className="flex items-center space-x-2.5 cursor-pointer"
@@ -143,26 +138,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 )}
               </div>
             )}
-          </div>
-
-          {/* Bottom Line: Status Indicator Pill */}
-          <div
-            onClick={() => handleTabClick('settings')}
-            className={`flex items-center justify-between px-2.5 py-1 rounded-xl text-[10px] font-bold cursor-pointer transition-all ${
-              isLiveMode
-                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                : 'bg-amber-50 text-amber-700 border border-amber-200'
-            }`}
-          >
-            <div className="flex items-center space-x-1.5">
-              {isLiveMode ? (
-                <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-              ) : (
-                <AlertCircle className="w-3 h-3 text-amber-600" />
-              )}
-              <span>{isLiveMode ? 'Cloud Sync Active' : 'Local Mode Active'}</span>
-            </div>
-            <span className="text-[9px] underline">Cấu hình</span>
           </div>
         </div>
 
@@ -282,20 +257,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <ChevronRight className="w-4 h-4 text-slate-400 shrink-0" />
               </div>
 
-              <div
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleTabClick('settings');
-                }}
-                className={`flex items-center justify-between px-2 py-0.5 rounded-lg text-[10px] font-bold ${
-                  isLiveMode
-                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                    : 'bg-amber-50 text-amber-700 border border-amber-200'
-                }`}
-              >
-                <span>{isLiveMode ? 'Cloud Sync Active' : 'Local Mode Active'}</span>
-                <span className="underline text-[9px]">Cấu hình</span>
-              </div>
             </div>
           )}
 

@@ -34,7 +34,6 @@ test('wedding seed data arrays and defaults are empty', () => {
 test('UI copy does not include sample names or demo wording', () => {
   const files = [
     'src/components/auth/LoginPage.tsx',
-    'src/components/SettingsConfig.tsx',
     'src/components/user/UserProfilePage.tsx',
     'src/components/wedding/modals/WeddingModals.tsx',
     'src/components/wedding/tabs/WeddingGiftsTab.tsx',

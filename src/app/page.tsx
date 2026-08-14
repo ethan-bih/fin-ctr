@@ -10,7 +10,6 @@ import { TransactionList } from '@/components/TransactionList';
 import { BudgetTracker } from '@/components/BudgetTracker';
 import { SavingsGoals } from '@/components/SavingsGoals';
 import { ReportsAnalytics } from '@/components/ReportsAnalytics';
-import { SettingsConfig } from '@/components/SettingsConfig';
 import { WeddingModule } from '@/components/wedding/WeddingModule';
 import { TransactionModal } from '@/components/TransactionModal';
 import { LoginPage } from '@/components/auth/LoginPage';
@@ -54,7 +53,6 @@ function MainAppContent() {
           {activeTab === 'budgets' && <BudgetTracker />}
           {activeTab === 'savings' && <SavingsGoals />}
           {activeTab === 'reports' && <ReportsAnalytics />}
-          {activeTab === 'settings' && <SettingsConfig />}
         </main>
       </div>
 
