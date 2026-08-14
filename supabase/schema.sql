@@ -74,6 +74,14 @@ CREATE TABLE IF NOT EXISTS public.savings_goals (
 );
 
 -- =========================================================
+-- COMPATIBILITY MIGRATIONS (for projects created before newer columns)
+-- CREATE TABLE IF NOT EXISTS does NOT add columns to an existing table,
+-- so add any newer columns explicitly here to keep this file rerunnable.
+-- =========================================================
+
+ALTER TABLE public.transactions ADD COLUMN IF NOT EXISTS jar_id TEXT;
+
+-- =========================================================
 -- ROW LEVEL SECURITY (RLS) POLICIES - BẢO MẬT DỮ LIỆU CÁ NHÂN
 -- =========================================================
 
