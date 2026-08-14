@@ -138,7 +138,7 @@ const readLocalSnapshot = (): WeddingSnapshot => {
 
 const writeLocalSnapshot = (snapshot: WeddingSnapshot) => {
   if (snapshot.settings) {
-    localStorage.setItem(LOCAL_STORAGE_DATE_KEY, snapshot.settings.wedding_date);
+    localStorage.setItem(LOCAL_STORAGE_DATE_KEY, snapshot.settings.wedding_date || '');
     localStorage.setItem(LOCAL_STORAGE_TARGET_BUDGET_KEY, snapshot.settings.target_budget.toString());
   }
   localStorage.setItem(LOCAL_STORAGE_EVENTS_KEY, JSON.stringify(snapshot.eventDates));

@@ -18,6 +18,16 @@ test('wedding schema includes events, settings, event links, and RLS checks', ()
   assert.match(sql, /WITH CHECK \(auth\.uid\(\) = user_id\)/);
 });
 
+test('wedding Supabase persistence supports an unset wedding date', () => {
+  const sql = readFileSync('supabase/wedding_schema.sql', 'utf8');
+  const helperSource = readFileSync('src/lib/weddingSupabase.ts', 'utf8');
+
+  assert.match(sql, /ALTER TABLE public\.wedding_settings ALTER COLUMN wedding_date DROP NOT NULL/);
+  assert.match(sql, /ALTER TABLE public\.wedding_settings ALTER COLUMN wedding_date DROP DEFAULT/);
+  assert.match(helperSource, /wedding_date: settings\.wedding_date \|\| null/);
+  assert.match(helperSource, /wedding_date: snapshot\.settings\?\.wedding_date \|\| null/);
+});
+
 test('WeddingContext uses Supabase for live-mode wedding persistence', () => {
   const source = readFileSync('src/context/WeddingContext.tsx', 'utf8');
   const helperSource = readFileSync('src/lib/weddingSupabase.ts', 'utf8');

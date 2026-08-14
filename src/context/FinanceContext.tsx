@@ -78,6 +78,12 @@ const DEFAULT_RATIOS: Record<JarType, number> = {
   GIVE: 5,
 };
 
+interface FinanceSnapshot {
+  transactions: Transaction[];
+  budgets: Budget[];
+  savingsGoals: SavingsGoal[];
+}
+
 export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [activeTab, setActiveTab] = useState<ActiveTabType>('login');
   const [user, setUser] = useState<UserProfile | null>(null);
@@ -187,33 +193,54 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   };
 
+  function readLocalFinanceSnapshot(): FinanceSnapshot {
+    const savedTx = localStorage.getItem(LOCAL_STORAGE_TX_KEY);
+    const savedBgt = localStorage.getItem(LOCAL_STORAGE_BGT_KEY);
+    const savedSvg = localStorage.getItem(LOCAL_STORAGE_SAVING_KEY);
+
+    return {
+      transactions: savedTx ? JSON.parse(savedTx) : INITIAL_MOCK_TRANSACTIONS,
+      budgets: savedBgt ? JSON.parse(savedBgt) : INITIAL_MOCK_BUDGETS,
+      savingsGoals: savedSvg ? JSON.parse(savedSvg) : INITIAL_MOCK_SAVINGS,
+    };
+  }
+
+  function applyFinanceSnapshot(snapshot: FinanceSnapshot) {
+    setTransactions(snapshot.transactions);
+    setBudgets(snapshot.budgets);
+    setSavingsGoals(snapshot.savingsGoals);
+  }
+
+  function hasFinanceSnapshotData(snapshot: FinanceSnapshot): boolean {
+    return snapshot.transactions.length > 0 || snapshot.budgets.length > 0 || snapshot.savingsGoals.length > 0;
+  }
+
+  function loadLocalAccountData() {
+    const savedUsers = localStorage.getItem(LOCAL_STORAGE_USERS_KEY);
+    const savedCurrentUser = localStorage.getItem(LOCAL_STORAGE_CURRENT_USER_KEY);
+    const savedRatios = localStorage.getItem(LOCAL_STORAGE_JAR_RATIOS_KEY);
+
+    if (savedUsers) {
+      setUsersList(JSON.parse(savedUsers));
+    } else {
+      localStorage.setItem(LOCAL_STORAGE_USERS_KEY, JSON.stringify([DEFAULT_ADMIN_ACCOUNT]));
+    }
+
+    if (savedCurrentUser) {
+      setUser(JSON.parse(savedCurrentUser));
+      setActiveTab('dashboard');
+    } else {
+      setUser(null);
+      setActiveTab('login');
+    }
+
+    if (savedRatios) setJarRatios(JSON.parse(savedRatios));
+  }
+
   function loadLocalStorageData() {
     try {
-      const savedUsers = localStorage.getItem(LOCAL_STORAGE_USERS_KEY);
-      const savedCurrentUser = localStorage.getItem(LOCAL_STORAGE_CURRENT_USER_KEY);
-      const savedTx = localStorage.getItem(LOCAL_STORAGE_TX_KEY);
-      const savedBgt = localStorage.getItem(LOCAL_STORAGE_BGT_KEY);
-      const savedSvg = localStorage.getItem(LOCAL_STORAGE_SAVING_KEY);
-      const savedRatios = localStorage.getItem(LOCAL_STORAGE_JAR_RATIOS_KEY);
-
-      if (savedUsers) {
-        setUsersList(JSON.parse(savedUsers));
-      } else {
-        localStorage.setItem(LOCAL_STORAGE_USERS_KEY, JSON.stringify([DEFAULT_ADMIN_ACCOUNT]));
-      }
-
-      if (savedCurrentUser) {
-        setUser(JSON.parse(savedCurrentUser));
-        setActiveTab('dashboard');
-      } else {
-        setUser(null);
-        setActiveTab('login');
-      }
-
-      setTransactions(savedTx ? JSON.parse(savedTx) : INITIAL_MOCK_TRANSACTIONS);
-      setBudgets(savedBgt ? JSON.parse(savedBgt) : INITIAL_MOCK_BUDGETS);
-      setSavingsGoals(savedSvg ? JSON.parse(savedSvg) : INITIAL_MOCK_SAVINGS);
-      if (savedRatios) setJarRatios(JSON.parse(savedRatios));
+      loadLocalAccountData();
+      applyFinanceSnapshot(readLocalFinanceSnapshot());
     } catch {
       setTransactions(INITIAL_MOCK_TRANSACTIONS);
       setBudgets(INITIAL_MOCK_BUDGETS);
@@ -222,9 +249,9 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   }
 
-  async function fetchSupabaseData(userId: string) {
+  async function fetchSupabaseData(userId: string): Promise<FinanceSnapshot | null> {
     const supabase = createClient();
-    if (!supabase) return;
+    if (!supabase) return null;
 
     const { data: txData } = await supabase
       .from('transactions')
@@ -232,13 +259,103 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
       .eq('user_id', userId)
       .order('date', { ascending: false });
 
-    if (txData) setTransactions(txData);
-
     const { data: bgtData } = await supabase.from('budgets').select('*').eq('user_id', userId);
-    if (bgtData) setBudgets(bgtData);
 
     const { data: svgData } = await supabase.from('savings_goals').select('*').eq('user_id', userId);
-    if (svgData) setSavingsGoals(svgData);
+
+    return {
+      transactions: txData ?? [],
+      budgets: bgtData ?? [],
+      savingsGoals: svgData ?? [],
+    };
+  }
+
+  async function seedSupabaseFinanceData(userId: string, snapshot: FinanceSnapshot): Promise<FinanceSnapshot | null> {
+    const supabase = createClient();
+    if (!supabase) return null;
+
+    await Promise.all([
+      supabase.from('savings_goals').delete().eq('user_id', userId),
+      supabase.from('budgets').delete().eq('user_id', userId),
+    ]);
+    await supabase.from('transactions').delete().eq('user_id', userId);
+
+    const txPayload = snapshot.transactions.map((tx) => ({
+      user_id: userId,
+      type: tx.type,
+      amount: tx.amount,
+      category_id: tx.category_id,
+      category_name: tx.category_name,
+      category_icon: tx.category_icon,
+      category_color: tx.category_color,
+      jar_id: tx.jar_id,
+      note: tx.note,
+      date: tx.date,
+    }));
+
+    const budgetPayload = snapshot.budgets.map((budget) => ({
+      user_id: userId,
+      category_id: budget.category_id,
+      category_name: budget.category_name,
+      category_icon: budget.category_icon,
+      category_color: budget.category_color,
+      monthly_limit: budget.monthly_limit,
+    }));
+
+    const savingsPayload = snapshot.savingsGoals.map((goal) => ({
+      user_id: userId,
+      title: goal.title,
+      target_amount: goal.target_amount,
+      current_amount: goal.current_amount,
+      target_date: goal.target_date,
+      category_color: goal.category_color,
+      icon: goal.icon,
+    }));
+
+    const [txResult, budgetResult, savingsResult] = await Promise.all([
+      txPayload.length > 0
+        ? supabase.from('transactions').insert(txPayload).select()
+        : Promise.resolve({ data: [], error: null }),
+      budgetPayload.length > 0
+        ? supabase.from('budgets').insert(budgetPayload).select()
+        : Promise.resolve({ data: [], error: null }),
+      savingsPayload.length > 0
+        ? supabase.from('savings_goals').insert(savingsPayload).select()
+        : Promise.resolve({ data: [], error: null }),
+    ]);
+
+    if (txResult.error) throw txResult.error;
+    if (budgetResult.error) throw budgetResult.error;
+    if (savingsResult.error) throw savingsResult.error;
+
+    return {
+      transactions: txResult.data ?? [],
+      budgets: budgetResult.data ?? [],
+      savingsGoals: savingsResult.data ?? [],
+    };
+  }
+
+  async function initializeCloudFinanceData(userId: string) {
+    try {
+      const cloudSnapshot = await fetchSupabaseData(userId);
+      if (!cloudSnapshot) return;
+
+      if (hasFinanceSnapshotData(cloudSnapshot)) {
+        applyFinanceSnapshot(cloudSnapshot);
+        return;
+      }
+
+      const localSnapshot = readLocalFinanceSnapshot();
+      if (hasFinanceSnapshotData(localSnapshot)) {
+        const seededSnapshot = await seedSupabaseFinanceData(userId, localSnapshot);
+        applyFinanceSnapshot(seededSnapshot ?? localSnapshot);
+        return;
+      }
+
+      applyFinanceSnapshot(cloudSnapshot);
+    } catch (error) {
+      console.error('Failed to load finance data from Supabase:', error);
+    }
   }
 
   // Initialize Data
@@ -246,11 +363,11 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const supabase = createClient();
 
     if (supabase) {
-      const activateCloudSession = (userId: string) => {
+      const activateCloudSession = async (userId: string) => {
         setCloudUserId(userId);
         setIsLiveMode(true);
-        fetchSupabaseData(userId);
-        loadLocalStorageData();
+        loadLocalAccountData();
+        await initializeCloudFinanceData(userId);
       };
 
       supabase.auth.getUser().then(async ({ data: { user: authUser } }) => {
@@ -274,7 +391,8 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
         if (session?.user?.id) {
           setCloudUserId(session.user.id);
           setIsLiveMode(true);
-          fetchSupabaseData(session.user.id);
+          loadLocalAccountData();
+          initializeCloudFinanceData(session.user.id);
         } else {
           setCloudUserId(null);
           setIsLiveMode(false);

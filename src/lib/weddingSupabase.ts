@@ -9,7 +9,7 @@ import {
 } from './weddingTypes';
 
 export interface WeddingSettings {
-  wedding_date: string;
+  wedding_date: string | null;
   target_budget: number;
 }
 
@@ -104,7 +104,14 @@ export async function upsertWeddingSettings(
 ): Promise<void> {
   const { error } = await supabase
     .from('wedding_settings')
-    .upsert({ user_id: userId, ...settings }, { onConflict: 'user_id' });
+    .upsert(
+      {
+        user_id: userId,
+        wedding_date: settings.wedding_date || null,
+        target_budget: settings.target_budget,
+      },
+      { onConflict: 'user_id' }
+    );
 
   if (error) throw error;
 }
@@ -176,9 +183,9 @@ export async function seedWeddingSnapshot(
 
   await supabase.from('wedding_events').delete().eq('user_id', userId);
 
-  await upsertWeddingSettings(supabase, userId, snapshot.settings ?? {
-    wedding_date: '',
-    target_budget: 0,
+  await upsertWeddingSettings(supabase, userId, {
+    wedding_date: snapshot.settings?.wedding_date || null,
+    target_budget: snapshot.settings?.target_budget ?? 0,
   });
 
   const insertMany = async <TTable extends WeddingTableName>(

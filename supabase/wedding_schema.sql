@@ -8,8 +8,8 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 CREATE TABLE IF NOT EXISTS public.wedding_settings (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL UNIQUE REFERENCES auth.users(id) ON DELETE CASCADE,
-    wedding_date DATE NOT NULL DEFAULT '2026-11-20',
-    target_budget NUMERIC(15, 2) NOT NULL DEFAULT 200000000 CHECK (target_budget >= 0),
+    wedding_date DATE,
+    target_budget NUMERIC(15, 2) NOT NULL DEFAULT 0 CHECK (target_budget >= 0),
     created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
     updated_at TIMESTAMPTZ DEFAULT now() NOT NULL
 );
@@ -110,6 +110,9 @@ CREATE TABLE IF NOT EXISTS public.wedding_gifts (
 );
 
 -- Compatibility for projects that previously ran the older wedding_schema.sql.
+ALTER TABLE public.wedding_settings ALTER COLUMN wedding_date DROP NOT NULL;
+ALTER TABLE public.wedding_settings ALTER COLUMN wedding_date DROP DEFAULT;
+ALTER TABLE public.wedding_settings ALTER COLUMN target_budget SET DEFAULT 0;
 ALTER TABLE public.wedding_tasks ADD COLUMN IF NOT EXISTS event_id UUID REFERENCES public.wedding_events(id) ON DELETE SET NULL;
 ALTER TABLE public.wedding_budgets ADD COLUMN IF NOT EXISTS event_id UUID REFERENCES public.wedding_events(id) ON DELETE SET NULL;
 ALTER TABLE public.wedding_budgets ADD COLUMN IF NOT EXISTS deposit_amount NUMERIC(15, 2) NOT NULL DEFAULT 0 CHECK (deposit_amount >= 0);

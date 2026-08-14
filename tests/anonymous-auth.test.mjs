@@ -17,6 +17,16 @@ test('auth and settings UI no longer show Google OAuth controls', () => {
   assert.doesNotMatch(`${login}\n${settings}`, /Google OAuth|Đăng Nhập Google Auth|loginWithGoogle/);
 });
 
+test('live Supabase activation does not overwrite cloud finance data with browser storage', () => {
+  const source = readFileSync('src/context/FinanceContext.tsx', 'utf8');
+  const activationMatch = source.match(/const activateCloudSession = async \(userId: string\) => \{([\s\S]*?)\n      \};/);
+
+  assert.ok(activationMatch, 'activateCloudSession should be an async initializer');
+  assert.match(activationMatch[1], /loadLocalAccountData\(\)/);
+  assert.match(activationMatch[1], /initializeCloudFinanceData\(userId\)/);
+  assert.doesNotMatch(activationMatch[1], /loadLocalStorageData\(\)/);
+});
+
 test('finance Supabase schema can be rerun and supports anonymous auth profiles', () => {
   const sql = readFileSync('supabase/schema.sql', 'utf8');
 
