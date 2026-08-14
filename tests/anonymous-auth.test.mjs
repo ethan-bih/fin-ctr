@@ -17,6 +17,13 @@ test('auth and settings UI no longer show Google OAuth controls', () => {
   assert.doesNotMatch(`${login}\n${settings}`, /Google OAuth|Đăng Nhập Google Auth|loginWithGoogle/);
 });
 
+test('Supabase client normalizes a Vercel REST endpoint env var to the project URL', () => {
+  const source = readFileSync('src/lib/supabase/client.ts', 'utf8');
+
+  assert.match(source, /replace\(\s*\/\\\/rest\\\/v1\\\/\?\$\/\s*,\s*''\s*\)/);
+  assert.match(source, /createBrowserClient\(normalizedSupabaseUrl, supabaseAnonKey\)/);
+});
+
 test('live Supabase activation does not overwrite cloud finance data with browser storage', () => {
   const source = readFileSync('src/context/FinanceContext.tsx', 'utf8');
   const activationMatch = source.match(/const activateCloudSession = async \(userId: string\) => \{([\s\S]*?)\n      \};/);
