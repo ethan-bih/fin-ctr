@@ -186,6 +186,10 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     [budgets, eventDates, gifts, guests, targetBudget, tasks, vendors, weddingDate]
   );
 
+  const persistLocalFallback = useCallback((snapshot: WeddingSnapshot) => {
+    writeLocalSnapshot(snapshot);
+  }, []);
+
   const getCloudClient = useCallback(() => {
     const supabase = createClient();
     return isCloudMode && cloudUserId && supabase ? { supabase, userId: cloudUserId } : null;
@@ -233,6 +237,7 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
         await upsertWeddingSettings(cloud.supabase, cloud.userId, settings);
       } catch (error) {
         console.error('Failed to save wedding settings to Supabase:', error);
+        persistLocalFallback(currentSnapshot(settings));
       }
     } else {
       writeLocalSnapshot(currentSnapshot(settings));
@@ -369,7 +374,11 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const newItem: WeddingBudgetItem = { ...item, id: createLocalId('w-bdg') };
     const updated = [...budgets, newItem];
     setBudgets(updated);
-    if (!cloud) writeLocalSnapshot({ ...currentSnapshot(), budgets: updated });
+    if (cloud) {
+      persistLocalFallback({ ...currentSnapshot(), budgets: updated });
+    } else {
+      writeLocalSnapshot({ ...currentSnapshot(), budgets: updated });
+    }
   };
 
   const updateBudgetItem = async (id: string, updates: Partial<WeddingBudgetItem>) => {
@@ -383,6 +392,7 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
         if (saved) setBudgets((prev) => prev.map((budget) => (budget.id === id ? saved : budget)));
       } catch (error) {
         console.error('Failed to update wedding budget item in Supabase:', error);
+        persistLocalFallback({ ...currentSnapshot(), budgets: updated });
       }
     } else {
       writeLocalSnapshot({ ...currentSnapshot(), budgets: updated });
@@ -399,6 +409,7 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
         await deleteWeddingRecord(cloud.supabase, 'wedding_budgets', id);
       } catch (error) {
         console.error('Failed to delete wedding budget item from Supabase:', error);
+        persistLocalFallback({ ...currentSnapshot(), budgets: updated });
       }
     } else {
       writeLocalSnapshot({ ...currentSnapshot(), budgets: updated });

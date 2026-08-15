@@ -372,7 +372,7 @@ export const BudgetModal: React.FC<BudgetModalProps> = ({ isOpen, onClose, itemT
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) return;
 
@@ -381,7 +381,7 @@ export const BudgetModal: React.FC<BudgetModalProps> = ({ isOpen, onClose, itemT
     const deposit = parseFloat(depositAmount) || 0;
 
     if (itemToEdit) {
-      updateBudgetItem(itemToEdit.id, {
+      await updateBudgetItem(itemToEdit.id, {
         category,
         title,
         estimated_cost: est,
@@ -392,7 +392,7 @@ export const BudgetModal: React.FC<BudgetModalProps> = ({ isOpen, onClose, itemT
         note,
       });
     } else {
-      addBudgetItem({
+      await addBudgetItem({
         category,
         title,
         estimated_cost: est,

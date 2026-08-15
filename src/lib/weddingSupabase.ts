@@ -52,6 +52,16 @@ const withoutId = <TRecord extends { id: string }>(record: TRecord): Omit<TRecor
   return copy as Omit<TRecord, 'id'>;
 };
 
+const normalizeWeddingRecordForSupabase = <TRecord extends SupabasePayload>(record: TRecord): SupabasePayload => {
+  const copy: SupabasePayload = { ...record };
+
+  if (copy.event_id === '') {
+    copy.event_id = null;
+  }
+
+  return copy;
+};
+
 export async function fetchWeddingSnapshot(
   supabase: SupabaseClient,
   userId: string
@@ -122,7 +132,10 @@ export async function insertWeddingRecord<TTable extends WeddingTableName>(
   userId: string,
   record: Omit<WeddingRecordMap[TTable], 'id'>
 ): Promise<WeddingRecordMap[TTable]> {
-  const payload = { ...record, user_id: userId } as WeddingPayload;
+  const payload = {
+    ...normalizeWeddingRecordForSupabase(record as SupabasePayload),
+    user_id: userId,
+  } as WeddingPayload;
   const { data, error } = await supabase.from(table).insert([payload]).select().single<WeddingRecordMap[TTable]>();
 
   if (error) throw error;
@@ -137,7 +150,7 @@ export async function updateWeddingRecord<TTable extends WeddingTableName>(
 ): Promise<WeddingRecordMap[TTable] | null> {
   const { data, error } = await supabase
     .from(table)
-    .update(updates as SupabasePayload)
+    .update(normalizeWeddingRecordForSupabase(updates as SupabasePayload))
     .eq('id', id)
     .select()
     .maybeSingle<WeddingRecordMap[TTable]>();
@@ -194,7 +207,10 @@ export async function seedWeddingSnapshot(
   ): Promise<WeddingRecordMap[TTable][]> => {
     if (records.length === 0) return [];
 
-    const payload = records.map((record) => ({ ...record, user_id: userId })) as WeddingPayload[];
+    const payload = records.map((record) => ({
+      ...normalizeWeddingRecordForSupabase(record as SupabasePayload),
+      user_id: userId,
+    })) as WeddingPayload[];
     const { data, error } = await supabase.from(table).insert(payload).select();
 
     if (error) throw error;

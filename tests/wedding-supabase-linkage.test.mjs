@@ -48,3 +48,20 @@ test('WeddingContext uses Supabase for live-mode wedding persistence', () => {
     assert.match(combinedSource, new RegExp(table));
   }
 });
+
+test('wedding persistence does not send blank event IDs to UUID columns', () => {
+  const helperSource = readFileSync('src/lib/weddingSupabase.ts', 'utf8');
+
+  assert.match(helperSource, /normalizeWeddingRecordForSupabase/);
+  assert.match(helperSource, /event_id === ''/);
+  assert.match(helperSource, /copy\.event_id = null/);
+  assert.match(helperSource, /insertWeddingRecord[\s\S]*normalizeWeddingRecordForSupabase\(record as SupabasePayload\)/);
+  assert.match(helperSource, /updateWeddingRecord[\s\S]*normalizeWeddingRecordForSupabase\(updates as SupabasePayload\)/);
+});
+
+test('WeddingContext preserves wedding edits locally when cloud persistence fails', () => {
+  const source = readFileSync('src/context/WeddingContext.tsx', 'utf8');
+
+  assert.match(source, /persistLocalFallback/);
+  assert.match(source, /persistLocalFallback\(\{ \.\.\.currentSnapshot\(\), budgets: updated \}\)/);
+});
