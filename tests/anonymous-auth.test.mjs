@@ -39,9 +39,20 @@ test('live Supabase activation does not overwrite cloud finance data with browse
   const activationMatch = source.match(/const activateCloudSession = async \(userId: string\) => \{([\s\S]*?)\n      \};/);
 
   assert.ok(activationMatch, 'activateCloudSession should be an async initializer');
+  assert.match(activationMatch[1], /clearLocalPersistedData\(\)/);
   assert.match(activationMatch[1], /loadLocalAccountData\(\)/);
   assert.match(activationMatch[1], /initializeCloudFinanceData\(userId\)/);
   assert.doesNotMatch(activationMatch[1], /loadLocalStorageData\(\)/);
+});
+
+test('empty cloud finance data does not get seeded from browser storage', () => {
+  const source = readFileSync('src/context/FinanceContext.tsx', 'utf8');
+  const initializerMatch = source.match(/async function initializeCloudFinanceData\(userId: string\) \{([\s\S]*?)\n  \}/);
+
+  assert.ok(initializerMatch, 'initializeCloudFinanceData should exist');
+  assert.doesNotMatch(initializerMatch[1], /readLocalFinanceSnapshot\(\)/);
+  assert.doesNotMatch(initializerMatch[1], /seedSupabaseFinanceData/);
+  assert.match(initializerMatch[1], /applyFinanceSnapshot\(cloudSnapshot\)/);
 });
 
 test('finance Supabase schema can be rerun and supports anonymous auth profiles', () => {

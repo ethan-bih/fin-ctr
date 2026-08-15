@@ -215,6 +215,21 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     return snapshot.transactions.length > 0 || snapshot.budgets.length > 0 || snapshot.savingsGoals.length > 0;
   }
 
+  function clearLocalPersistedData() {
+    localStorage.removeItem(LOCAL_STORAGE_TX_KEY);
+    localStorage.removeItem(LOCAL_STORAGE_BGT_KEY);
+    localStorage.removeItem(LOCAL_STORAGE_SAVING_KEY);
+    localStorage.removeItem(LOCAL_STORAGE_JAR_RATIOS_KEY);
+    localStorage.removeItem(LOCAL_STORAGE_WEDDING_DATE_KEY);
+    localStorage.removeItem(LOCAL_STORAGE_WEDDING_TARGET_BUDGET_KEY);
+    localStorage.removeItem(LOCAL_STORAGE_WEDDING_EVENTS_KEY);
+    localStorage.removeItem(LOCAL_STORAGE_WEDDING_TASKS_KEY);
+    localStorage.removeItem(LOCAL_STORAGE_WEDDING_BUDGETS_KEY);
+    localStorage.removeItem(LOCAL_STORAGE_WEDDING_GUESTS_KEY);
+    localStorage.removeItem(LOCAL_STORAGE_WEDDING_VENDORS_KEY);
+    localStorage.removeItem(LOCAL_STORAGE_WEDDING_GIFTS_KEY);
+  }
+
   function loadLocalAccountData() {
     const savedUsers = localStorage.getItem(LOCAL_STORAGE_USERS_KEY);
     const savedCurrentUser = localStorage.getItem(LOCAL_STORAGE_CURRENT_USER_KEY);
@@ -270,71 +285,6 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
     };
   }
 
-  async function seedSupabaseFinanceData(userId: string, snapshot: FinanceSnapshot): Promise<FinanceSnapshot | null> {
-    const supabase = createClient();
-    if (!supabase) return null;
-
-    await Promise.all([
-      supabase.from('savings_goals').delete().eq('user_id', userId),
-      supabase.from('budgets').delete().eq('user_id', userId),
-    ]);
-    await supabase.from('transactions').delete().eq('user_id', userId);
-
-    const txPayload = snapshot.transactions.map((tx) => ({
-      user_id: userId,
-      type: tx.type,
-      amount: tx.amount,
-      category_id: tx.category_id,
-      category_name: tx.category_name,
-      category_icon: tx.category_icon,
-      category_color: tx.category_color,
-      jar_id: tx.jar_id,
-      note: tx.note,
-      date: tx.date,
-    }));
-
-    const budgetPayload = snapshot.budgets.map((budget) => ({
-      user_id: userId,
-      category_id: budget.category_id,
-      category_name: budget.category_name,
-      category_icon: budget.category_icon,
-      category_color: budget.category_color,
-      monthly_limit: budget.monthly_limit,
-    }));
-
-    const savingsPayload = snapshot.savingsGoals.map((goal) => ({
-      user_id: userId,
-      title: goal.title,
-      target_amount: goal.target_amount,
-      current_amount: goal.current_amount,
-      target_date: goal.target_date,
-      category_color: goal.category_color,
-      icon: goal.icon,
-    }));
-
-    const [txResult, budgetResult, savingsResult] = await Promise.all([
-      txPayload.length > 0
-        ? supabase.from('transactions').insert(txPayload).select()
-        : Promise.resolve({ data: [], error: null }),
-      budgetPayload.length > 0
-        ? supabase.from('budgets').insert(budgetPayload).select()
-        : Promise.resolve({ data: [], error: null }),
-      savingsPayload.length > 0
-        ? supabase.from('savings_goals').insert(savingsPayload).select()
-        : Promise.resolve({ data: [], error: null }),
-    ]);
-
-    if (txResult.error) throw txResult.error;
-    if (budgetResult.error) throw budgetResult.error;
-    if (savingsResult.error) throw savingsResult.error;
-
-    return {
-      transactions: txResult.data ?? [],
-      budgets: budgetResult.data ?? [],
-      savingsGoals: savingsResult.data ?? [],
-    };
-  }
-
   async function initializeCloudFinanceData(userId: string) {
     try {
       const cloudSnapshot = await fetchSupabaseData(userId);
@@ -342,13 +292,6 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
       if (hasFinanceSnapshotData(cloudSnapshot)) {
         applyFinanceSnapshot(cloudSnapshot);
-        return;
-      }
-
-      const localSnapshot = readLocalFinanceSnapshot();
-      if (hasFinanceSnapshotData(localSnapshot)) {
-        const seededSnapshot = await seedSupabaseFinanceData(userId, localSnapshot);
-        applyFinanceSnapshot(seededSnapshot ?? localSnapshot);
         return;
       }
 
@@ -366,6 +309,7 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
       const activateCloudSession = async (userId: string) => {
         setCloudUserId(userId);
         setIsLiveMode(true);
+        clearLocalPersistedData();
         loadLocalAccountData();
         await initializeCloudFinanceData(userId);
       };
@@ -391,6 +335,7 @@ export const FinanceProvider: React.FC<{ children: React.ReactNode }> = ({ child
         if (session?.user?.id) {
           setCloudUserId(session.user.id);
           setIsLiveMode(true);
+          clearLocalPersistedData();
           loadLocalAccountData();
           initializeCloudFinanceData(session.user.id);
         } else {

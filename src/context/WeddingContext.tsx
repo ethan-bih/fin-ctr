@@ -186,10 +186,6 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     [budgets, eventDates, gifts, guests, targetBudget, tasks, vendors, weddingDate]
   );
 
-  const persistLocalFallback = useCallback((snapshot: WeddingSnapshot) => {
-    writeLocalSnapshot(snapshot);
-  }, []);
-
   const getCloudClient = useCallback(() => {
     const supabase = createClient();
     return isCloudMode && cloudUserId && supabase ? { supabase, userId: cloudUserId } : null;
@@ -214,12 +210,10 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
           return;
         }
 
-        const localSnapshot = readLocalSnapshot();
-        const seededSnapshot = await seedWeddingSnapshot(cloud.supabase, cloud.userId, localSnapshot);
-        if (!cancelled) applySnapshot(seededSnapshot);
+        if (!cancelled) applySnapshot(cloudSnapshot);
       } catch (error) {
         console.error('Failed to load wedding data from Supabase:', error);
-        if (!cancelled) applySnapshot(readLocalSnapshot());
+        if (!cancelled) applySnapshot(defaultSnapshot());
       }
     };
 
@@ -237,7 +231,6 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
         await upsertWeddingSettings(cloud.supabase, cloud.userId, settings);
       } catch (error) {
         console.error('Failed to save wedding settings to Supabase:', error);
-        persistLocalFallback(currentSnapshot(settings));
       }
     } else {
       writeLocalSnapshot(currentSnapshot(settings));
@@ -264,6 +257,7 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
         return;
       } catch (error) {
         console.error('Failed to add wedding event to Supabase:', error);
+        return;
       }
     }
 
@@ -316,6 +310,7 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
         return;
       } catch (error) {
         console.error('Failed to add wedding task to Supabase:', error);
+        return;
       }
     }
 
@@ -368,17 +363,14 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
         return;
       } catch (error) {
         console.error('Failed to add wedding budget item to Supabase:', error);
+        return;
       }
     }
 
     const newItem: WeddingBudgetItem = { ...item, id: createLocalId('w-bdg') };
     const updated = [...budgets, newItem];
     setBudgets(updated);
-    if (cloud) {
-      persistLocalFallback({ ...currentSnapshot(), budgets: updated });
-    } else {
-      writeLocalSnapshot({ ...currentSnapshot(), budgets: updated });
-    }
+    writeLocalSnapshot({ ...currentSnapshot(), budgets: updated });
   };
 
   const updateBudgetItem = async (id: string, updates: Partial<WeddingBudgetItem>) => {
@@ -392,7 +384,6 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
         if (saved) setBudgets((prev) => prev.map((budget) => (budget.id === id ? saved : budget)));
       } catch (error) {
         console.error('Failed to update wedding budget item in Supabase:', error);
-        persistLocalFallback({ ...currentSnapshot(), budgets: updated });
       }
     } else {
       writeLocalSnapshot({ ...currentSnapshot(), budgets: updated });
@@ -409,7 +400,6 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
         await deleteWeddingRecord(cloud.supabase, 'wedding_budgets', id);
       } catch (error) {
         console.error('Failed to delete wedding budget item from Supabase:', error);
-        persistLocalFallback({ ...currentSnapshot(), budgets: updated });
       }
     } else {
       writeLocalSnapshot({ ...currentSnapshot(), budgets: updated });
@@ -426,6 +416,7 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
         return;
       } catch (error) {
         console.error('Failed to add wedding guest to Supabase:', error);
+        return;
       }
     }
 
@@ -478,6 +469,7 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
         return;
       } catch (error) {
         console.error('Failed to add wedding vendor to Supabase:', error);
+        return;
       }
     }
 
@@ -530,6 +522,7 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
         return;
       } catch (error) {
         console.error('Failed to add wedding gift to Supabase:', error);
+        return;
       }
     }
 

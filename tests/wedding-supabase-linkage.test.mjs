@@ -59,9 +59,10 @@ test('wedding persistence does not send blank event IDs to UUID columns', () => 
   assert.match(helperSource, /updateWeddingRecord[\s\S]*normalizeWeddingRecordForSupabase\(updates as SupabasePayload\)/);
 });
 
-test('WeddingContext preserves wedding edits locally when cloud persistence fails', () => {
+test('empty cloud wedding data does not get seeded from browser storage', () => {
   const source = readFileSync('src/context/WeddingContext.tsx', 'utf8');
 
-  assert.match(source, /persistLocalFallback/);
-  assert.match(source, /persistLocalFallback\(\{ \.\.\.currentSnapshot\(\), budgets: updated \}\)/);
+  assert.doesNotMatch(source, /seedWeddingSnapshot\(cloud\.supabase, cloud\.userId, localSnapshot\)/);
+  assert.doesNotMatch(source, /persistLocalFallback/);
+  assert.match(source, /if \(!cancelled\) applySnapshot\(cloudSnapshot\)/);
 });
